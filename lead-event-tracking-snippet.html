@@ -1,0 +1,71 @@
+<!-- 
+  INSTRUÇÕES DE USO NA GREATPAGES:
+  1. No editor da GreatPages, clique na página para abrir as configurações
+  2. Acesse "Configurações da Página" > "Código Personalizado" (ou "Scripts")
+  3. Cole o código abaixo no campo "Antes do </body>" ou "Rodapé"
+  4. Salve e publique a página
+  5. Teste com o Meta Pixel Helper (extensão do Chrome)
+
+  IMPORTANTE: O Meta Pixel base deve já estar instalado na página.
+  Este script apenas adiciona o disparo do evento 'Lead' no envio do formulário.
+-->
+
+<script>
+(function () {
+  'use strict';
+
+  function onReady(fn) {
+    if (document.readyState !== 'loading') {
+      fn();
+    } else {
+      document.addEventListener('DOMContentLoaded', fn);
+    }
+  }
+
+  function trackLead() {
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead');
+    }
+  }
+
+  onReady(function () {
+    // 1. Submit tradicional
+    document.addEventListener('submit', function (e) {
+      if (e.target && e.target.tagName === 'FORM') {
+        trackLead();
+      }
+    }, true);
+
+    // 2. Intercepta fetch (AJAX moderno usado pela GreatPages)
+    var originalFetch = window.fetch;
+    window.fetch = function () {
+      var args = arguments;
+      var url = (args[0] && typeof args[0] === 'string') ? args[0] : '';
+      return originalFetch.apply(this, args).then(function (response) {
+        var isFormSubmit = /lead|form|contato|submit|capturas|conversao/i.test(url);
+        if (isFormSubmit && response.ok) {
+          trackLead();
+        }
+        return response;
+      });
+    };
+
+    // 3. Intercepta XMLHttpRequest (AJAX legado)
+    var OrigXHR = window.XMLHttpRequest;
+    function PatchedXHR() {
+      var xhr = new OrigXHR();
+      var reqUrl = '';
+      var origOpen = xhr.open.bind(xhr);
+      xhr.open = function (m, u) { reqUrl = u; return origOpen.apply(xhr, arguments); };
+      xhr.addEventListener('load', function () {
+        if (xhr.status >= 200 && xhr.status < 300 && /lead|form|contato|submit|capturas|conversao/i.test(reqUrl)) {
+          trackLead();
+        }
+      });
+      return xhr;
+    }
+    PatchedXHR.prototype = OrigXHR.prototype;
+    window.XMLHttpRequest = PatchedXHR;
+  });
+})();
+</script>
