@@ -1,0 +1,250 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RUBRA · Extrato de tomate em vidro 200 ml</title>
+<meta name="description" content="Extrato de tomate concentrado em fogo baixo, sem conservantes, engarrafado em vidro de 200 ml no mesmo dia da colheita." />
+<meta name="theme-color" content="#0B0A0A" />
+<meta property="og:title" content="RUBRA · Extrato de tomate" />
+<meta property="og:description" content="O tomate inteiro, em 200 ml." />
+<meta property="og:type" content="website" />
+
+<!-- Tudo local: nenhuma requisição sai do domínio, nada quebra se um CDN cair -->
+<link rel="preload" href="assets/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="assets/fonts/fonts.css" />
+<link rel="stylesheet" href="assets/vendor/phosphor.css" />
+<link rel="stylesheet" href="assets/css/style.css" />
+
+<script>
+  // Só esconde o que vai ser animado se houver JS, e desiste se o bundle não
+  // chegar em 3s. Evita a pior falha possível: página em branco por CDN fora.
+  document.documentElement.classList.add("js");
+  setTimeout(function () {
+    if (!document.documentElement.classList.contains("anim-ready")) {
+      document.documentElement.classList.add("no-anim");
+    }
+  }, 3000);
+</script>
+
+<!-- WebGL stage: lives behind every transparent section -->
+<div class="stage" aria-hidden="true">
+  <canvas id="gl"></canvas>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="nav__brand" href="#topo" aria-label="RUBRA, início">
+    <svg viewBox="0 0 24 24" width="18" height="18" role="presentation" focusable="false">
+      <circle cx="12" cy="13.5" r="8" fill="currentColor" />
+      <path d="M12 5.5c2.4-1.6 4.6-1.6 6.6 0-2 1.7-4.2 1.7-6.6 0Z" fill="currentColor" opacity=".55" />
+    </svg>
+    <span>RUBRA</span>
+  </a>
+  <nav class="nav__links" aria-label="Seções">
+    <a href="#produto">Produto</a>
+    <a href="#origem">Origem</a>
+    <a href="#processo">Processo</a>
+  </nav>
+  <a class="btn btn--solid btn--sm" href="#comprar">Comprar</a>
+</header>
+
+<main id="topo">
+  <!-- 1. HERO: split assimétrico, tipo à esquerda, garrafa WebGL à direita -->
+  <section class="hero" id="produto">
+    <div class="shell"><div class="hero__copy">
+      <p class="eyebrow" data-reveal-hero>Extrato de tomate</p>
+      <h1 class="hero__title">
+        <span class="mask"><span data-reveal-line>O tomate inteiro,</span></span>
+        <span class="mask"><span data-reveal-line>em 200 ml.</span></span>
+      </h1>
+      <p class="hero__sub" data-reveal-hero>
+        Extrato concentrado em fogo baixo, sem conservantes, engarrafado em vidro
+        no mesmo dia da colheita.
+      </p>
+      <div class="hero__cta" data-reveal-hero>
+        <a class="btn btn--solid" href="#comprar">Comprar<i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+        <a class="btn btn--ghost" href="#processo">Ver o processo</a>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- 2. Prova social: parede de logos, fora do hero -->
+  <section class="kitchens">
+    <div class="shell">
+    <h2 class="kitchens__title">Nas cozinhas de</h2>
+    <ul class="kitchens__row" role="list">
+      <li>
+        <svg viewBox="0 0 64 40" aria-label="Casa Tuia" role="img">
+          <title>Casa Tuia</title>
+          <rect x="14" y="6" width="36" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.2" />
+          <text x="32" y="26" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="700" letter-spacing="1" fill="currentColor">CT</text>
+        </svg>
+      </li>
+      <li>
+        <svg viewBox="0 0 64 40" aria-label="Serra Nova" role="img">
+          <title>Serra Nova</title>
+          <path d="M8 30 20 14l8 10 8-14 12 20z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        </svg>
+      </li>
+      <li>
+        <svg viewBox="0 0 64 40" aria-label="Oliva e Fogo" role="img">
+          <title>Oliva e Fogo</title>
+          <circle cx="24" cy="20" r="11" fill="none" stroke="currentColor" stroke-width="2.2" />
+          <circle cx="40" cy="20" r="11" fill="none" stroke="currentColor" stroke-width="2.2" />
+        </svg>
+      </li>
+      <li>
+        <svg viewBox="0 0 64 40" aria-label="Mesa Bruta" role="img">
+          <title>Mesa Bruta</title>
+          <rect x="10" y="10" width="20" height="20" fill="currentColor" />
+          <rect x="34" y="10" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" />
+        </svg>
+      </li>
+      <li>
+        <svg viewBox="0 0 64 40" aria-label="Cantina Zabé" role="img">
+          <title>Cantina Zabé</title>
+          <path d="M12 12h40L18 28h34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </li>
+    </ul>
+    </div>
+  </section>
+
+  <!-- 3. Manifesto: tipografia de largura total -->
+  <section class="manifesto">
+    <div class="shell">
+    <h2 class="manifesto__title" data-reveal>
+      Extrato não é molho.<br />É o começo dele.
+    </h2>
+    <p class="manifesto__body" data-reveal>
+      A indústria dilui, corrige com açúcar e vende pronto. Nós paramos antes disso
+      e entregamos a base no ponto exato.
+    </p>
+    </div>
+  </section>
+
+  <!-- 4. Origem: campo de tomates em 3D ao fundo, texto deslocado à direita -->
+  <section class="origin" id="origem">
+    <div class="shell origin__shell"><div class="origin__panel">
+      <h2 class="origin__title" data-reveal>Colhido maduro,<br />não colhido cedo.</h2>
+      <p data-reveal>
+        O tomate de indústria é colhido verde para aguentar estrada. O nosso sai do
+        pé no ponto e entra no tacho em menos de seis horas.
+      </p>
+      <p class="origin__note" data-reveal>
+        Vale do Paranapanema, safra de fevereiro a maio.
+      </p>
+    </div></div>
+  </section>
+
+  <!-- 5. Processo: scroll horizontal com pin -->
+  <section class="pan" id="processo">
+    <div class="pan__track">
+      <div class="pan__intro">
+        <h2>Do pé<br />ao vidro.</h2>
+        <p>Quatro etapas, todas dentro do mesmo dia.</p>
+      </div>
+      <article class="pan__panel">
+        <h3>Colher</h3>
+        <p>Duas passadas por talhão, à mão. O que não está no ponto fica no pé para a semana seguinte.</p>
+      </article>
+      <article class="pan__panel pan__panel--tint">
+        <h3>Selecionar</h3>
+        <p>Mesa de catação antes da lavagem. Fruto rachado, verde ou com sol queimado sai fora.</p>
+      </article>
+      <article class="pan__panel">
+        <h3>Reduzir</h3>
+        <p>Tacho aberto, fogo baixo, mexido devagar. A água evapora sozinha, sem concentrado de fora.</p>
+      </article>
+      <article class="pan__panel pan__panel--tint">
+        <h3>Engarrafar</h3>
+        <p>Vidro esterilizado, envase a quente e tampa selada no mesmo turno da colheita.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 6. Bento: 5 células, 5 conteúdos -->
+  <section class="bento solid">
+    <p class="eyebrow bento__eyebrow" data-reveal>Por dentro do vidro</p>
+    <div class="bento__grid">
+      <div class="cell cell--hero" data-reveal>
+        <h3>Só tomate,<br />sal e tempo.</h3>
+        <p>Três linhas no rótulo. Nenhuma delas é um código.</p>
+      </div>
+      <div class="cell" data-reveal>
+        <h4>Vidro, não lata</h4>
+        <p>Sem revestimento interno e sem gosto metálico no fim do molho.</p>
+      </div>
+      <div class="cell cell--tint" data-reveal>
+        <h4>Uma garrafa, quatro pratos</h4>
+        <p>Os 200 ml rendem molho para uma panela de família.</p>
+      </div>
+      <div class="cell" data-reveal>
+        <h4>Tacho aberto</h4>
+        <p>A redução acontece na fábrica, em fogo baixo, e não no seu fogão.</p>
+      </div>
+      <div class="cell cell--grid" data-reveal>
+        <h4>Safra curta</h4>
+        <p>Produzimos entre fevereiro e maio. Quando acaba, acabou.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Depoimento -->
+  <section class="quote solid">
+    <blockquote data-reveal>
+      <p>
+        Troquei três marcas por essa. O molho fica pronto em vinte minutos e ninguém
+        na mesa pergunta o que tem dentro.
+      </p>
+      <footer>
+        <span class="quote__name">Marília Cavalcanti</span>
+        <span class="quote__role">chef de cozinha, Casa Tuia</span>
+      </footer>
+    </blockquote>
+  </section>
+
+  <!-- 8. Fechamento -->
+  <section class="close" id="comprar">
+    <div class="shell"><div class="close__copy">
+      <h2 data-reveal>Leve a safra<br />para casa.</h2>
+      <p data-reveal>Caixa com seis garrafas de 200 ml, direto da fábrica ou nas casas parceiras.</p>
+      <div class="close__cta" data-reveal>
+        <a class="btn btn--solid" href="#comprar">Comprar<i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <ul class="close__list" role="list" data-reveal>
+        <li><i class="ph ph-storefront" aria-hidden="true"></i> Empório Sé, São Paulo</li>
+        <li><i class="ph ph-storefront" aria-hidden="true"></i> Mercearia Norte, Curitiba</li>
+        <li><i class="ph ph-truck" aria-hidden="true"></i> Entrega própria na Grande SP</li>
+      </ul>
+    </div></div>
+  </section>
+</main>
+
+<footer class="foot solid">
+  <div class="foot__brand">RUBRA</div>
+  <nav class="foot__nav" aria-label="Rodapé">
+    <a href="#produto">Produto</a>
+    <a href="#origem">Origem</a>
+    <a href="#processo">Processo</a>
+    <a href="mailto:oi@rubra.com.br">oi@rubra.com.br</a>
+  </nav>
+  <p class="foot__legal">Rubra Alimentos. Registro MAPA em processo.</p>
+</footer>
+
+<noscript>
+  <div class="noscript">
+    A garrafa em 3D precisa de JavaScript. O conteúdo da página continua legível sem ele.
+  </div>
+</noscript>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "./assets/vendor/three.module.js"
+    }
+  }
+</script>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script type="module" src="assets/js/main.js"></script>
