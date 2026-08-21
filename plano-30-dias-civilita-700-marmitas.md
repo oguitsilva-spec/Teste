@@ -5,6 +5,8 @@
 **Elaborado em:** 21/08/2026 · **Janela:** 30 dias a partir do D0
 **Status da conta:** ACTIVE · 4 campanhas pausadas · **R$0,00 de entrega há 9 dias**
 
+> ⚠️ **A seção 9 revisa este plano com os dados do negócio (ticket R$180 e CAC máximo R$26) e identifica um conflito entre a meta e o teto de CAC. Leia a seção 9 antes de executar as seções 4–6.**
+
 ---
 
 ## 1. O QUE REATIVAR — consolidação dos 3 níveis
@@ -235,3 +237,129 @@ Se um pedido tem ~1 marmita, a mídia entrega 76–100 marmitas incrementais e *
 ---
 
 *Plano elaborado em 21/08/2026 · Base: Meta Ads API · Nenhuma alteração feita na conta · Metodologia: /ecommerce-performance*
+
+---
+---
+
+# 9. REVISÃO COM OS DADOS DO NEGÓCIO
+
+*Incorporado em 21/08/2026, após o cliente informar: ticket médio **R$180**, meta **incremental** via mídia, **CAC de R$26**.*
+
+## 9.1 Reconciliação de ticket — a Meta superestima 15%
+
+| Fonte | Valor por pedido |
+|---|---|
+| Meta (`omni_purchase_values` ÷ compras) | R$ 207,18 |
+| **Negócio (informado)** | **R$ 180,00** |
+| **Divergência** | **Meta +15,1%** |
+
+**Consequência direta:** o ROAS de 6,07 reportado pela plataforma, corrigido pelo ticket real, cai para **5,27** — e isso **antes** de descontar incrementalidade. Some-se o lift de 41–65% e o retorno econômico real fica muito abaixo do que o painel mostra.
+
+> **Novo item P1 de tracking:** investigar por que o `value` do evento `Purchase` sai 15% acima do ticket real. Suspeitas usuais: frete somado ao valor, taxa de entrega embutida, ou dupla contagem de itens. Enquanto não for corrigido, **todo ROAS da conta está inflado em ~15%**.
+
+## 9.2 O conflito central: CAC de R$26 vs CPA incremental de R$79
+
+| Métrica | Valor | vs teto de R$26 | % do ticket R$180 |
+|---|---|---|---|
+| **CAC máximo do negócio** | **R$ 26,00** | — | 14,4% |
+| CPA atribuído pela Meta | R$ 32,49 | **1,25×** | 18,1% |
+| **CPA incremental medido** | **R$ 79,18** | **3,05×** | **44,0%** |
+
+**Pelo próprio número do negócio, a mídia como rodava já estava acima do teto — inclusive na contabilidade otimista da Meta.**
+
+### ⚠️ Antes de tratar isso como veredito, uma normalização pendente
+
+O CAC de R$26 precisa ser qualificado, porque o denominador muda tudo:
+
+| Se R$26 for… | Comparação correta | Implicação |
+|---|---|---|
+| **CAC por cliente NOVO** | Comparar com **LTV**, não com CPA do 1º pedido | Se o cliente recompra, um CPA de R$79 na 1ª compra pode ser saudável |
+| **CPA por pedido (blended)** | Comparar com blended real | O blended medido é **R$12,93–18,65** — abaixo de R$26. Não bate |
+| **CAC alvo/teto definido pela margem** | Comparar com CPA incremental | **A mídia não se paga hoje.** Gap de 3× |
+
+> **Delivery de almoço é negócio de recorrência.** Se o cliente pede 2–4 vezes por mês, o CPA da primeira compra se dilui rapidamente. **A taxa de recompra sai de P3 e vira a variável que decide este plano.**
+
+## 9.3 700 marmitas incrementais — quantos pedidos?
+
+Com ticket de R$180, o número de marmitas por pedido depende do preço unitário. **O cliente informou o ticket, não o preço unitário** — a faixa abaixo é inferência minha:
+
+| Preço/marmita *(assumido)* | Marmitas/pedido | 700 marmitas = |
+|---|---|---|
+| R$ 20 | 9,0 | **78 pedidos** |
+| **R$ 25** | **7,2** | **97 pedidos** |
+| R$ 30 | 6,0 | **117 pedidos** |
+
+**Cenário central: ~97 pedidos incrementais em 30 dias.**
+
+## 9.4 A meta e o teto de CAC não cabem no mesmo plano
+
+| | Verba 30d | R$/dia | Entrega |
+|---|---|---|---|
+| **Para atingir a meta** (97 ped @ CPA incr. R$79) | R$ 7.698 | **R$ 257** | 700 marmitas ✅ |
+| **Para respeitar o CAC** (97 ped @ R$26) | R$ 2.528 | **R$ 84** | **230 marmitas — 33% da meta** ❌ |
+
+Quanto cada patamar de verba entrega, na eficiência atual:
+
+| R$/dia | Verba 30d | Pedidos incr. | Marmitas | % da meta |
+|---|---|---|---|---|
+| 84 | 2.528 | 32 | 230 | **33%** |
+| 150 | 4.500 | 57 | 409 | 58% |
+| 200 | 6.000 | 76 | 546 | 78% |
+| **265** | **7.950** | **100** | **723** | **103%** ✅ |
+| 309 | 9.270 | 117 | 843 | 120% |
+
+> **A meta é atingível — a R$265/dia. Mas isso implica operar a um CAC ~3× o teto declarado.**
+> **Para a meta caber no CAC de R$26, o CPA incremental precisa cair 67% — de R$79,18 para R$26,00.** Isso não é ajuste fino; é mudança de patamar de eficiência.
+
+## 9.5 Três rotas — e a recomendação
+
+### Rota A — Respeitar o CAC (R$84/dia)
+Entrega ~230 marmitas incrementais (33% da meta). Protege caixa, não bate a meta.
+**Quando faz sentido:** se R$26 é teto rígido derivado de margem apertada e não há recompra relevante.
+
+### Rota B — Bater a meta (R$265/dia) ✅ **RECOMENDADA, com condições**
+Entrega ~723 marmitas incrementais. Opera a CAC ~R$79 por 30 dias.
+**Só se aceita se as três condições forem verdadeiras:**
+1. A **taxa de recompra** justificar o CPA da primeira compra (LTV > R$79 em contribuição)
+2. O tracking for corrigido no D0 — sem isso não se sabe nem o CPA real
+3. Tratar como **investimento com prazo**, não como novo patamar: revisão obrigatória no D14 com o resultado do geo-holdout
+
+### Rota C — Comprar eficiência antes de comprar volume
+Rodar 30 dias a R$150/dia focados em **derrubar o CPA incremental**, não em volume. Entrega ~409 marmitas (58%), mas sai com CPA menor e mensuração confiável para o mês seguinte.
+
+**As alavancas de eficiência já identificadas, em ordem de potencial:**
+
+| Alavanca | Evidência | Efeito esperado no CPA |
+|---|---|---|
+| **Corrigir o vazamento Click→LPV** | ~40% dos cliques pagos não chegam à página | **Alto** — é 40% da verba perdida antes da chance de venda |
+| **Testar oferta** | Zero teste de desconto/combo/frete em 32 dias | **Alto** — alavanca inteira nunca acionada |
+| **Dayparting 07h–15h** | 71% das compras entre 08h e 14h | **Médio** |
+| **Corrigir o `AddToCart`** | ATC/PageView de 52% com tráfego orgânico | **Médio** — melhora o sinal de otimização |
+| **Repor criativo** | V15/V17 com freq 6,87 e 6,68 | **Médio** |
+
+> **Minha recomendação: Rota B condicionada** — mas a condição nº 1 é decisiva. **Se a taxa de recompra for baixa, a Rota B queima caixa e a resposta correta passa a ser a Rota C.**
+
+## 9.6 O que mudou no plano das seções 4–6
+
+| Item | Antes | Agora |
+|---|---|---|
+| Orçamento D1 | R$200/dia | **R$200/dia** — mantido |
+| Orçamento D8+ | R$265/dia | **R$265/dia se Rota B · R$150/dia se Rota C · R$84/dia se Rota A** |
+| Projeção | 76–100 pedidos incrementais | **Mantida** — 100 pedidos ≈ 723 marmitas a R$265/dia |
+| Critério de sucesso | CPA atribuído ≤ R$34 | **CPA atribuído ≤ R$26** (teto do negócio, não benchmark de plataforma) |
+| Tracking P1 | IC + CAPI | **+ investigar o `value` 15% acima do ticket real** |
+| Recompra/LTV | P3 | 🔴 **P0 — decide qual rota seguir** |
+| Estrutura, público, criativos | — | **Inalterados.** Bauru broad + V15/V17/AD010 segue de pé |
+
+## 9.7 O que ainda falta
+
+| # | Dado | Por que trava |
+|---|---|---|
+| 1 | 🔴 **Taxa de recompra / pedidos por cliente no mês** | Decide entre Rota B e Rota C |
+| 2 | 🔴 **O CAC de R$26 é por cliente novo, por pedido, ou teto derivado da margem?** | Muda a leitura do gap de 3× |
+| 3 | 🟠 **Preço unitário da marmita** | Converte a meta de 700 unidades em 78–117 pedidos |
+| 4 | 🟠 **Margem de contribuição** | Ainda não recebida — CAC é teto, não margem |
+
+---
+
+*Seção 9 incorporada em 21/08/2026 · Dados do negócio informados pelo cliente · Metodologia: /ecommerce-performance*
