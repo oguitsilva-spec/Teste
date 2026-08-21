@@ -5,7 +5,7 @@
 **Elaborado em:** 21/08/2026 · **Janela:** 30 dias a partir do D0
 **Status da conta:** ACTIVE · 4 campanhas pausadas · **R$0,00 de entrega há 9 dias**
 
-> ⚠️ **A seção 9 revisa este plano com os dados do negócio (ticket R$180 e CAC máximo R$26) e identifica um conflito entre a meta e o teto de CAC. Leia a seção 9 antes de executar as seções 4–6.**
+> ⚠️ **A seção 10 é a versão final e supera a seção 9.** Com os dados de recompra (8–10 compras/cliente) e LTV (R$1.600), o conflito descrito na seção 9 **deixa de existir**. Leia a seção 10 antes de executar qualquer coisa.
 
 ---
 
@@ -363,3 +363,149 @@ Rodar 30 dias a R$150/dia focados em **derrubar o CPA incremental**, não em vol
 ---
 
 *Seção 9 incorporada em 21/08/2026 · Dados do negócio informados pelo cliente · Metodologia: /ecommerce-performance*
+
+---
+---
+
+# 10. VERSÃO FINAL — COM LTV E RECOMPRA
+
+*Incorporado em 21/08/2026. Cliente informou: CAC de **cliente novo**, cliente compra **8 a 10 vezes** (compras, não marmitas), gasto médio por cliente de **R$1.600**.*
+
+> **Esta seção corrige a seção 9.** Lá eu tratei o CAC de R$26 como teto econômico e concluí que a meta e o CAC eram incompatíveis. **Com o LTV na mesa, essa conclusão cai.** O erro estava em comparar um custo por pedido com um teto de CAC construído sem LTV.
+
+## 10.1 Os dados do negócio são internamente consistentes
+
+| Verificação | Resultado |
+|---|---|
+| R$180 × 8 compras | R$ 1.440 |
+| R$180 × 10 compras | R$ 1.800 |
+| **LTV informado** | **R$ 1.600** → equivale a **8,9 compras** |
+
+Os três números fecham entre si. **Base econômica confiável.**
+
+## 10.2 O CAC de R$26 nunca foi um teto válido — é subinvestimento
+
+**LTV / CAC declarado = R$1.600 / R$26 = 61,5×.**
+
+A referência usual de e-commerce saudável fica entre **3× e 5×**. A Civilitá estava operando ~15× mais conservadora do que o normal.
+
+E o número não reconcilia com a conta:
+
+| | |
+|---|---|
+| Gasto no período auditado | R$ 3.722,83 |
+| Clientes novos que R$26 de CAC implicaria | **143** |
+| Compras que a Meta atribuiu no total | **109** |
+
+> **Impossível.** Não dá para adquirir 143 clientes novos em 109 compras. **R$26 não é o CAC de mídia paga realizado** — é meta interna, ou vem de outro canal, ou de outra metodologia. Não serve como teto para decidir verba de Meta Ads.
+
+## 10.3 O CPA de R$79 é saudável — com folga
+
+LTV de R$1.600 é **receita**. Quem paga CAC é a **contribuição**. A margem ainda não foi informada, então vão os cenários:
+
+| Margem | LTV contribuição | CAC máx @3× | @4× | @5× | Com CPA R$79,18 |
+|---|---|---|---|---|---|
+| **20%** | R$ 320 | R$ 107 | R$ 80 | R$ 64 | **LTV/CAC 4,0×** ✅ |
+| 25% | R$ 400 | R$ 133 | R$ 100 | R$ 80 | LTV/CAC 5,1× ✅ |
+| 30% | R$ 480 | R$ 160 | R$ 120 | R$ 96 | LTV/CAC 6,1× ✅ |
+| 40% | R$ 640 | R$ 213 | R$ 160 | R$ 128 | LTV/CAC 8,1× ✅ |
+| 50% | R$ 800 | R$ 267 | R$ 200 | R$ 160 | LTV/CAC 10,1× ✅ |
+
+**Mesmo na margem mais pessimista (20%), o CPA incremental de R$79,18 entrega LTV/CAC de 4,0×.**
+
+### Payback
+
+| Margem | Contribuição/pedido | Compras até pagar o CAC de R$79 |
+|---|---|---|
+| 20% | R$ 36,00 | **2,2** |
+| 30% | R$ 54,00 | **1,5** |
+| 40% | R$ 72,00 | **1,1** |
+
+**O cliente faz de 8 a 10 compras. O CAC se recupera entre a 1ª e a 3ª.**
+
+## 10.4 Isso também reenquadra o achado de incrementalidade
+
+A auditoria mediu lift de apenas 2,12 pedidos/dia e classificou o ROAS de 6,07 como não-incremental. **Isso continua verdade para PEDIDOS — mas subestima o valor da mídia.**
+
+Com recompra de 8–10×, a base orgânica de 6,88 pedidos/dia é, em boa parte, **clientes já adquiridos recomprando**. O trabalho da mídia não é gerar aquele pedido — é **colocar clientes novos dentro dessa base**. Um pedido incremental que seja a primeira compra de um cliente novo vale R$1.600, não R$180.
+
+> **O que muda:** o lift baixo deixa de ser sinal de mídia ineficaz e passa a ser sinal de que **estamos medindo a coisa errada.** A métrica correta é **cliente novo adquirido**, não pedido incremental.
+> **O que não muda:** ainda é preciso medir. O geo-holdout do D8 continua no plano — mas o resultado a ler é clientes novos, não pedidos.
+
+## 10.5 A meta de 700 marmitas — agora sem conflito
+
+Ainda falta o preço unitário da marmita. Faixa provável:
+
+| Preço/marmita | Marmitas/pedido | Pedidos incrementais | Verba 30d | R$/dia |
+|---|---|---|---|---|
+| R$ 20 | 9,0 | 78 | R$ 6.158 | **R$ 205** |
+| **R$ 25** | **7,2** | **97** | **R$ 7.698** | **R$ 257** |
+| R$ 30 | 6,0 | 117 | R$ 9.238 | **R$ 308** |
+
+**Recomendação: R$265/dia** (centro da faixa, ~723 marmitas incrementais = 103% da meta).
+
+### O que R$265/dia produz em 30 dias
+
+| | |
+|---|---|
+| Verba | R$ 7.950 |
+| Pedidos incrementais | ~100 |
+| Marmitas incrementais | ~723 |
+| Receita imediata | R$ 18.073 · **ROAS imediato 2,27** |
+
+E o retorno em LTV, conforme a fatia de clientes novos:
+
+| % de clientes novos | Clientes novos | LTV de receita gerado | Retorno s/ verba |
+|---|---|---|---|
+| 20% | 20 | R$ 32.129 | **4,0×** |
+| 30% | 30 | R$ 48.194 | **6,1×** |
+| 40% | 40 | R$ 64.259 | **8,1×** |
+
+**Mesmo com só 20% de clientes novos, a verba retorna 4× em LTV de receita.**
+
+## 10.6 As três rotas da seção 9 estão canceladas
+
+| Rota (seção 9) | Status |
+|---|---|
+| A — respeitar CAC R$26 (R$84/dia) | ❌ **Descartada.** Baseada num teto inválido. Entregaria 33% da meta sem razão econômica |
+| B — bater a meta (R$265/dia) | ✅ **APROVADA — e sem as condições da seção 9.** O LTV já a justifica |
+| C — comprar eficiência antes de volume | 🔁 **Vira paralelo, não alternativa.** As alavancas de eficiência entram junto com o volume |
+
+**Decisão: R$200/dia no D1 → R$265/dia no D8**, com as alavancas de eficiência rodando em paralelo.
+
+## 10.7 O gargalo mudou de lugar
+
+Com o CAC resolvido, as restrições reais passam a ser três:
+
+| Restrição | Situação | Ação |
+|---|---|---|
+| 🔴 **Pagamento** | 4 bloqueios em 23 dias; risco **não testado** (conta `Active` mas com gasto zero há 9 dias) | Continua sendo o bloqueador nº 1 do D0 |
+| 🟠 **Tamanho do público de Bauru** | A R$265/dia são ~619 mil impressões/mês; para frequência 4 é preciso ~155 mil contas | Conferir no Ads Manager. Abaixo de 150 mil, planejar expansão geográfica já no D15 |
+| 🟠 **Capacidade operacional** | ~3,3 pedidos/dia a mais, concentrados entre 08h e 14h | Confirmar com a cozinha antes do D1 |
+
+**Não é mais o CAC.** Pelo LTV, a economia comporta CAC bem acima de R$79 — o que não comporta é tracking quebrado e conta bloqueando.
+
+## 10.8 Métricas do plano — revisadas
+
+| Métrica | Antes | Agora |
+|---|---|---|
+| **Métrica primária** | Pedidos incrementais | 🆕 **Clientes novos adquiridos** |
+| Teto de CPA | R$26 (inválido) | **R$107** com margem de 20% @ LTV/CAC 3× |
+| CPA alvo de trabalho | ≤ R$34 | **≤ R$79** (mantém LTV/CAC ≥4× no pior cenário de margem) |
+| Leitura do geo-holdout (D8) | Lift de pedidos | **Lift de clientes novos** |
+| Sucesso em 30 dias | 700 marmitas | **700 marmitas + contagem de clientes novos** |
+
+## 10.9 O que ainda falta
+
+| # | Dado | Impacto |
+|---|---|---|
+| 1 | 🟠 **Margem de contribuição** | Todos os cenários funcionam de 20% a 50%. Só precisa para travar o teto exato de CAC |
+| 2 | 🟠 **Preço unitário da marmita** | Ajusta a verba entre R$205 e R$308/dia |
+| 3 | 🟠 **Como o backend separa cliente novo de recorrente** | Necessário para a métrica primária nova |
+| 4 | 🟠 **Tamanho do público Bauru 18–65** | Define se há teto de alcance antes do D30 |
+
+**Nenhum deles bloqueia o D0 ou o D1.** O plano roda com R$200/dia enquanto esses números chegam.
+
+---
+
+*Seção 10 incorporada em 21/08/2026 · Supera a seção 9 · Metodologia: /ecommerce-performance*
