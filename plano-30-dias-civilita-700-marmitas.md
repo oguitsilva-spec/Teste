@@ -5,6 +5,8 @@
 **Elaborado em:** 21/08/2026 · **Janela:** 30 dias a partir do D0
 **Status da conta:** ACTIVE · 4 campanhas pausadas · **R$0,00 de entrega há 9 dias**
 
+> 📌 **Regra de alocação de verba:** este plano está sujeito à regra registrada em `regras-alocacao-verba-civilita.md` — 70% da verba nos primeiros 15 dias, 80% desses nos dias-chave. A verba diária das seções 4–6 é uma **média**; a distribuição real segue aquele documento.
+
 > ⚠️ **A seção 10 é a versão final e supera a seção 9.** Com os dados de recompra (8–10 compras/cliente) e LTV (R$1.600), o conflito descrito na seção 9 **deixa de existir**. Leia a seção 10 antes de executar qualquer coisa.
 
 ---
