@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '29067415522845089');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=29067415522845089&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Avvento Consult · Calculadora Sistema S</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS — extraídos das artes reais da Avvento ============ */
+:root{
+  --ink:#0E1B2B; --ink-2:#16283A;
+  --forest:#1B3A35; --forest-2:#142C28;
+  --gold:#C8A96B; --gold-dark:#9E875D; --gold-hi:#E4D3AC;
+  --paper:#F5F5F5; --card:#E7E7E7; --paper-2:#FFFFFF;
+  --text:#14202B; --text-soft:#56626C;
+  --green:#1F7A54; --urgent:#A8442E; --whatsapp:#25D366;
+  --rule: rgba(14,27,43,0.13);
+  --serif:'Playfair Display', Georgia, serif;
+  --sans:'Poppins', -apple-system, 'Segoe UI', sans-serif;
+  --mono:'IBM Plex Mono','SFMono-Regular',Consolas, monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;min-height:100%;}
+body{
+  background:var(--ink);color:var(--text);font-family:var(--sans);
+  -webkit-user-select:none;user-select:none;
+}
+input,textarea{-webkit-user-select:text;user-select:text;}
+
+/* ---------- textura de linhas triangulares (elemento gráfico da marca) ---------- */
+.linework{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.10;}
+.linework svg{position:absolute;}
+
+/* ============ SPLASH ============ */
+#splash{
+  position:fixed;inset:0;background:radial-gradient(120% 100% at 30% 0%, var(--forest) 0%, var(--ink) 62%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:999;
+  opacity:1;transition:opacity .35s ease;
+}
+#splash.out{opacity:0;pointer-events:none;}
+#splash .mark{width:76px;height:auto;object-fit:contain;
+  opacity:0;transform:scale(.85);filter:blur(6px) drop-shadow(0 6px 18px rgba(0,0,0,.4));
+  animation:splashIn 1s cubic-bezier(.2,.8,.2,1) forwards;}
+@keyframes splashIn{
+  0%{opacity:0;transform:scale(.85);filter:blur(6px);}
+  60%{opacity:1;transform:scale(1.02);filter:blur(0px);}
+  100%{opacity:1;transform:scale(1);filter:blur(0px);}
+}
+#splash .word{margin-top:10px;font-family:var(--serif);letter-spacing:.28em;font-size:12px;
+  color:#F2F0EC;opacity:0;animation:wordIn .4s ease .5s forwards;text-transform:uppercase;}
+@keyframes wordIn{to{opacity:1;}}
+
+/* ============ SCREENS ============ */
+/* Base = mobile pequeno (≤479px): thumb-first, uma ação por tela, CTA fixo */
+.screen{display:none;min-height:100vh;padding:20px 16px 32px;flex-direction:column;position:relative;}
+.screen.active{display:flex;}
+.shell{max-width:440px;margin:0 auto;width:100%;flex:1;display:flex;flex-direction:column;position:relative;z-index:1;}
+
+/* ---- Mobile grande (≥480px): mais respiro, mesma lógica de 1 ação por tela ---- */
+@media(min-width:480px){
+  .screen{padding:28px 20px 36px;}
+  h1{font-size:clamp(26px,6vw,30px);}
+  .card{padding:24px 22px;}
+}
+
+/* ---- Tablet (≥768px): intermediário — NÃO é desktop reduzido.
+   Mantém o fluxo passo-a-passo (uma tela por vez), mas com mais largura de leitura,
+   alvos de toque maiores e o grid de argumentos em 4 colunas (cabe confortavelmente). ---- */
+@media(min-width:768px){
+  .screen{padding:48px 24px;}
+  .shell{max-width:560px;}
+  h1{font-size:clamp(28px,4vw,34px);}
+  .card{padding:30px 32px;border-radius:18px;}
+  button.cta{padding:18px;font-size:16px;}
+  input[type=text],input[type=email],input[type=number]{padding:15px 16px;font-size:16px;}
+  .punch{grid-template-columns:repeat(4,1fr);}
+  .mini-benefits span{font-size:10.5px;padding:6px 12px;}
+}
+
+.step-pill{
+  display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+  background:var(--gold);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:11px;margin-bottom:14px;
+}
+.brandline{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.brandline .mini-mark{width:18px;height:auto;object-fit:contain;flex:0 0 auto;}
+.brandline span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi);}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold-hi);margin:0 0 10px;}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(24px,7vw,32px);color:#F4F2ED;margin:0 0 10px;line-height:1.16;}
+.sub{color:#9FADBC;font-size:14px;line-height:1.5;margin:0 0 20px;}
+
+.mini-benefits{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+.mini-benefits span{font-family:var(--mono);font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;
+  border:1px solid rgba(200,169,107,0.45);color:var(--gold-hi);border-radius:999px;padding:5px 10px;}
+
+.card{background:var(--paper-2);border-radius:16px;padding:22px 20px;box-shadow:0 24px 60px -22px rgba(0,0,0,0.55);
+  border-top:2px solid var(--gold);}
+label{display:block;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--text-soft);margin:0 0 6px;text-transform:uppercase;font-family:var(--sans);}
+.pinned-info{
+  display:flex;flex-direction:column;background:rgba(200,169,107,0.14);border:1px solid rgba(200,169,107,0.4);
+  border-radius:10px;padding:12px 14px;margin-bottom:18px;
+}
+.pinned-info .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-soft);}
+.pinned-info .v{font-family:var(--sans);font-weight:600;font-size:14px;color:var(--text);}
+.pinned-info .v.mono{font-family:var(--mono);font-weight:500;font-size:13px;}
+.pinned-info .source-cite{font-size:8.5px;color:var(--text-soft);opacity:.75;margin-top:8px;font-style:italic;}
+
+.regime-options{display:flex;flex-direction:column;gap:10px;}
+.regime-opt{
+  width:100%;text-align:left;padding:16px 16px;border-radius:10px;border:1.5px solid rgba(14,27,43,0.14);
+  background:#fff;color:var(--text);font-family:var(--sans);font-weight:600;font-size:14.5px;cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+}
+.regime-opt:hover{border-color:var(--gold);background:rgba(200,169,107,0.08);}
+.regime-opt.selected{border-color:var(--gold);background:rgba(200,169,107,0.14);}
+.field{margin-bottom:16px;}
+input[type=text],input[type=email],input[type=number]{
+  width:100%;padding:13px 14px;border:1px solid rgba(14,27,43,0.16);border-radius:99px;
+  font-family:var(--mono);font-size:16px;background:#fff;color:var(--text);
+}
+input:focus{outline:2px solid var(--gold);outline-offset:1px;}
+.err{font-size:11px;color:var(--urgent);margin-top:5px;display:none;}
+.field.invalid input{border-color:var(--urgent);}
+.field.invalid .err{display:block;}
+
+button.cta{
+  width:100%;padding:16px;border:none;border-radius:10px;
+  background:linear-gradient(135deg, var(--gold-hi), var(--gold) 55%, var(--gold-dark));
+  color:var(--ink);font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:.01em;cursor:pointer;margin-top:6px;
+  box-shadow:0 10px 24px -8px rgba(158,135,93,0.55);
+}
+button.cta:active{transform:scale(0.99);}
+.legal-note{font-size:10.5px;color:var(--text-soft);text-align:center;margin-top:14px;line-height:1.4;}
+
+.adv-toggle{display:inline-block;margin-top:22px;font-family:var(--mono);font-size:8.5px;color:rgba(86,98,108,0.32);
+  letter-spacing:.02em;cursor:pointer;background:none;border:none;padding:2px;}
+.adv-toggle:hover{color:rgba(86,98,108,0.7);}
+.adv-box{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(14,27,43,0.08);}
+.adv-box.open{display:block;}
+.adv-box label{font-size:9.5px;color:rgba(86,98,108,0.6);}
+.adv-box input{font-size:12px;padding:8px 10px;opacity:0.7;}
+
+/* ============ RESULT — "certidão" no idioma visual da marca ============ */
+#screenResult{padding-bottom:100px;}
+.result-placeholder{
+  flex:1;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;text-align:center;border:1px dashed rgba(244,242,237,0.18);border-radius:16px;padding:40px 24px;
+}
+.result-placeholder svg{width:40px;height:40px;opacity:.6;}
+.result-placeholder p{margin:0;font-size:13px;color:#8695A4;max-width:240px;line-height:1.5;}
+.cheque{background:var(--paper-2);border-radius:16px;overflow:hidden;position:relative;
+  box-shadow:0 24px 60px -22px rgba(0,0,0,0.55);}
+.ribbon-corner{position:absolute;top:0;right:0;width:86px;height:86px;overflow:hidden;z-index:2;}
+.ribbon-corner span{position:absolute;top:16px;right:-30px;width:150px;text-align:center;
+  background:linear-gradient(120deg, var(--forest), var(--ink));color:var(--gold-hi);
+  transform:rotate(40deg);padding:4px 0;font-family:var(--mono);font-size:8.5px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;}
+.cheque-top{padding:22px 20px 16px;}
+.cheque-top .eyebrow{color:#8A7148;margin-bottom:8px;}
+.cheque-co{font-family:var(--serif);font-size:13px;color:var(--text-soft);margin:0;}
+.cheque-headline{margin:10px 0 8px;background:linear-gradient(135deg, rgba(200,169,107,0.20), rgba(200,169,107,0.06));
+  border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 14px;}
+.cheque-headline svg{width:100%;height:auto;display:block;}
+.cheque-note{font-size:11px;color:var(--text-soft);margin:0;}
+.urgency-line{font-size:11.5px;color:var(--text);background:rgba(200,169,107,0.16);border-left:3px solid var(--gold);
+  padding:8px 10px;margin:12px 0 0;line-height:1.4;}
+.urgency-line strong{font-family:var(--mono);color:var(--urgent);}
+.seal-strip{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0;}
+.seal{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;background:rgba(200,169,107,0.16);
+  border:1px solid var(--gold-dark);color:#7A6540;border-radius:3px;padding:3px 6px;font-weight:600;}
+.meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed var(--rule);}
+.meta-item .k{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-bottom:2px;}
+.meta-item .v{font-family:var(--mono);font-size:13px;color:var(--text);}
+
+.punch{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border-top:1px dashed var(--rule);border-bottom:1px dashed var(--rule);}
+.punch-card{background:var(--card);padding:14px 12px;}
+.punch-icon{width:26px;height:26px;display:block;margin-bottom:6px;}
+.punch-h{font-family:var(--serif);font-weight:600;font-size:12.5px;margin:0 0 4px;color:var(--text);}
+.punch-t{font-size:10.5px;line-height:1.4;color:var(--text-soft);margin:0;}
+.punch-t strong{color:var(--green);font-family:var(--mono);background:rgba(31,122,84,0.12);padding:1px 4px;border-radius:3px;}
+.tag-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.tag{font-family:var(--mono);font-size:8px;background:#D7D4CC;color:#3D4750;border-radius:3px;padding:2px 5px;font-weight:500;}
+
+.urgency{background:var(--ink);background-image:radial-gradient(120% 100% at 100% 0%, var(--forest) 0%, transparent 55%);
+  padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.urgency-tag{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:#E39C86;border:1px solid rgba(168,68,46,0.5);border-radius:999px;padding:3px 7px;margin-bottom:4px;}
+.urgency-item p{margin:0;font-size:11px;line-height:1.4;color:#C9D2DD;}
+.urgency-item strong{color:#F4F1E8;}
+
+.exclusive{background:var(--paper-2);padding:16px 20px;display:flex;gap:14px;align-items:center;border-top:1px dashed var(--rule);}
+.stamp-badge{flex:0 0 auto;width:58px;height:58px;border-radius:50%;border:2px solid var(--urgent);color:var(--urgent);
+  display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-weight:700;
+  font-size:9px;transform:rotate(-9deg);line-height:1.2;text-transform:uppercase;}
+.exclusive p{margin:0;font-size:11px;line-height:1.4;color:var(--text-soft);}
+
+.perforation{height:0;border-top:2px dashed rgba(14,27,43,0.2);position:relative;}
+.perforation::before,.perforation::after{content:"";position:absolute;top:-8px;width:16px;height:16px;border-radius:50%;background:var(--ink);}
+.perforation::before{left:-8px;} .perforation::after{right:-8px;}
+
+.breakdown{padding:18px 20px 14px;}
+.breakdown h3{font-family:var(--serif);font-size:14px;margin:0 0 10px;color:var(--text);}
+.bars{display:flex;align-items:flex-end;gap:4px;height:70px;margin-bottom:8px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.bar{width:100%;background:linear-gradient(180deg,var(--gold) 0%, var(--forest) 46%);border-radius:2px 2px 0 0;min-height:2px;}
+.bar-label{font-family:var(--mono);font-size:8px;color:var(--text-soft);margin-top:4px;}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.yr{width:100%;min-width:420px;border-collapse:collapse;font-size:10.5px;}
+table.yr th{text-align:right;font-size:8.5px;text-transform:uppercase;color:var(--text-soft);padding:5px 6px;border-bottom:1px solid var(--rule);}
+table.yr th:first-child, table.yr td:first-child{text-align:left;}
+table.yr td{text-align:right;font-family:var(--mono);padding:5px 6px;border-bottom:1px solid rgba(14,27,43,0.06);color:var(--text);}
+table.yr tr:last-child td{font-weight:700;border-top:1px solid var(--rule);}
+
+/* marca d'água discreta — área "printável" */
+.watermark{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px 4px;opacity:.42;}
+.watermark svg{width:12px;height:12px;}
+.watermark span{font-family:var(--serif);font-size:10px;letter-spacing:.18em;color:var(--text-soft);text-transform:uppercase;}
+.disclaimer{font-size:9.5px;color:var(--text-soft);line-height:1.4;padding:6px 20px 16px;font-style:italic;text-align:center;}
+
+/* -------- floating WhatsApp CTA -------- */
+.fab-wrap{position:fixed;left:0;right:0;bottom:0;padding:12px 18px 16px;
+  background:linear-gradient(180deg, rgba(14,27,43,0) 0%, var(--ink) 42%);z-index:50;}
+.fab{max-width:404px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--whatsapp);color:#fff;padding:15px 18px;border-radius:12px;font-weight:700;font-size:14.5px;
+  text-decoration:none;font-family:var(--sans);box-shadow:0 14px 30px -10px rgba(0,0,0,0.5);}
+.fab svg{width:20px;height:20px;flex:0 0 auto;}
+
+/* -------- exit intent popup -------- */
+.overlay{position:fixed;inset:0;background:rgba(9,15,24,0.72);display:none;align-items:flex-end;justify-content:center;z-index:100;}
+.overlay.show{display:flex;}
+@media(min-width:640px){.overlay{align-items:center;}}
+.popup{background:var(--paper-2);width:100%;max-width:420px;border-radius:18px 18px 0 0;padding:24px 22px 22px;
+  box-shadow:0 -20px 60px rgba(0,0,0,0.4);position:relative;border-top:3px solid var(--gold);}
+@media(min-width:640px){.popup{border-radius:18px;}}
+.popup-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:var(--text-soft);cursor:pointer;}
+.popup .eyebrow{color:var(--urgent);}
+.popup h2{font-family:var(--serif);font-size:19px;margin:6px 0 8px;color:var(--text);}
+.popup p{font-size:12.5px;line-height:1.5;color:var(--text-soft);margin:0 0 10px;}
+.popup .val{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--text);margin:0 0 12px;
+  background:linear-gradient(135deg, rgba(200,169,107,0.20), rgba(200,169,107,0.06));
+  border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:10px 14px;display:block;}
+.popup .winwin{display:flex;gap:8px;background:rgba(31,122,84,0.1);border-left:3px solid var(--green);
+  padding:9px 10px;font-size:11.5px;color:var(--text);margin-bottom:14px;line-height:1.4;}
+.popup .fab{position:static;box-shadow:none;}
+.hidden{display:none !important;}
+
+.desktop-pair{display:none;}
+@media(min-width:1024px){
+  .desktop-pair.active{display:grid;grid-template-columns:380px 1fr;gap:20px;max-width:1120px;margin:0 auto;align-items:start;
+    padding:40px 28px;}
+  .desktop-pair.active #screenForm,
+  .desktop-pair.active #screenResult{display:flex !important;}
+  .desktop-pair .shell{max-width:none;}
+  #screenForm.screen, #screenResult.screen{padding:0;min-height:0;}
+
+  /* Formulário: mais compacto, sensação premium em vez de "alto" */
+  .desktop-pair .card{padding:22px 24px;border-radius:14px;}
+  .desktop-pair .field{margin-bottom:13px;}
+  .desktop-pair label{font-size:11px;margin-bottom:5px;}
+  .desktop-pair input[type=text],.desktop-pair input[type=email],.desktop-pair input[type=number]{
+    padding:11px 13px;font-size:14.5px;border-radius:8px;}
+  .desktop-pair .pinned-info{padding:11px 13px;margin-bottom:14px;}
+
+  /* Botão principal: escala de botão, não de bloco */
+  .desktop-pair button.cta{padding:13px 18px;font-size:14px;border-radius:9px;margin-top:4px;
+    box-shadow:0 6px 16px -8px rgba(158,135,93,0.45);}
+  .desktop-pair button.cta:hover{box-shadow:0 8px 18px -8px rgba(158,135,93,0.55);transform:translateY(-1px);}
+
+  /* Gate vira hero de duas colunas — usa a largura em vez de só centralizar um card */
+  #screenGate .shell{max-width:1000px;display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:center;text-align:left;}
+  #screenGate .gate-copy{display:flex;flex-direction:column;}
+  #screenGate h1{font-size:clamp(28px,2.4vw,36px);}
+  #screenGate .sub{font-size:14px;max-width:420px;}
+  #screenGate .mini-benefits{margin-bottom:0;}
+  #screenGate .card{align-self:center;padding:22px 24px;}
+
+  /* CTA: sticky dentro da coluna de resultado, escala de botão real */
+  .fab-wrap{position:sticky;bottom:20px;left:auto;right:auto;padding:0;margin-top:14px;background:none;}
+  .fab{max-width:none;padding:12px 16px;font-size:13.5px;border-radius:10px;
+    box-shadow:0 8px 20px -10px rgba(0,0,0,0.4);}
+  .fab svg{width:17px;height:17px;}
+
+  /* Resultado: respiro mais contido, ritmo vertical mais denso */
+  .cheque-top{padding:16px 18px 12px;}
+  .cheque-co{font-size:12px;}
+  .cheque-headline{margin:8px 0 6px;padding:9px 12px;}
+  .cheque-headline svg{max-width:280px;}
+  .cheque-note{font-size:10.5px;}
+  .urgency-line{padding:7px 9px;margin-top:9px;font-size:10.5px;}
+  .seal-strip{margin-top:8px;}
+  .meta-row{margin-top:9px;padding-top:9px;gap:14px;}
+  .meta-item .v{font-size:12.5px;}
+
+  .punch-card{padding:11px 10px;}
+  .punch-h{font-size:12px;}
+  .punch-t{font-size:10px;}
+
+  .urgency,.exclusive{padding:12px 16px;}
+  .breakdown{padding:14px 16px 10px;}
+  .breakdown h3{font-size:12.5px;margin-bottom:8px;}
+  .breakdown .bars{height:78px;margin-bottom:6px;}
+  table.yr td, table.yr th{padding:4px 6px;}
+
+  .watermark{padding:8px 16px 3px;}
+  .disclaimer{padding:5px 16px 12px;}
+}
+
+/* ============ DESKTOP (≥1440px): mais espaço, tipografia maior,
+   composição de dashboard executivo — refinado, não apenas ampliado. ============ */
+@media(min-width:1440px){
+  .desktop-pair{grid-template-columns:440px 1fr;max-width:1280px;gap:24px;padding:52px 36px;}
+  #screenGate .shell{max-width:1180px;grid-template-columns:1fr 440px;gap:56px;}
+  h1{letter-spacing:-.01em;}
+  #screenGate h1{font-size:clamp(32px,2.2vw,40px);}
+  #screenGate .card{padding:26px 28px;}
+
+  .desktop-pair .card{padding:26px 28px;}
+  .cheque-co{font-size:13px;}
+  .cheque-headline svg{max-width:310px;}
+  .breakdown .bars{height:92px;}
+  .punch-card{padding:14px 13px;}
+}
+
+/* ============ TELAS GRANDES / ultrawide (≥1920px): não deixamos esticar
+   até a borda — centralizamos com mais margem lateral e reforçamos a
+   hierarquia, em vez de só ampliar tudo proporcionalmente. ============ */
+@media(min-width:1920px){
+  .desktop-pair{max-width:1380px;grid-template-columns:480px 1fr;}
+  #screenGate .shell{max-width:1280px;}
+  body{font-size:14.5px;}
+  .breakdown .bars{height:100px;}
+}
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- ============ SPLASH (400–800ms) ============ -->
+<div id="splash">
+  <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Consult Logo" class="mark">
+  <div class="word">Avvento Consult</div>
+</div>
+
+<!-- ============ SCREEN 1 — GATE ============ -->
+<div class="screen active" id="screenGate">
+  <div class="linework"><svg width="260" height="260" viewBox="0 0 260 260"><polygon points="130,10 250,230 10,230" fill="none" stroke="#C8A96B" stroke-width="1"/><polygon points="130,70 210,220 50,220" fill="none" stroke="#C8A96B" stroke-width="1"/></svg></div>
+  <div class="shell">
+    <div class="gate-copy">
+      <div class="step-pill">01</div>
+      <div class="brandline">
+        <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" class="mini-mark">
+        <span>Avvento Consult</span>
+      </div>
+      <p class="eyebrow">Tese Sistema S · Teto de 20 salários mínimos</p>
+      <h1>Descubra quanto sua empresa tem a recuperar</h1>
+      <p class="sub">Simulação em 2 minutos. Crédito já reconhecido, corrigido pela SELIC até hoje.</p>
+      <div class="mini-benefits">
+        <span>Redução da carga tributária</span>
+        <span>Fluxo de caixa</span>
+        <span>Sem desembolso inicial</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field" id="fCnpj">
+        <label for="cnpj">CNPJ</label>
+        <input type="text" id="cnpj" inputmode="numeric" placeholder="00.000.000/0000-00" maxlength="18">
+        <p class="err">Informe um CNPJ válido (14 dígitos).</p>
+      </div>
+      <div class="field" id="fEmail">
+        <label for="email">E-mail principal</label>
+        <input type="email" id="email" placeholder="voce@suaempresa.com.br">
+        <p class="err">Informe um e-mail válido.</p>
+      </div>
+      <button class="cta" id="gateBtn" onclick="validarGate()">Ver minha estimativa →</button>
+      <p class="legal-note">Seus dados são usados apenas para enviar sua estimativa e falar com um consultor Avvento.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 1.5 — REGIME TRIBUTÁRIO ============ -->
+<div class="screen" id="screenRegime">
+  <div class="shell">
+    <div class="step-pill">02</div>
+    <div class="brandline">
+      <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" class="mini-mark">
+      <span>Avvento Consult</span>
+    </div>
+    <p class="eyebrow">Antes de calcular</p>
+    <h1>Qual o regime tributário da empresa?</h1>
+    <p class="sub">Essa tese específica só se aplica a empresas fora do Simples Nacional.</p>
+    <div class="card">
+      <div class="regime-options" id="regimeOptions">
+        <button type="button" class="regime-opt" onclick="selecionarRegime('real', this)">Lucro Real</button>
+        <button type="button" class="regime-opt" onclick="selecionarRegime('presumido', this)">Lucro Presumido</button>
+        <button type="button" class="regime-opt" data-regime="simples" onclick="selecionarRegime('simples', this)">Simples Nacional / MEI</button>
+        <button type="button" class="regime-opt" onclick="selecionarRegime('naosei', this)">Não sei / prefiro confirmar depois</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN — BLOQUEIO (Simples Nacional) ============ -->
+<div class="screen" id="screenBlocked">
+  <div class="shell">
+    <div class="brandline">
+      <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" class="mini-mark">
+      <span>Avvento Consult</span>
+    </div>
+    <p class="eyebrow">Regime Simples Nacional</p>
+    <h1>Essa tese não se aplica ao seu regime — mas isso não fecha a porta</h1>
+    <p class="sub">Empresas do Simples Nacional recolhem o Sistema S de forma unificada, dentro do DAS. Por isso, nesse regime específico, não existe o valor pago a maior que essa calculadora identifica.</p>
+    <div class="card" style="text-align:center;">
+      <p style="font-size:13.5px;color:var(--text-soft);line-height:1.6;margin:0 0 18px;">
+        Isso não significa que sua empresa não tenha <strong style="color:var(--text);">outras oportunidades tributárias ou previdenciárias</strong> — a Avvento atua com dezenas de teses além do Sistema S. Fale direto com um consultor e conte sua situação: a avaliação inicial não tem custo.
+      </p>
+      <a class="fab" id="blockedFab" href="#" target="_blank" rel="noopener" style="position:static;max-width:none;">
+        <svg viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.3 0-.5s-.7-1.6-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.2 3.4 5.4 4.7.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.1-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.2L2 22l4.9-1.5C8.3 21.5 10.1 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .9.9-2.9-.2-.3C3.8 15 3.2 13.5 3.2 12c0-4.8 3.9-8.7 8.8-8.7s8.8 3.9 8.8 8.7-3.9 8.8-8.8 8.8z"/></svg>
+        Falar com um consultor sobre meu caso
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREENS 2+3 — dupla desktop ============ -->
+<div class="desktop-pair">
+
+
+  <!-- FORM -->
+  <div class="screen" id="screenForm">
+    <div class="shell">
+      <div class="step-pill">03</div>
+      <div class="brandline">
+        <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" class="mini-mark">
+        <span>Avvento Consult</span>
+      </div>
+      <p class="eyebrow">Dados da folha</p>
+      <h1>Agora, os dados da folha</h1>
+      <p class="sub">Já confirmamos sua empresa — só falta a folha.</p>
+      <div class="card">
+        <div class="pinned-info" id="pinnedInfo">
+          <span class="k">Empresa identificada</span>
+          <span class="v" id="pinnedEmpresa">—</span>
+          <span class="k" style="margin-top:8px;">CNPJ</span>
+          <span class="v mono" id="pinnedCnpj">—</span>
+          <span class="source-cite" id="pinnedSource"></span>
+        </div>
+        <div class="field">
+          <label for="func">Nº de funcionários</label>
+          <input type="number" id="func" min="1" step="1" value="50">
+        </div>
+        <div class="field">
+          <label for="salario">Salário médio (R$)</label>
+          <input type="number" id="salario" min="0" step="0.01" value="2200">
+        </div>
+        <button class="cta" onclick="calcular()">Calcular recuperação →</button>
+        <button class="adv-toggle" onclick="toggleAdv()">·</button>
+        <div class="adv-box" id="advBox">
+          <div class="field">
+            <label for="aliquota">Alíquota (%)</label>
+            <input type="number" id="aliquota" min="0" step="0.01" value="5.8">
+          </div>
+          <div class="field">
+            <label for="minimo">Salário mínimo ref. (R$)</label>
+            <input type="number" id="minimo" min="0" step="1" value="1621">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screenResult">
+    <div class="shell" id="resultShell">
+      <div class="result-placeholder" id="resultPlaceholder">
+        <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" style="width:36px;height:auto;">
+        <p>Preencha os dados ao lado para ver sua estimativa aqui.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="fab-wrap hidden" id="fabWrap">
+  <a class="fab" id="fabLink" href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.3 0-.5s-.7-1.6-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.2 3.4 5.4 4.7.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.1-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.2L2 22l4.9-1.5C8.3 21.5 10.1 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .9.9-2.9-.2-.3C3.8 15 3.2 13.5 3.2 12c0-4.8 3.9-8.7 8.8-8.7s8.8 3.9 8.8 8.7-3.9 8.8-8.8 8.8z"/></svg>
+    Falar com um consultor Avvento
+  </a>
+</div>
+
+<div class="overlay" id="exitOverlay">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup()">×</button>
+    <p class="eyebrow">Antes de sair</p>
+    <h2 id="popupTitle">Não deixe esse crédito parado</h2>
+    <p class="val" id="popupValor">R$ 0,00</p>
+    <p>Esse valor é seu, corrigido pela SELIC, dentro de uma tese já pacificada. Cada mês sem ação é fluxo de caixa a menos e mais um mês de prazo prescricional consumido.</p>
+    <div class="winwin">🤝 Nossa equipe trabalha com atendimento próximo, do início ao fim do processo — e só ganha se a sua empresa ganhar (honorário 100% de êxito). Pra você, é ganha-ganha.</div>
+    <a class="fab" id="popupFab" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.3 0-.5s-.7-1.6-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.2 3.4 5.4 4.7.8.3 1.4.5 1.8.7.8.2 1.5.2 2 .1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.1-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.2L2 22l4.9-1.5C8.3 21.5 10.1 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .9.9-2.9-.2-.3C3.8 15 3.2 13.5 3.2 12c0-4.8 3.9-8.7 8.8-8.7s8.8 3.9 8.8 8.7-3.9 8.8-8.8 8.8z"/></svg>
+      Falar com um consultor agora
+    </a>
+  </div>
+</div>
+
+<script>
+const WHATSAPP_NUMBER = '5519971649904';
+const GOOGLE_SHEETS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwrbeJ3aHP9rfX8G7qOGkAt7-ZKgTRb0f-zbkciLAwMaoRaiqcmomBrXF4uvEa3gIGu/exec';
+const PERIODO_INICIO = new Date(2015, 8, 1);
+const PERIODO_FIM    = new Date(2024, 3, 1);
+const SELIC_MENSAL   = 0.01;
+
+let state = { cnpj:'', email:'', empresa:'', regime:'', func:0, salario:0, valorCom:0, valorSem:0 };
+let popupShown = false;
+
+function fmtBRL(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function monthsBetween(a,b){ return Math.max((b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth()),0); }
+function pad(n){ return n<10?'0'+n:''+n; }
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if(target) target.classList.add('active');
+
+  const pair = document.querySelector('.desktop-pair');
+  if(pair){
+    if(id==='screenForm' || id==='screenResult'){
+      pair.classList.add('active');
+    }else{
+      pair.classList.remove('active');
+    }
+  }
+  window.scrollTo(0,0);
+}
+
+setTimeout(()=>{ document.getElementById('splash').classList.add('out'); }, 1350);
+
+let cnpjEnviadoImediato = false;
+document.getElementById('cnpj').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g,'').slice(0,14);
+  v = v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v = v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v = v.replace(/(\d{4})(\d)/,'$1-$2');
+  e.target.value = v;
+
+  const digits = v.replace(/\D/g,'');
+  if(digits.length===14 && cnpjChecksumValido(digits) && !cnpjEnviadoImediato){
+    cnpjEnviadoImediato = true;
+    state.cnpj = v;
+    state.email = document.getElementById('email').value.trim();
+    enviarParaSheets('cnpj_imediato'); // cai na planilha nova e simples, no instante em que o CNPJ é preenchido
+  }
+  if(digits.length<14){
+    cnpjEnviadoImediato = false; // se apagar e digitar outro CNPJ, permite enviar de novo
+  }
+});
+
+
+function cnpjChecksumValido(cnpj){
+  cnpj = cnpj.replace(/\D/g,'');
+  if(cnpj.length!==14) return false;
+  if(/^(\d)\1{13}$/.test(cnpj)) return false; // todos os dígitos iguais
+  const calc = (base)=>{
+    let len = base.length, pos = len-7, soma=0;
+    for(let i=len;i>=1;i--){ soma += base.charAt(len-i)*pos--; if(pos<2) pos=9; }
+    const r = soma%11;
+    return r<2 ? 0 : 11-r;
+  };
+  const d1 = calc(cnpj.substring(0,12));
+  if(d1 != cnpj.charAt(12)) return false;
+  const d2 = calc(cnpj.substring(0,13));
+  if(d2 != cnpj.charAt(13)) return false;
+  return true;
+}
+
+async function validarGate(){
+  const cnpjDigits = document.getElementById('cnpj').value.replace(/\D/g,'');
+  const email = document.getElementById('email').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const cnpjOk = cnpjChecksumValido(cnpjDigits);
+  document.querySelector('#fCnpj .err').textContent = 'Informe um CNPJ válido (14 dígitos).';
+  document.getElementById('fCnpj').classList.toggle('invalid', !cnpjOk);
+  document.getElementById('fEmail').classList.toggle('invalid', !emailOk);
+  if(!cnpjOk || !emailOk) return;
+
+  state.cnpj = document.getElementById('cnpj').value;
+  state.email = email;
+
+  const btn = document.getElementById('gateBtn');
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Verificando CNPJ...';
+  btn.disabled = true;
+
+  let razaoSocial = '';
+  let simplesApiHint = null;
+
+  const consultarCnpj = async ()=>{
+    const ctrl = new AbortController();
+    const timeout = setTimeout(()=>ctrl.abort(), 4000);
+    const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjDigits}`, {signal: ctrl.signal});
+    clearTimeout(timeout);
+    return resp;
+  };
+
+  try{
+    let resp;
+    try{ resp = await consultarCnpj(); }
+    catch(e1){ resp = await consultarCnpj(); } // 1 nova tentativa em caso de instabilidade momentânea
+
+    if(resp.status===404){
+      document.getElementById('fCnpj').classList.add('invalid');
+      document.querySelector('#fCnpj .err').textContent = 'CNPJ não encontrado na Receita Federal.';
+      btn.textContent = originalLabel; btn.disabled = false;
+      return;
+    }
+    if(resp.ok){
+      const data = await resp.json();
+      razaoSocial = data.razao_social || data.nome_fantasia || '';
+      if(typeof data.opcao_pelo_simples === 'boolean') simplesApiHint = data.opcao_pelo_simples;
+    }
+  }catch(err){
+    // API fora do ar mesmo após nova tentativa: não bloqueia o lead, segue com o que já validamos por dígito verificador
+  }
+
+  state.empresa = razaoSocial || 'Sua empresa';
+  document.getElementById('pinnedEmpresa').textContent = razaoSocial || 'Não identificada automaticamente — confirme com seu consultor';
+  document.getElementById('pinnedCnpj').textContent = state.cnpj;
+  document.getElementById('pinnedSource').textContent = razaoSocial
+    ? 'Fonte: Receita Federal do Brasil, via BrasilAPI (dados públicos de CNPJ).'
+    : '';
+
+  btn.textContent = originalLabel; btn.disabled = false;
+
+  // se a Receita já confirma Simples Nacional, pré-marca a opção (usuário ainda confirma)
+  if(simplesApiHint === true){
+    document.querySelectorAll('.regime-opt').forEach(b=>b.classList.remove('selected'));
+    const simplesBtn = document.querySelector('.regime-opt[data-regime="simples"]');
+    if(simplesBtn) simplesBtn.classList.add('selected');
+  }
+
+  enviarParaSheets('parcial'); // salva o que já foi preenchido, mesmo se abandonar aqui
+  showScreen('screenRegime');
+}
+
+function selecionarRegime(regime, btnEl){
+  document.querySelectorAll('.regime-opt').forEach(b=>b.classList.remove('selected'));
+  btnEl.classList.add('selected');
+  state.regime = regime;
+  if(regime==='simples'){
+    const msg = `Olá! Fiz a simulação da tese Sistema S no site da Avvento, mas minha empresa é do Simples Nacional/MEI.\n`+
+      `Gostaria de entender se existe alguma outra oportunidade tributária ou previdenciária para o meu caso.\n`+
+      `CNPJ: ${state.cnpj}`;
+    document.getElementById('blockedFab').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    enviarParaSheets('bloqueado');
+    showScreen('screenBlocked');
+    return;
+  }
+  showScreen('screenForm');
+}
+
+function toggleAdv(){ document.getElementById('advBox').classList.toggle('open'); }
+
+function enviarDadosParaGoogleSheets(url, dataObj) {
+  if (!url || url.indexOf('http') !== 0) return;
+  try {
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(dataObj)
+    }).catch(function() {});
+  } catch (e) {}
+
+  try {
+    var iframeName = 'iframe_sheets_' + Math.floor(Math.random() * 100000);
+    var iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = iframeName;
+
+    for (var key in dataObj) {
+      if (dataObj.hasOwnProperty(key)) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = typeof dataObj[key] === 'object' ? JSON.stringify(dataObj[key]) : dataObj[key];
+        form.appendChild(input);
+      }
+    }
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function() {
+      try { document.body.removeChild(form); } catch(err){}
+      try { document.body.removeChild(iframe); } catch(err){}
+    }, 2500);
+  } catch (err) {}
+}
+
+function enviarParaSheets(tipo){
+  if(GOOGLE_SHEETS_ENDPOINT.indexOf('http')!==0) return;
+  enviarDadosParaGoogleSheets(GOOGLE_SHEETS_ENDPOINT, {
+    tipo: tipo,
+    cnpj: state.cnpj,
+    email: state.email,
+    empresa: state.empresa,
+    regime: state.regime,
+    funcionarios: state.func,
+    salario: state.salario,
+    valorComSelic: state.valorCom,
+    valorSemSelic: state.valorSem
+  });
+}
+
+
+function whatsappUrl(){
+  const msg = `Olá! Fiz a simulação da tese Sistema S no site da Avvento.\n`+
+    `Empresa: ${state.empresa}\nCNPJ: ${state.cnpj}\nNº funcionários: ${state.func}\n`+
+    `Valor estimado a recuperar (corrigido pela SELIC): ${fmtBRL(state.valorCom)}\n`+
+    `Quero falar com um consultor.`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
+
+function svgHeadline(value){
+  const txt = fmtBRL(value);
+  return `<svg viewBox="0 0 400 60" preserveAspectRatio="xMinYMid meet">
+    <text x="0" y="45" font-family="'Playfair Display',Georgia,serif" font-weight="600" font-size="40" fill="#14202B">${txt}</text>
+  </svg>`;
+}
+
+function calcular(){
+  state.func = parseFloat(document.getElementById('func').value) || 0;
+  state.salario = parseFloat(document.getElementById('salario').value) || 0;
+  const aliquota = (parseFloat(document.getElementById('aliquota').value) || 0)/100;
+  const minimo = parseFloat(document.getElementById('minimo').value) || 0;
+
+  const start = PERIODO_INICIO, end = PERIODO_FIM, hoje = new Date();
+  const teto = 20*minimo;
+  const base = state.func*state.salario;
+  const indebitoMensal = Math.max((base-teto)*aliquota,0);
+
+  let cursor = new Date(start.getTime());
+  let totalSem=0, totalCom=0; const anos={};
+  while(cursor<=end){
+    const meses = monthsBetween(cursor, hoje);
+    const corrigido = indebitoMensal*(1+meses*SELIC_MENSAL);
+    totalSem+=indebitoMensal; totalCom+=corrigido;
+    const y=cursor.getFullYear();
+    if(!anos[y]) anos[y]={base:0,sem:0,com:0};
+    anos[y].base+=base; anos[y].sem+=indebitoMensal; anos[y].com+=corrigido;
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth()+1, 1);
+  }
+  state.valorCom = totalCom; state.valorSem = totalSem;
+
+  const anosOrd = Object.keys(anos).sort();
+  const maxCom = Math.max(...anosOrd.map(y=>anos[y].com),1);
+  const barsHtml = anosOrd.map(y=>{
+    const h = Math.max((anos[y].com/maxCom)*100,2);
+    return `<div class="bar-col"><div class="bar" style="height:${h}%"></div><div class="bar-label">'${y.slice(2)}</div></div>`;
+  }).join('');
+  const rowsHtml = anosOrd.map(y=>`<tr><td>${y}</td><td>${fmtBRL(anos[y].base)}</td><td>${fmtBRL(anos[y].sem)}</td><td>${fmtBRL(anos[y].com)}</td></tr>`).join('')
+    + `<tr><td>Total</td><td>${fmtBRL(anosOrd.reduce((s,y)=>s+anos[y].base,0))}</td><td>${fmtBRL(totalSem)}</td><td>${fmtBRL(totalCom)}</td></tr>`;
+
+  const inicioLabel = pad(start.getMonth()+1)+'/'+start.getFullYear();
+  const fimLabel = pad(end.getMonth()+1)+'/'+end.getFullYear();
+
+  document.getElementById('resultShell').innerHTML = `
+    <div class="step-pill">04</div>
+    <div class="brandline">
+      <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" class="mini-mark">
+      <span>Sua estimativa</span>
+    </div>
+    <div class="cheque">
+      <div class="ribbon-corner"><span>Créditos prescrevem</span></div>
+      <div class="cheque-top">
+        <p class="eyebrow">Certidão de estimativa</p>
+        <p class="cheque-co">${state.empresa} tem a recuperar (estimado)</p>
+        <div class="cheque-headline">${svgHeadline(totalCom)}</div>
+        <p class="cheque-note">Corrigido pela SELIC (1% a.m.) até hoje · sem correção: ${fmtBRL(totalSem)}</p>
+        <p class="urgency-line">⏳ Cada mês de espera é <strong>${fmtBRL(indebitoMensal)}</strong> de fôlego de caixa a menos — e mais um mês de prazo prescricional consumido.</p>
+        <div class="seal-strip">
+          <span class="seal">Aumento da lucratividade</span>
+          <span class="seal">Competitividade</span>
+          <span class="seal">Investimento e expansão</span>
+        </div>
+        <div class="meta-row">
+          <div class="meta-item"><div class="k">Período</div><div class="v">${inicioLabel} – ${fimLabel}</div></div>
+          <div class="meta-item"><div class="k">SELIC até</div><div class="v">${pad(hoje.getMonth()+1)}/${hoje.getFullYear()}</div></div>
+        </div>
+      </div>
+      <div class="punch">
+        <div class="punch-card">
+          <svg viewBox="0 0 40 40" class="punch-icon"><circle cx="20" cy="20" r="17" fill="none" stroke="var(--gold-dark)" stroke-width="1.6"/><text x="20" y="26" text-anchor="middle" font-family="var(--serif)" font-size="16" fill="#7A6540" font-weight="600">R$</text></svg>
+          <p class="punch-h">Isso já é seu</p>
+          <p class="punch-t">Você já pagou a mais. Não é economia futura.</p>
+          <div class="tag-row"><span class="tag">Valores pagos indevidamente</span><span class="tag">Capital de giro</span></div>
+        </div>
+        <div class="punch-card">
+          <svg viewBox="0 0 40 40" class="punch-icon"><path d="M20 4 L34 10 V19 C34 28 28 34 20 37 C12 34 6 28 6 19 V10 Z" fill="none" stroke="var(--gold-dark)" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 20 L18 25 L27 14" fill="none" stroke="var(--gold-dark)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p class="punch-h">Tese pacificada</p>
+          <p class="punch-t">Consolidada até 04/2024. Crédito reconhecido.</p>
+          <div class="tag-row"><span class="tag">Direito reconhecido</span><span class="tag">Segurança jurídica</span></div>
+        </div>
+        <div class="punch-card">
+          <svg viewBox="0 0 40 40" class="punch-icon"><path d="M20 5 V27" stroke="var(--gold-dark)" stroke-width="1.6"/><path d="M11 20 L20 29 L29 20" fill="none" stroke="var(--gold-dark)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="35" x2="32" y2="35" stroke="var(--gold-dark)" stroke-width="1.6"/></svg>
+          <p class="punch-h">Some da conta todo mês</p>
+          <p class="punch-t">Aplicando o teto: <strong>${fmtBRL(indebitoMensal)}/mês</strong> a menos.</p>
+          <div class="tag-row"><span class="tag">Redução da carga tributária</span><span class="tag">Custo operacional</span></div>
+        </div>
+        <div class="punch-card">
+          <svg viewBox="0 0 40 40" class="punch-icon"><circle cx="14" cy="14" r="7" fill="none" stroke="var(--gold-dark)" stroke-width="1.6"/><circle cx="26" cy="26" r="7" fill="none" stroke="var(--gold-dark)" stroke-width="1.6"/><line x1="19" y1="19" x2="21" y2="21" stroke="var(--gold-dark)" stroke-width="1.6"/></svg>
+          <p class="punch-h">Sem tirar do caixa</p>
+          <p class="punch-t">Modelo por êxito: só paga se recuperar.</p>
+          <div class="tag-row"><span class="tag">Sem endividamento</span><span class="tag">Fluxo de caixa</span></div>
+        </div>
+      </div>
+      <div class="urgency">
+        <div class="urgency-item"><span class="urgency-tag">Fluxo de caixa</span><p>Quanto antes entra em compensação, <strong>mais cedo a empresa para de desembolsar caixa próprio.</strong></p></div>
+        <div class="urgency-item"><span class="urgency-tag">Prescrição</span><p>Crédito tributário prescreve. <strong>Cada mês de atraso é um mês a menos de recuperação.</strong></p></div>
+      </div>
+      <div class="exclusive">
+        <div class="stamp-badge">Acesso<br>Restrito</div>
+        <p><strong>Tese não aberta ao mercado em geral.</strong> Só para empresas filiadas à associação titular da decisão favorável.</p>
+      </div>
+      <div class="perforation"></div>
+      <div class="breakdown">
+        <h3>Evolução do crédito por ano</h3>
+        <div class="bars">${barsHtml}</div>
+        <div class="table-scroll">
+          <table class="yr"><tr><th>Ano</th><th>Base</th><th>Indébito</th><th>Corrigido</th></tr>${rowsHtml}</table>
+        </div>
+      </div>
+      <div class="watermark">
+        <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Logo" style="width:14px;height:auto;">
+        <span>Avvento Consult</span>
+      </div>
+      <div class="disclaimer">Estimativa educativa com parâmetros simplificados. Não substitui apuração pericial contábil nem constitui parecer jurídico.</div>
+    </div>
+  `;
+
+  showScreen('screenResult');
+  document.getElementById('fabWrap').classList.remove('hidden');
+  document.getElementById('fabLink').href = whatsappUrl();
+  document.getElementById('popupFab').href = whatsappUrl();
+  document.getElementById('popupValor').textContent = fmtBRL(totalCom);
+  enviarParaSheets('completo');
+  armarPopupSaida();
+}
+
+document.addEventListener('copy', function(e){ e.preventDefault(); });
+document.addEventListener('cut', function(e){ e.preventDefault(); });
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey) && ['c','p','s','u'].includes(e.key.toLowerCase())){ e.preventDefault(); }
+});
+
+function openPopup(){ if(popupShown) return; popupShown=true; document.getElementById('exitOverlay').classList.add('show'); }
+function closePopup(){ document.getElementById('exitOverlay').classList.remove('show'); }
+function armarPopupSaida(){
+  document.addEventListener('mouseout', function(e){ if(!e.relatedTarget && e.clientY<=0) openPopup(); });
+  history.pushState({avvento:true}, '');
+  window.addEventListener('popstate', function(){ openPopup(); history.pushState({avvento:true}, ''); });
+  setTimeout(openPopup, 40000);
+}
+</script>
+</body>
+</html>

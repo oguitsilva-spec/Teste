@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '29067415522845089');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=29067415522845089&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Sistema S | Avvento Consult</title>
+  
+  <!-- Fonts Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM AVVENTO CONSULT — DESIGN REFINADO E PREMIUM
+       ========================================================================== */
+    :root {
+      --navy: #0D1B2A;
+      --navy-deep: #060E17;
+      --forest: #1F4037;
+      --forest-dark: #122824;
+      --gold: #C6A563;
+      --gold-light: #F0E2C3;
+      --gold-dark: #9E875D;
+      --bg-gray: #F5F5F5;
+      --bg-card: #FFFFFF;
+      --text-dark: #14202B;
+      --text-muted: #64748B;
+      --text-light: #F4F2ED;
+      --green-accent: #1F7A54;
+      --urgent: #A8442E;
+      
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-md: 0 12px 30px rgba(0,0,0,0.18);
+      --shadow-lg: 0 24px 60px -15px rgba(0,0,0,0.45);
+      --shadow-gold: 0 10px 30px rgba(198, 165, 99, 0.35);
+      --radius: 16px;
+      --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reset Básico */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--navy-deep);
+      color: var(--text-light);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Fundo dinâmico com iluminação radial suave */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(31, 64, 55, 0.35) 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(198, 165, 99, 0.12) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Linhas Decorativas de Marca */
+    .bg-linework {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.05;
+      z-index: 0;
+    }
+    .bg-linework svg {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+    }
+
+    /* ==========================================================================
+       HEADER & NAVEGAÇÃO ELEGANTE
+       ========================================================================== */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 14, 23, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(198, 165, 99, 0.2);
+      padding: 16px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .brand-logo:hover {
+      opacity: 0.9;
+    }
+
+    .brand-logo svg,
+    .brand-logo-img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(198, 165, 99, 0.3));
+    }
+
+    .brand-logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--gold-light);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .btn-header-cta {
+      position: relative;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold) 55%, var(--gold-dark));
+      color: var(--navy-deep);
+      border: none;
+      padding: 11px 24px;
+      border-radius: 30px;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 18px rgba(198, 165, 99, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      overflow: hidden;
+    }
+
+    .btn-header-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(198, 165, 99, 0.5);
+    }
+
+    /* ---- Linha verde fina correndo na borda do botão ---- */
+    .btn-border-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .btn-border-svg rect {
+      fill: none;
+      stroke: #00FF88;
+      stroke-width: 1.5px;
+      vector-effect: non-scaling-stroke;
+      pathLength: 100;
+      stroke-dasharray: 22 78;
+      stroke-dashoffset: 0;
+      animation: run-border-line 2.4s linear infinite;
+      filter: drop-shadow(0 0 2px rgba(0, 255, 136, 0.7));
+    }
+
+    @keyframes run-border-line {
+      0% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: -100;
+      }
+    }
+
+    /* ==========================================================================
+       ESTILOS DAS DOBRAS
+       ========================================================================== */
+    .dobra-section {
+      position: relative;
+      padding: 90px 20px;
+      border-bottom: 1px solid rgba(198, 165, 99, 0.12);
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .container-grid {
+      max-width: 1240px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .dobra-img-col {
+      position: relative;
+    }
+
+    .img-frame {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(198, 165, 99, 0.35);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 30px rgba(198, 165, 99, 0.15);
+      transition: var(--transition);
+    }
+
+    .img-frame:hover {
+      transform: translateY(-5px);
+      border-color: rgba(198, 165, 99, 0.6);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.65), 0 0 40px rgba(198, 165, 99, 0.25);
+    }
+
+    .dobra-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    .dobra-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold-light);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      background: rgba(198, 165, 99, 0.12);
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(198, 165, 99, 0.3);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .dobra-title {
+      font-family: var(--font-serif);
+      font-size: clamp(24px, 2.7vw, 36px);
+      font-weight: 600;
+      line-height: 1.22;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    .dobra-subtitle {
+      font-size: 18px;
+      color: #CBD5E1;
+      line-height: 1.7;
+      margin-bottom: 36px;
+      font-weight: 400;
+    }
+
+    .dobra-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 42px;
+    }
+
+    .dobra-bullets li {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 16px;
+      font-size: 17px;
+      color: var(--gold-light);
+      font-weight: 500;
+      background: rgba(13, 27, 42, 0.4);
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(198, 165, 99, 0.15);
+      transition: var(--transition);
+    }
+
+    .dobra-bullets li:hover {
+      border-color: var(--gold);
+      transform: translateX(6px);
+      background: rgba(13, 27, 42, 0.7);
+    }
+
+    .bullet-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(198, 165, 99, 0.15);
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-light);
+      flex-shrink: 0;
+    }
+
+    .bullet-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 3;
+    }
+
+    .cta-wrapper {
+      margin-top: 10px;
+    }
+
+    .btn-dobra-cta {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #F5E8C7 0%, #C6A563 50%, #9E875D 100%);
+      color: var(--navy-deep);
+      border: none;
+      padding: 20px 42px;
+      border-radius: 14px;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 12px 35px rgba(198, 165, 99, 0.4);
+      text-decoration: none;
+      overflow: hidden;
+    }
+
+    .btn-dobra-cta:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 18px 45px rgba(198, 165, 99, 0.55);
+    }
+
+    .subtext-group {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .subtext-item {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: #94A3B8;
+      letter-spacing: 0.02em;
+    }
+
+    /* Card Box sofisticado para parágrafos das Dobras */
+    .dobra-content-card {
+      position: relative;
+      background: rgba(13, 27, 42, 0.65);
+      border: 1px solid rgba(198, 165, 99, 0.25);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 36px;
+      transition: var(--transition);
+    }
+
+    .dobra-content-card:hover {
+      border-color: rgba(198, 165, 99, 0.45);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(198, 165, 99, 0.15);
+    }
+
+    .dobra-content-card.feature-card-accent {
+      border-left: 4px solid var(--gold);
+    }
+
+    .dobra-content-card.story-card {
+      background: linear-gradient(145deg, rgba(13, 27, 42, 0.8), rgba(31, 64, 55, 0.3));
+    }
+
+    .dobra-content-card.final-card {
+      background: linear-gradient(145deg, rgba(31, 64, 55, 0.4), rgba(13, 27, 42, 0.8));
+    }
+
+    .dobra-content-card p {
+      font-size: 16.5px;
+      color: #CBD5E1;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .dobra-content-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .dobra-content-card p strong {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    /* Estilos específicos de plano de fundo por Dobra */
+    /* DOBRA 01 */
+    #dobra-01 {
+      padding-top: 110px;
+      padding-bottom: 110px;
+      background: linear-gradient(180deg, rgba(6, 14, 23, 0.75) 0%, rgba(6, 14, 23, 0.85) 100%),
+                  url("ChatGPT Image 28 de ago. de 2026, 15_52_02.png") center/cover no-repeat;
+    }
+
+    /* DOBRA 02 */
+    #dobra-02 {
+      background: rgba(13, 27, 42, 0.4);
+    }
+
+    /* DOBRA 03 */
+    #dobra-03 {
+      background: radial-gradient(120% 120% at 20% 30%, var(--forest-dark) 0%, var(--navy-deep) 70%);
+    }
+
+    /* DOBRA 04 */
+    #dobra-04 {
+      background: rgba(8, 17, 27, 0.6);
+    }
+
+    /* DOBRA 05 */
+    #dobra-05 {
+      background: radial-gradient(110% 110% at 50% 100%, var(--forest) 0%, var(--navy-deep) 80%);
+      padding-bottom: 120px;
+    }
+
+    .disclaimer-box {
+      margin-top: 28px;
+      padding: 20px 24px;
+      background: rgba(6, 14, 23, 0.7);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+      font-size: 13px;
+      color: #94A3B8;
+      line-height: 1.6;
+      border-top: 1px solid rgba(198, 165, 99, 0.1);
+      border-right: 1px solid rgba(198, 165, 99, 0.1);
+      border-bottom: 1px solid rgba(198, 165, 99, 0.1);
+    }
+
+    /* Dobra Quem Somos */
+    .badge-quem-somos {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy-deep);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 8px 22px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(198, 165, 99, 0.35);
+      letter-spacing: 0.02em;
+    }
+
+    .qs-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 24px;
+      margin-bottom: 32px;
+    }
+
+    .qs-highlight-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--gold-light);
+      font-weight: 500;
+      background: rgba(13, 27, 42, 0.6);
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(198, 165, 99, 0.22);
+      transition: var(--transition);
+    }
+
+    .qs-highlight-item:hover {
+      border-color: var(--gold);
+      background: rgba(13, 27, 42, 0.85);
+      transform: translateY(-2px);
+    }
+
+    .qs-highlight-item svg {
+      width: 16px;
+      height: 16px;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       MODAL DE CAPTURA DO LEAD
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 14, 23, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-container {
+      background: var(--bg-card);
+      color: var(--text-dark);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: 0 35px 90px rgba(0,0,0,0.6);
+      position: relative;
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      border-top: 5px solid var(--gold);
+    }
+
+    .modal-overlay.active .modal-container {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(0,0,0,0.05);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(0,0,0,0.1);
+      color: var(--text-dark);
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .modal-header .modal-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--forest);
+      background: rgba(31, 64, 55, 0.12);
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      color: var(--navy-deep);
+      margin-bottom: 8px;
+    }
+
+    .modal-header p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-dark);
+      background-color: #F8FAFC;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--gold-dark);
+      background-color: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(198, 165, 99, 0.18);
+    }
+
+    .form-error {
+      font-size: 11.5px;
+      color: var(--urgent);
+      margin-top: 6px;
+      display: none;
+    }
+
+    .form-group.has-error .form-control {
+      border-color: var(--urgent);
+    }
+
+    .form-group.has-error .form-error {
+      display: block;
+    }
+
+    .btn-submit-form {
+      position: relative;
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold) 55%, var(--gold-dark));
+      color: var(--navy-deep);
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 15.5px;
+      cursor: pointer;
+      margin-top: 12px;
+      box-shadow: 0 10px 25px rgba(198, 165, 99, 0.4);
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-submit-form:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(198, 165, 99, 0.55);
+    }
+
+    .form-privacy-note {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    footer.site-footer {
+      background: var(--navy-deep);
+      border-top: 1px solid rgba(244, 242, 237, 0.1);
+      padding: 48px 24px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: #64748B;
+      margin-bottom: 8px;
+    }
+
+    .footer-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold-dark);
+      letter-spacing: 0.05em;
+    }
+
+    /* Scroll Reveal suave */
+    .reveal {
+      opacity: 0;
+      transform: translateY(35px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal.reveal-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsividade */
+    @media (max-width: 900px) {
+      .container-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+      .dobra-section {
+        padding: 70px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Textura de Fundo Avvento -->
+  <div class="bg-linework">
+    <svg width="600" height="600" viewBox="0 0 600 600">
+      <polygon points="300,20 580,550 20,550" fill="none" stroke="#C6A563" stroke-width="1.5"/>
+      <polygon points="300,140 480,500 120,500" fill="none" stroke="#C6A563" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="brand-logo">
+        <img src="LOGO-AVVENTOpng-1344x1536.webp" alt="Avvento Consult Logo" class="brand-logo-img">
+        <div class="brand-logo-text">
+          <span class="brand-title">Avvento Consult</span>
+          <span class="brand-sub">Inteligência Tributária</span>
+        </div>
+      </a>
+
+      <button class="btn-header-cta" onclick="openLeadModal()">
+        Calcular Minha Estimativa
+        <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="30" pathLength="100"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- DOBRA 01 -->
+  <section class="dobra-section" id="dobra-01">
+    <div class="container reveal">
+      <div class="dobra-text-col">
+        <h1 class="dobra-title">Descubra quanto sua empresa tem a recuperar.</h1>
+        
+        <p class="dobra-subtitle">
+          Em 2 minutos, estime o valor pago a mais ao Sistema S com dados da sua empresa consultados junto à Receita Federal.
+        </p>
+
+        <ul class="dobra-bullets">
+          <li>
+            <span class="bullet-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>Tese juridicamente consolidada.</span>
+          </li>
+          <li>
+            <span class="bullet-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>Valor estimado atualizado pela SELIC.</span>
+          </li>
+          <li>
+            <span class="bullet-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>Sem custo para simular.</span>
+          </li>
+        </ul>
+
+        <div class="cta-wrapper">
+          <button class="btn-dobra-cta" onclick="openLeadModal()">
+            CALCULAR MINHA ESTIMATIVA
+            <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+          </button>
+        </div>
+
+        <div class="subtext-group">
+          <span class="subtext-item">• Para empresas do Lucro Real ou Lucro Presumido.</span>
+          <span class="subtext-item">• Simulação estimativa e sem compromisso.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 02 -->
+  <section class="dobra-section" id="dobra-02">
+    <div class="container reveal">
+      <h2 class="dobra-title">Sua empresa pode ter pago mais do que deveria ao Sistema&nbsp;S.</h2>
+
+      <div class="dobra-content-card feature-card-accent">
+        <p>Empresas do Lucro Real ou Presumido recolhem contribuições para entidades como <strong>SESI, SENAI, SEBRAE, SESC e SENAC</strong>, calculadas sobre a folha de pagamento.</p>
+        <p>Uma tese jurídica consolidada reconhece a aplicação de um <strong>teto de 20 salários mínimos</strong> para esse cálculo.</p>
+        <p>Na prática, se sua empresa recolheu acima desse limite, pode existir um valor a recuperar.</p>
+        <p>A calculadora estima quanto isso pode representar para o seu negócio.</p>
+      </div>
+
+      <div class="cta-wrapper">
+        <button class="btn-dobra-cta" onclick="openLeadModal()">
+          CALCULAR MINHA ESTIMATIVA
+          <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 03 -->
+  <section class="dobra-section" id="dobra-03">
+    <div class="container reveal">
+      <h2 class="dobra-title">Não é uma simulação genérica. É uma estimativa da sua empresa.</h2>
+
+      <div class="dobra-content-card">
+        <p>A calculadora utiliza o CNPJ para identificar sua empresa e consultar seus dados junto à Receita Federal.</p>
+        <p>A partir daí, você complementa apenas as informações necessárias para a estimativa e com esses dados, a ferramenta calcula uma estimativa do valor que sua empresa pode ter a recuperar.</p>
+        <p><strong>Em 2 minutos, sem custo e sem compromisso.</strong></p>
+      </div>
+
+      <div class="cta-wrapper">
+        <button class="btn-dobra-cta" onclick="openLeadModal()">
+          CALCULAR MINHA ESTIMATIVA
+          <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA QUEM SOMOS -->
+  <section class="dobra-section" id="dobra-quem-somos">
+    <div class="container container-grid reveal">
+      <div class="dobra-text-col">
+        <span class="badge-quem-somos">Quem somos</span>
+        <h2 class="dobra-title">Estratégia empresarial com o respaldo de uma sociedade de advogados</h2>
+
+        <div class="dobra-content-card">
+          <p>A Avvento Consult nasce como um braço estratégico da DES | Diógenes Eleutério & Souza Advogados, sociedade constituída em 1980, em Campinas/SP, com atuação em todo o território nacional. Unimos análise financeira, planejamento tributário e respaldo jurídico para auxiliar empresas na redução de riscos, identificação de oportunidades e tomada de decisões mais estratégicas e seguras.</p>
+        </div>
+
+        <div class="qs-highlights">
+          <div class="qs-highlight-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+            <span>OAB/SP nº 494769</span>
+          </div>
+          <div class="qs-highlight-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>+30 anos de trajetória jurídica</span>
+          </div>
+          <div class="qs-highlight-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span>Atuação em todo o Brasil</span>
+          </div>
+        </div>
+
+        <div class="cta-wrapper">
+          <button class="btn-dobra-cta" onclick="openLeadModal()">
+            QUERO SER UM CLIENTE
+            <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="dobra-img-col">
+        <div class="img-frame">
+          <img src="DESADVESCRITORIO.webp" alt="DES | Diógenes Eleutério & Souza Advogados Escritório" class="dobra-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA DRA. GIOVANNA MORAES DE SOUZA -->
+  <section class="dobra-section" id="dobra-giovanna">
+    <div class="container container-grid reveal">
+      <div class="dobra-img-col">
+        <div class="img-frame">
+          <img src="IMAGEM-AVVENTO-CONSULT-_1_.webp" alt="Dra. Giovanna Moraes de Souza - Sócia Avvento Consult" class="dobra-img">
+        </div>
+      </div>
+
+      <div class="dobra-text-col">
+        <span class="badge-quem-somos">Quem conduz sua estratégia</span>
+        <h2 class="dobra-title" style="margin-bottom: 8px;">Dra. Giovanna Moraes de Souza</h2>
+        <p style="font-size: 15px; font-weight: 700; color: var(--gold-light); margin-bottom: 20px;">Sócia. Consultoria empresarial e tributária</p>
+
+        <div class="dobra-content-card" style="margin-bottom: 24px;">
+          <p>Advogada especializada em consultoria empresarial e tributária, com foco em eficiência fiscal, governança e gestão de riscos. Formada em Direito pela PUC-SP, com menção honrosa, e pós-graduada em Penal Econômico pela FGV, Giovanna lidera projetos de:</p>
+          
+          <ul style="list-style: none; padding-left: 0; margin: 14px 0; display: flex; flex-direction: column; gap: 8px;">
+            <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15.5px; color: #CBD5E1;">
+              <span style="color: var(--gold); font-weight: bold;">•</span> Planejamento tributário e societário;
+            </li>
+            <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15.5px; color: #CBD5E1;">
+              <span style="color: var(--gold); font-weight: bold;">•</span> Revisão de regimes e incentivos fiscais;
+            </li>
+            <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15.5px; color: #CBD5E1;">
+              <span style="color: var(--gold); font-weight: bold;">•</span> Estruturação e reorganização empresarial;
+            </li>
+            <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15.5px; color: #CBD5E1;">
+              <span style="color: var(--gold); font-weight: bold;">•</span> Programas de compliance e governança;
+            </li>
+            <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15.5px; color: #CBD5E1;">
+              <span style="color: var(--gold); font-weight: bold;">•</span> Blindagem penal-econômica (PLD, investigações internas e resposta a crises).
+            </li>
+          </ul>
+
+          <p>Atua como sócia da DES | Diógenes Eleutério & Souza Advogados, entregando soluções completas: diagnóstico fiscal, matriz de riscos, plano de ação, resposta a incidentes e treinamentos estratégicos para times de liderança, fiscal e contábil.</p>
+          <p>Sua abordagem une segurança jurídica, clareza estratégica e gestão de riscos, contribuindo para uma atuação empresarial sustentável e livre de litígios desnecessários.</p>
+        </div>
+
+        <div class="cta-wrapper">
+          <button class="btn-dobra-cta" onclick="openLeadModal()">
+            QUERO SER UM CLIENTE
+            <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA CONTEÚDO TORNAR SIMPLES -->
+  <section class="dobra-section" id="dobra-04">
+    <div class="container reveal" style="max-width: 850px; text-align: center;">
+      <h2 class="dobra-title">Tornar simples o que é complexo.</h2>
+
+      <div class="dobra-content-card story-card" style="text-align: left;">
+        <p>A Avvento Consult nasceu da união entre profissionais do Direito e empresários com mais de 30 anos de experiência de mercado.</p>
+        <p>Uma consultoria voltada à otimização tributária, previdenciária, fiscal e mercadológica, com uma premissa simples: <strong>transformar temas complexos em decisões simplificadas que façam sentido para a empresa.</strong></p>
+        <p>A Calculadora Sistema S segue essa mesma lógica.</p>
+        <p>Você não precisa interpretar a tese jurídica. Precisa apenas descobrir se existe uma oportunidade que merece ser analisada.</p>
+        <p>E, caso queira avançar depois da simulação, poderá falar diretamente com um consultor Avvento.</p>
+      </div>
+
+      <div class="cta-wrapper">
+        <button class="btn-dobra-cta" onclick="openLeadModal()">
+          CALCULAR MINHA ESTIMATIVA
+          <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 05 -->
+  <section class="dobra-section" id="dobra-05">
+    <div class="container reveal">
+      <h2 class="dobra-title">Vale a pena entender quanto isso pode representar para a sua empresa.</h2>
+
+      <div class="dobra-content-card final-card">
+        <p>A Calculadora Sistema S oferece uma primeira estimativa do valor potencialmente recuperável, de forma simples e em cerca de 2 minutos.</p>
+        <p><strong>Sem custo para simular. Sem compromisso.</strong></p>
+      </div>
+
+      <div class="cta-wrapper">
+        <button class="btn-dobra-cta" onclick="openLeadModal()">
+          CALCULAR MINHA ESTIMATIVA
+          <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="14" pathLength="100"/></svg>
+        </button>
+      </div>
+
+      <div class="subtext-group" style="margin-top: 24px;">
+        <span class="subtext-item">• Disponível para empresas do Lucro Real ou Lucro Presumido.</span>
+      </div>
+
+      <div class="disclaimer-box">
+        A simulação possui caráter estimativo e educativo. Não constitui cálculo pericial, parecer jurídico ou garantia de recuperação.
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE FORMULÁRIO PARA LIBERAR A CALCULADORA -->
+  <div class="modal-overlay" id="leadModal">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeLeadModal()">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-badge">Acesso à Ferramenta</span>
+        <h3>Liberar Calculadora Sistema S</h3>
+        <p>Preencha os dados de contato abaixo para acessar a calculadora.</p>
+      </div>
+
+      <form id="leadForm" onsubmit="handleLeadSubmit(event)">
+        <div class="form-group" id="groupName">
+          <label for="leadName">Seu Nome Completo</label>
+          <input type="text" id="leadName" class="form-control" placeholder="Ex: Roberto Silva" required>
+          <span class="form-error">Por favor, informe seu nome completo.</span>
+        </div>
+
+        <div class="form-group" id="groupEmail">
+          <label for="leadEmail">E-mail Corporativo</label>
+          <input type="email" id="leadEmail" class="form-control" placeholder="roberto@suaempresa.com.br" required>
+          <span class="form-error">Informe um e-mail válido.</span>
+        </div>
+
+        <div class="form-group" id="groupPhone">
+          <label for="leadPhone">Telefone / WhatsApp</label>
+          <input type="tel" id="leadPhone" class="form-control" placeholder="(00) 00000-0000" maxlength="15" required>
+          <span class="form-error">Informe um número de telefone com DDD.</span>
+        </div>
+
+        <button type="submit" class="btn-submit-form" id="btnSubmit">
+          Calcular Minha Estimativa →
+          <svg class="btn-border-svg"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="12" pathLength="100"/></svg>
+        </button>
+
+        <p class="form-privacy-note">
+          🔒 Respeitamos sua privacidade. Seus dados serão utilizados apenas para liberar seu acesso.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <p class="footer-text">
+        © 2026 Avvento Consult. Todos os direitos reservados.
+      </p>
+      <p class="footer-sub">
+        Soluções Corporativas em Planejamento Fiscal e Recuperação Tributária.
+      </p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT DE INTERAÇÃO E REDIRECIONAMENTO -->
+  <script>
+    const GOOGLE_SHEETS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwOKuAJ583BAWYfX81P79HDHoJUCwusIcMGYkpeEwCMgL9VvAdEN6RdU5PNDawpCA27/exec';
+
+    function enviarDadosParaGoogleSheets(url, dataObj) {
+      if (!url || url.indexOf('http') !== 0) return;
+      try {
+        fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(dataObj)
+        }).catch(function() {});
+      } catch (e) {}
+
+      try {
+        var iframeName = 'iframe_sheets_' + Math.floor(Math.random() * 100000);
+        var iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+        form.target = iframeName;
+
+        for (var key in dataObj) {
+          if (dataObj.hasOwnProperty(key)) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = typeof dataObj[key] === 'object' ? JSON.stringify(dataObj[key]) : dataObj[key];
+            form.appendChild(input);
+          }
+        }
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(function() {
+          try { document.body.removeChild(form); } catch(err){}
+          try { document.body.removeChild(iframe); } catch(err){}
+        }, 2500);
+      } catch (err) {}
+    }
+
+    // Abrir e fechar Modal
+    function openLeadModal() {
+      document.getElementById('leadModal').classList.add('active');
+    }
+
+    function closeLeadModal() {
+      document.getElementById('leadModal').classList.remove('active');
+    }
+
+    // Fechar ao clicar fora
+    document.getElementById('leadModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeLeadModal();
+      }
+    });
+
+    // Máscara de Telefone
+    document.getElementById('leadPhone').addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.slice(0, 11);
+      v = v.replace(/^(\d{2})(\d)/, '($1) $2');
+      v = v.replace(/(\d{5})(\d)/, '$1-$2');
+      e.target.value = v;
+    });
+
+    // Envio do Formulário de Lead
+    function handleLeadSubmit(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('leadName').value.trim();
+      const email = document.getElementById('leadEmail').value.trim();
+      const phone = document.getElementById('leadPhone').value.trim();
+
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const phoneDigits = phone.replace(/\D/g, '');
+
+      document.getElementById('groupName').classList.toggle('has-error', name.length < 3);
+      document.getElementById('groupEmail').classList.toggle('has-error', !emailValid);
+      document.getElementById('groupPhone').classList.toggle('has-error', phoneDigits.length < 10);
+
+      if (name.length < 3 || !emailValid || phoneDigits.length < 10) {
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.textContent = 'Liberando acesso...';
+
+      // Enviar Lead para o Google Sheets / Webhook
+      enviarDadosParaGoogleSheets(GOOGLE_SHEETS_ENDPOINT, {
+        tipo: 'lead_apresentacao_calculadora',
+        nome: name,
+        email: email,
+        telefone: phone,
+        dataHora: new Date().toISOString()
+      });
+
+      // Guardar localmente
+      localStorage.setItem('avvento_lead_name', name);
+      localStorage.setItem('avvento_lead_email', email);
+      localStorage.setItem('avvento_lead_phone', phone);
+
+      // Redireciona para a calculadora
+      setTimeout(() => {
+        window.location.href = 'calculadora.html';
+      }, 400);
+    }
+
+    // Scroll Reveal
+    document.addEventListener('DOMContentLoaded', function() {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px 0px -50px 0px',
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+
+</body>
+</html>
