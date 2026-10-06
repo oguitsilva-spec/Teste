@@ -11,10 +11,10 @@ Estúdio fitness premium em Bauru (SP). O Guilherme produz a estratégia e o con
 ## Pilares (calendário Out a Dez/2026, planilha `Calendario_Conteudo_Maikai_OutNovDez_2026.xlsx`)
 
 1. **Body Mind**: lado do processo e do atendimento. Avaliação física, montagem de treino individualizada, aulas coletivas inclusas no plano.
-2. **Aulas de Ginástica**: uma modalidade por semana, cada uma com vídeo próprio. A planilha lista Fire Bike, Maicycle, Yoga, Boxe, Glute Zone e Mat Pilates. MaiRun e MaiDance também existem como nomes de marca; confirmar com o Guilherme se seguem na grade.
+2. **Aulas de Ginástica**: uma modalidade por semana, cada uma com vídeo próprio. A planilha lista Fire Bike, Maicycle, Yoga, Boxe, Glute Zone e Mat Pilates. MaiRun e MaiDance seguem na grade (confirmado pelo Guilherme em 06/10/2026).
 3. **Espaço Maikai**: estrutura como diferencial. Estacionamento próprio, vestiários, Abs Zone (alongamento e mobilidade), sala integrada (musculação + funcional + mobilidade), luz natural.
 4. **Comunidade & Exclusividade**: bastidores da equipe, depoimentos de alunos, reaproveitamento do evento Nas Alturas (10 anos da Maikai, 11/09/2026, Edifício Next, Bauru).
-5. **Unique**: plano com personal certificado pela própria Maikai, nutricionista integrado e flexibilidade de horário. O aluno avisa que está indo e a Maikai deixa um personal pronto esperando, no horário dele e não no do profissional. Historicamente o Unique também foi comunicado com fisioterapia e massoterapia; confirmar antes de citar de novo.
+5. **Unique**: plano com personal certificado pela própria Maikai, nutricionista integrado e flexibilidade de horário. O aluno avisa que está indo e a Maikai deixa um personal pronto esperando, no horário dele e não no do profissional. O Unique também inclui fisioterapia e massoterapia, que podem ser citadas (confirmado pelo Guilherme em 06/10/2026).
 
 ## Cadência e formatos
 
