@@ -7,22 +7,15 @@ Três primeiros posts da semana 3 do calendário. Copy revisada pela skill `huma
 ## Post 1. Segunda, 12/10. Body Mind
 
 Subtema: aulas de ginástica inclusas no plano
-Formato: carrossel (foto), 10 cards
+Formato: carrossel (foto), 3 cards
 
 ### Cards
 
 | Card | Foto | Texto |
 |---|---|---|
-| 1 (capa) | Mosaico ou plano aberto de uma aula cheia | Oito aulas. / Nenhuma à parte. |
-| 2 | Fire Bike, turma pedalando | Fire Bike. / A música manda no pedal. |
-| 3 | Maicycle | Maicycle. / Giro após giro, a cabeça esvazia. |
-| 4 | Yoga, luz natural | Yoga. / Respirar também é treino. |
-| 5 | Boxe, luva em close | Boxe. / O resto do dia fica do lado de fora. |
-| 6 | Glute Zone | Glute Zone. / Uma série de cada vez. |
-| 7 | Mat Pilates | Mat Pilates. / Força que ninguém vê. |
-| 8 | MaiRun | MaiRun. / Um passo puxa o outro. |
-| 9 | MaiDance | MaiDance. / Suar sem perceber. |
-| 10 (fechamento) | Sala vazia, pronta para a aula | Tudo isso já está no seu plano. / A gente guarda um lugar pra você. |
+| 1 (capa) | Mosaico ou plano aberto de uma aula cheia | 8 modalidades. / Nenhuma à parte. |
+| 2 | Fundo escuro ou foto discreta de aula | Fire Bike / Maicycle / Yoga / Boxe / Glute Zone / Mat Pilates / MaiRun / MaiDance |
+| 3 (fechamento) | Sala vazia, pronta para a aula | Tudo isso já está no seu plano. |
 
 ### Legenda
 
@@ -33,8 +26,7 @@ As aulas coletivas da Maikai já vêm no seu plano, sem custo à parte. Você s�
 ### Produção
 
 - O calendário listava 6 modalidades. O carrossel usa as 8, com MaiRun e MaiDance.
-- Fotos do acervo das semanas 1 e 2. Glute Zone, Mat Pilates, MaiRun e MaiDance provavelmente ainda não têm foto boa: conferir e, se faltar, fotografar no fim de uma aula nesta semana.
-- Mesmo tratamento de cor em todos os cards, para o carrossel ler como série.
+- Arte em `carrossel-aulas-inclusas/` (versão com fundo escuro em `out/` e só texto e logo em `out-transparente/`).
 
 ---
 
