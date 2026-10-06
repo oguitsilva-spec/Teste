@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Maikai | Aulas inclusas no plano</title>
+<!-- Fonte de marca: Praktica Rounded. Coloque os arquivos em fontes/ com os nomes abaixo.
+     Sem eles, o carrossel usa a Lexend (Google Fonts) como reserva. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 400; font-style: normal;
+    src: local('Praktica Rounded'), local('PrakticaRounded-Regular'), url('fontes/PrakticaRounded-Regular.otf'); }
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 400; font-style: italic;
+    src: local('Praktica Rounded Italic'), local('PrakticaRounded-Italic'), url('fontes/PrakticaRounded-Italic.otf'); }
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 700; font-style: normal;
+    src: local('Praktica Rounded Bold'), local('PrakticaRounded-Bold'), url('fontes/PrakticaRounded-Bold.otf'); }
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 700; font-style: italic;
+    src: local('Praktica Rounded Bold Italic'), local('PrakticaRounded-BoldItalic'), url('fontes/PrakticaRounded-BoldItalic.otf'); }
+
+  :root {
+    --bg: #141416;
+    --fg: #ffffff;
+    --muted: rgba(255,255,255,.72);
+    --destaque: #c9a27a;
+    --fonte: 'Praktica Rounded', 'Lexend', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #000; font-family: var(--fonte); color: var(--fg);
+         display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+
+  .slide { position: relative; width: 1080px; height: 1350px; overflow: hidden; background: var(--bg); }
+
+  /* Foto: coloque o arquivo em fotos/ com o nome indicado em cada slide. Sem foto, fica o fundo escuro. */
+  .foto { position: absolute; inset: 0; background: var(--bg) center / cover no-repeat; background-image: var(--img); }
+  .sombra { position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,10,12,.55) 0%, rgba(10,10,12,0) 22%, rgba(10,10,12,0) 45%, rgba(10,10,12,.78) 78%, rgba(10,10,12,.92) 100%); }
+  .grao { position: absolute; inset: 0; opacity: .10; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+  .topo { position: absolute; top: 34px; left: 64px; right: 64px; display: flex; justify-content: space-between;
+          font-size: 26px; letter-spacing: .08em; font-weight: 400; color: var(--fg); text-transform: lowercase; }
+
+  .texto { position: absolute; left: 96px; right: 96px; top: 860px; text-transform: uppercase;
+           font-size: 54px; line-height: 1.12; letter-spacing: .03em; font-weight: 400; }
+  .texto .nome { display: block; color: var(--destaque); font-weight: 700; margin-bottom: 6px; }
+  .texto em { font-style: italic; font-weight: 700; }
+  .texto .apoio { display: block; margin-top: 28px; text-transform: none; font-size: 40px; letter-spacing: .01em;
+                  line-height: 1.25; color: var(--muted); }
+
+  .logo { position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); width: 236px; }
+
+  /* Versão só com texto e logo, para aplicar por cima da foto em outro programa. */
+  body.transparente { background: transparent; }
+  body.transparente .slide, body.transparente .foto { background: transparent; }
+  body.transparente .foto, body.transparente .sombra, body.transparente .grao { display: none; }
+</style>
+</head>
+<body>
+
+<!-- 1. Capa -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/01-capa.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Oito aulas.</span>Nenhuma <em>à parte</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 2. Fire Bike -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/02-fire-bike.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Fire Bike.</span>A música manda<br>no <em>pedal</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 3. Maicycle -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/03-maicycle.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Maicycle.</span>Giro após giro,<br>a cabeça <em>esvazia</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 4. Yoga -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/04-yoga.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Yoga.</span>Respirar também<br>é <em>treino</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 5. Boxe -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/05-boxe.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Boxe.</span>O resto do dia fica<br>do lado de <em>fora</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 6. Glute Zone -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/06-glute-zone.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Glute Zone.</span>Uma série<br>de cada <em>vez</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 7. Mat Pilates -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/07-mat-pilates.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Mat Pilates.</span>Força que<br>ninguém <em>vê</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 8. MaiRun -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/08-mairun.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">MaiRun.</span>Um passo puxa<br>o <em>outro</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 9. MaiDance -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/09-maidance.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">MaiDance.</span>Suar sem<br><em>perceber</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+<!-- 10. Fechamento -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/10-fechamento.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto" style="top: 800px">Tudo isso já está<br>no seu <em>plano</em>.<span class="apoio">A gente guarda um lugar pra você.</span></div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+
+</body>
+</html>
