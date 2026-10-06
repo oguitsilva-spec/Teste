@@ -33,59 +33,51 @@ As aulas coletivas da Maikai já vêm no seu plano, sem custo à parte. Você s�
 ## Post 2. Terça, 13/10. Aulas de Ginástica
 
 Subtema: Yoga
-Formato: Reels filmado, sem fala, cerca de 25 s, 9:16
+Formato: estático (foto), 1080x1350
 
-### Roteiro
+### Texto na arte
 
-| Cena | Tempo | Imagem | Texto na tela |
-|---|---|---|---|
-| 1 | 0 a 2 s | Corte rápido de Fire Bike em ritmo forte, com o som real da aula | (sem texto) |
-| 2 | 2 a 6 s | Corte seco para o silêncio. Sala de Yoga vazia, luz natural, tapetes alinhados | Depois do barulho, |
-| 3 | 6 a 10 s | Close de mãos e pés apoiados no tapete | o corpo pede outra coisa. |
-| 4 | 10 a 15 s | Turma em movimento lento, contraluz | Aqui, ninguém tem pressa. |
-| 5 | 15 a 20 s | Close de um rosto de olhos fechados, respirando | Tem força que só aparece quando você para. |
-| 6 | 20 a 25 s | Plano aberto, turma em relaxamento final, luz entrando | Seu tapete está esperando. |
-
-Lettering final: Yoga | Maikai
+Yoga. / Tem força que só aparece quando você para.
 
 ### Legenda
 
-Tem dia pra acelerar e tem dia pra respirar fundo. O Yoga da Maikai é desse segundo tipo, com a luz natural entrando pela sala e o tempo que o seu corpo pedir.
+Tem dia pra acelerar e tem dia pra respirar fundo. O Yoga da Maikai é desse segundo tipo.
 
-Já vem no seu plano.
+A luz natural entra pela sala e a turma desacelera junto, sem pressa de chegar a lugar nenhum. A diferença costuma aparecer no resto da semana.
+
+Já vem no seu plano. Seu tapete está esperando.
 
 ### Produção
 
-- O som alto da Fire Bike na cena 1 é a exceção proposital à trilha baixa. A partir do corte da cena 2, só a trilha instrumental, bem baixa.
-- Gravar de manhã, pela luz natural. Câmera estável, movimentos lentos, nada de corte rápido depois da cena 1.
-- A cena 1 pode sair do material de Fire Bike da semana 1.
-- Autorização de imagem para o close da cena 5.
+- Foto de manhã, com luz natural: turma em postura parada ou um close de rosto de olhos fechados (com autorização).
+- Arte em `estatico-yoga/` (fundo escuro em `out/`, só texto e logo em `out-transparente/`). Foto em `fotos/yoga.jpg`.
 
 ---
 
-## Post 3. Quarta, 14/10. Espaço Maikai
+## Post 3. Quarta, 14/10. Unique
 
-Subtema: sala integrada (musculação, funcional e mobilidade)
-Formato: Reels filmado, sem fala, cerca de 22 s, 9:16
+Subtema: o plano inteiro (personal, nutrição, fisioterapia, massoterapia, horário)
+Formato: carrossel (foto), 6 cards
 
-### Roteiro
+### Cards
 
-| Cena | Tempo | Imagem | Texto na tela |
-|---|---|---|---|
-| 1 | 0 a 3 s | Plano alto e aberto da sala cheia, timelapse curto | Cada um chegou com um plano. |
-| 2 | 3 a 7 s | Musculação: close de uma anilha sendo encaixada na barra | Tem quem venha pela carga. |
-| 3 | 7 a 11 s | Whip pan para o funcional: kettlebell, corda ou caixa | Tem quem venha pelo movimento. |
-| 4 | 11 a 16 s | Mobilidade: aluno no tapete ou no rolo, ritmo mais calmo | No fim, todo mundo passa por aqui. |
-| 5 | 16 a 22 s | Câmera recua em movimento contínuo e mostra as áreas em uso ao mesmo tempo | Um espaço só. / Cada treino no seu ritmo. |
+| Card | Foto | Texto |
+|---|---|---|
+| 1 (capa) | Aluno chegando, mochila no ombro, celular na mão | Você / avisa. |
+| 2 | Personal esperando na sala, equipamento pronto | A Maikai / prepara. / Um personal pronto, esperando no seu horário. |
+| 3 | Personal corrigindo um movimento | Personal / certificado. / Formado pela própria Maikai. |
+| 4 | Nutricionista em atendimento | Nutrição / junto. / A nutricionista acompanha o mesmo plano do seu treino. |
+| 5 | Fisioterapia ou massoterapia | Fisio e / massoterapia. / Recuperar também faz parte. |
+| 6 (fechamento) | Aluno treinando com o personal | O tempo / é seu. |
 
 ### Legenda
 
-Na sala integrada, a musculação divide o espaço com o funcional e a área de mobilidade. Você termina o agachamento, pega o kettlebell e fecha o treino no tapete sem trocar de sala.
+No Unique, você avisa que está indo e um personal certificado pela Maikai já te espera, no seu horário. A nutricionista acompanha o mesmo plano, e fisioterapia e massoterapia entram quando o corpo pede.
 
-Vem ver de perto.
+O tempo é seu. A gente organiza o resto.
 
 ### Produção
 
-- Filmar no horário de pico, para a sala aparecer de verdade em uso.
-- Combinar antes com 3 ou 4 alunos (com autorização) para ocupar cada área no momento da tomada final.
-- A cena 5 funciona melhor com gimbal ou celular estabilizado, num movimento só, sem corte.
+- Mesmo estilo do post "Você treina": linha leve em branco, palavra forte em bronze itálico, assinatura UNIQUE no rodapé.
+- Arte em `carrossel-unique/`. Fotos em `fotos/` com os nomes `01-capa.jpg` a `06-fechamento.jpg`.
+- A assinatura UNIQUE foi remontada com o sol da logo e o texto na fonte da marca. Se existir um arquivo oficial da logo Unique, trocar.

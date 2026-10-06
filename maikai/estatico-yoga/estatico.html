@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Maikai | Yoga</title>
+<!-- Fonte de marca: Praktica Rounded. Coloque os arquivos em fontes/ com os nomes abaixo.
+     Sem eles, o carrossel usa a Lexend (Google Fonts) como reserva. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 400; font-style: normal;
+    src: local('Praktica Rounded'), local('PrakticaRounded-Regular'), url('fontes/PrakticaRounded-Regular.otf'); }
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 400; font-style: italic;
+    src: local('Praktica Rounded Italic'), local('PrakticaRounded-Italic'), url('fontes/PrakticaRounded-Italic.otf'); }
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 700; font-style: normal;
+    src: local('Praktica Rounded Bold'), local('PrakticaRounded-Bold'), url('fontes/PrakticaRounded-Bold.otf'); }
+  @font-face { font-family: 'Praktica Rounded'; font-weight: 700; font-style: italic;
+    src: local('Praktica Rounded Bold Italic'), local('PrakticaRounded-BoldItalic'), url('fontes/PrakticaRounded-BoldItalic.otf'); }
+
+  :root {
+    --bg: #141416;
+    --fg: #ffffff;
+    --muted: rgba(255,255,255,.72);
+    --destaque: #c9a27a;
+    --fonte: 'Praktica Rounded', 'Lexend', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #000; font-family: var(--fonte); color: var(--fg);
+         display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+
+  .slide { position: relative; width: 1080px; height: 1350px; overflow: hidden; background: var(--bg); }
+
+  /* Foto: coloque o arquivo em fotos/ com o nome indicado em cada slide. Sem foto, fica o fundo escuro. */
+  .foto { position: absolute; inset: 0; background: var(--bg) center / cover no-repeat; background-image: var(--img); }
+  .sombra { position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,10,12,.55) 0%, rgba(10,10,12,0) 22%, rgba(10,10,12,0) 45%, rgba(10,10,12,.78) 78%, rgba(10,10,12,.92) 100%); }
+  .grao { position: absolute; inset: 0; opacity: .10; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+  .topo { position: absolute; top: 34px; left: 64px; right: 64px; display: flex; justify-content: space-between;
+          font-size: 26px; letter-spacing: .08em; font-weight: 400; color: var(--fg); text-transform: lowercase; }
+
+  .texto { position: absolute; left: 96px; right: 96px; top: 860px; text-transform: uppercase;
+           font-size: 54px; line-height: 1.12; letter-spacing: .03em; font-weight: 400; }
+  .texto .nome { display: block; color: var(--destaque); font-weight: 700; margin-bottom: 6px; }
+  .texto em { font-style: italic; font-weight: 700; }
+  .texto .apoio { display: block; margin-top: 28px; text-transform: none; font-size: 40px; letter-spacing: .01em;
+                  line-height: 1.25; color: var(--muted); }
+
+  .lista { position: absolute; left: 96px; right: 96px; top: 380px; list-style: none;
+           font-size: 52px; letter-spacing: .03em; font-weight: 700; }
+  .lista li { padding: 14px 0; border-bottom: 2px solid rgba(201,162,122,.45); }
+  .lista li:last-child { border-bottom: 0; }
+
+  .logo { position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); width: 236px; }
+
+  /* Versão só com texto e logo, para aplicar por cima da foto em outro programa. */
+  body.transparente { background: transparent; }
+  body.transparente .slide, body.transparente .foto { background: transparent; }
+  body.transparente .foto, body.transparente .sombra, body.transparente .grao { display: none; }
+</style>
+</head>
+<body>
+<!-- Estático 13/10: Yoga -->
+<section class="slide">
+  <div class="foto" style="--img: url('fotos/yoga.jpg')"></div>
+  <div class="sombra"></div><div class="grao"></div>
+  <div class="topo"><span>trust</span><span>the</span><span>process</span></div>
+  <div class="texto"><span class="nome">Yoga.</span>Tem força que só<br>aparece quando<br>você <em>para</em>.</div>
+  <img class="logo" src="logo-maikai-negativo.png" alt="Maikai Body &amp; Mind">
+</section>
+</body>
+</html>
