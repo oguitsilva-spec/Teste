@@ -1,0 +1,85 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #0c0c0c; --card: #1a1a1a; --line: #2c2c2c; --orange: #ff7a00;
+        --orange-soft: #ffb066; --text: #ffffff; --muted: #b9b9b9; }
+html, body { width: 100%; height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+       -webkit-font-smoothing: antialiased; overflow: hidden; }
+.frame { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column;
+         padding: 90px 84px 80px; }
+.stories .frame { padding: 250px 84px 360px; }
+.glow { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(circle at 85% 8%, rgba(255,122,0,.22), transparent 45%),
+                    radial-gradient(circle at 0% 100%, rgba(255,122,0,.12), transparent 40%); }
+.brand { display: flex; align-items: center; gap: 16px; font-weight: 700; font-size: 30px;
+         letter-spacing: .5px; color: var(--muted); z-index: 1; }
+.brand .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--orange);
+              box-shadow: 0 0 24px var(--orange); }
+.main { flex: 1; display: flex; flex-direction: column; justify-content: center; z-index: 1; }
+h1 { font-weight: 900; font-size: 88px; line-height: 1.02; letter-spacing: -2px; }
+h1 em { font-style: normal; color: var(--orange); }
+.sub { margin-top: 34px; font-size: 38px; line-height: 1.35; color: var(--muted); font-weight: 500; }
+.sub b { color: var(--text); font-weight: 700; }
+.cta { z-index: 1; display: flex; align-items: center; justify-content: space-between;
+       background: var(--orange); color: #111; font-weight: 900; font-size: 34px;
+       letter-spacing: .5px; padding: 34px 44px; border-radius: 18px; text-transform: uppercase; }
+.cta .arrow { font-size: 44px; }
+.tag { display: inline-block; align-self: flex-start; background: rgba(255,122,0,.14);
+       color: var(--orange-soft); border: 2px solid rgba(255,122,0,.5); font-weight: 800;
+       font-size: 26px; letter-spacing: 3px; text-transform: uppercase; padding: 12px 22px;
+       border-radius: 999px; margin-bottom: 36px; }
+.stories h1 { font-size: 96px; }
+.stories .sub { font-size: 42px; }
+ html,body{width:1080px;height:1920px}</style></head><body class="stories">
+<style>
+.s3 .wrap { display: flex; align-items: center; gap: 30px; margin: 40px 0 10px; }
+.s3 .body { width: 560px; flex-shrink: 0; }
+.s3 .legend { display: flex; flex-direction: column; gap: 40px; }
+.s3 .item { font-size: 34px; font-weight: 700; line-height: 1.25; }
+.s3 .item small { display: block; font-size: 26px; font-weight: 500; color: var(--muted); margin-top: 6px; }
+.s3 .k { display: inline-block; width: 26px; height: 26px; border-radius: 50%; margin-right: 12px;
+          vertical-align: -3px; }
+.s3 .k.dor { border: 4px dashed #9a9a9a; }
+.s3 .k.ori { background: var(--orange); border: 4px solid #fff; }
+.s3 h1 { font-size: 84px; }
+.stories .s3 .wrap { flex-direction: column; }
+.stories .s3 .legend { flex-direction: row; gap: 50px; }
+</style>
+<div class="frame s3"><div class="glow"></div><div class="brand"><span class="dot"></span>SILÊNCIO NEURAL</div>
+<div class="main">
+  <h1>Onde dói <em>não é</em> onde começa.</h1>
+  <div class="wrap">
+<svg viewBox="0 0 400 560" class="body">
+  <defs>
+    <radialGradient id="pg" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ff7a00" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ff7a00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g fill="#2a2a2a" stroke="#3a3a3a" stroke-width="3">
+    <circle cx="200" cy="58" r="44"/>
+    <path d="M178 98 h44 v22 h-44z"/>
+    <path d="M110 128 Q200 104 290 128 L300 250 Q292 300 280 330 L120 330 Q108 300 100 250 Z"/>
+    <path d="M110 132 L70 160 L48 300 L72 304 L96 190 Z"/>
+    <path d="M290 132 L330 160 L352 300 L328 304 L304 190 Z"/>
+    <path d="M120 330 Q200 350 280 330 L290 400 Q200 430 110 400 Z"/>
+    <path d="M114 400 L196 418 L186 556 L128 556 Z"/>
+    <path d="M286 400 L204 418 L214 556 L272 556 Z"/>
+  </g>
+  <path d="M200 120 L200 400" stroke="#3d3d3d" stroke-width="4" stroke-dasharray="6 8"/>
+  <!-- dor: lombar -->
+  <circle cx="200" cy="282" r="42" fill="none" stroke="#9a9a9a" stroke-width="4" stroke-dasharray="8 7"/>
+  <!-- origem: glúteo médio -->
+  <circle cx="250" cy="372" r="46" fill="url(#pg)"/>
+  <circle cx="250" cy="372" r="13" fill="#ff7a00" stroke="#fff" stroke-width="4"/>
+  <path d="M250 372 Q240 330 220 312" stroke="#ff7a00" stroke-width="4" fill="none"
+        stroke-dasharray="2 9" stroke-linecap="round"/>
+</svg>
+    <div class="legend">
+      <div class="item"><span class="k dor"></span>Onde o paciente sente<small>a dor na lombar</small></div>
+      <div class="item"><span class="k ori"></span>Onde você trata<small>o ponto-gatilho de origem</small></div>
+    </div>
+  </div>
+  <p class="sub">Aprenda a usar o <b>Mapa dos Pontos Gatilho</b> e liberar o ponto em cerca de 60 segundos.</p>
+</div>
+<div class="cta"><span>Saiba mais</span><span class="arrow">→</span></div></div></body></html>
