@@ -1,6 +1,6 @@
 // Cache do app para abrir rápido e sem internet. Troque VERSAO a cada atualização.
-const VERSAO = "laudo-zog-v2";
-const ARQUIVOS = ["./", "index.html", "app.js", "manifest.webmanifest", "modelo-hemograma.docx", "logo-header.png", "logo-laudo.jpg", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
+const VERSAO = "laudo-zog-v3";
+const ARQUIVOS = ["./", "index.html", "app.js", "manifest.webmanifest", "modelo-hemograma.docx", "logo-header.png", "logo-laudo.jpg", "zog-icon-192.png", "zog-icon-512.png", "zog-icon-maskable-512.png", "zog-apple-touch-icon.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(VERSAO).then((c) => c.addAll(ARQUIVOS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSAO).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
