@@ -1,0 +1,14 @@
+import { chromium } from "playwright";
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+const p = await ctx.newPage(); const erros = [];
+p.on("pageerror", (e) => erros.push(e.message));
+await p.goto("https://oguitsilva-spec.github.io/Teste/");
+await p.waitForTimeout(2500);
+const sw = await p.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); return !!(r && (r.active || r.installing || r.waiting)); });
+const man = await p.evaluate(async () => (await (await fetch("manifest.webmanifest")).json()).name);
+await p.fill("#animal", "Teste"); await p.fill('[data-b="ex.hemograma.v.hem"]', "6.5");
+const [d] = await Promise.all([p.waitForEvent("download"), p.click("#pdfBtn")]);
+await d.saveAs("/home/claude/online.pdf");
+console.log({ sw, man, erros, titulo: await p.title() });
+await b.close();

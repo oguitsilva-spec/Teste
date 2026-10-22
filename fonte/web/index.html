@@ -103,6 +103,10 @@ table.vals input[type=checkbox]{width:18px;height:18px}
   table.vals input{width:4.6em}
   table.vals td{padding:5px 3px}
 }
+.ocr{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.ocr .small{flex:1;min-width:200px}
+#ocrTxt pre{white-space:pre-wrap;font-size:.75rem;background:var(--field);border-radius:8px;padding:8px;max-height:220px;overflow:auto}
+input.lido,select.lido{background:var(--warn-soft);border-color:#e0b100}
 details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link);margin:4px 0 10px}
 .foto img{max-height:140px;border-radius:8px;border:1px solid var(--line)}
 /* Folha do laudo: papel branco, mesmo desenho do PDF */
@@ -184,6 +188,13 @@ details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link
         <h2><span class="step">2</span> Exames</h2>
         <div class="chips" id="chips"></div>
         <p class="legenda">Pode marcar mais de um: tudo sai no mesmo laudo, com assinatura em cada exame.</p>
+        <div class="ocr">
+          <button class="primary" id="fotoExameBtn" type="button">Ler foto do exame</button>
+          <input type="file" id="fotoExame" accept="image/*" hidden>
+          <span class="small">Tire a foto da impressão do aparelho (hemograma ou bioquímico). Os valores são preenchidos para você conferir.</span>
+        </div>
+        <p class="status" id="ocrStatus"></p>
+        <details id="ocrTxt" hidden><summary>Ver texto lido da foto</summary><pre></pre></details>
       </section>
       <div id="exames" class="col"></div>
     </div>

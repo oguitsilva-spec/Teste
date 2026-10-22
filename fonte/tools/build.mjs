@@ -19,12 +19,19 @@ for (const f of readdirSync(join(raiz, "assets"))) {
 cpSync(join(raiz, "assets/logo-laudo.jpg"), join(dist, "logo-laudo.jpg"));
 cpSync(join(raiz, "assets/logo-header.png"), join(dist, "logo-header.png"));
 
+// leitura de foto (OCR): baixada só quando usada, não entra no cache inicial
+mkdirSync(join(dist, "ocr"), { recursive: true });
+const nm = join(raiz, "node_modules");
+cpSync(join(nm, "tesseract.js/dist/worker.min.js"), join(dist, "ocr/worker.min.js"));
+for (const f of ["tesseract-core-lstm.wasm.js", "tesseract-core-simd-lstm.wasm.js"]) cpSync(join(nm, "tesseract.js-core", f), join(dist, "ocr", f));
+cpSync(join(nm, "@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz"), join(dist, "ocr/eng.traineddata.gz"));
+
 const lista = [];
 (function walk(d, pre = "") {
   for (const f of readdirSync(d)) {
     const p = join(d, f);
     if (statSync(p).isDirectory()) walk(p, pre + f + "/");
-    else if (f !== "sw.js" && !f.startsWith(".")) lista.push(pre + f);
+    else if (f !== "sw.js" && !f.startsWith(".") && !pre.startsWith("ocr/")) lista.push(pre + f);
   }
 })(dist);
 const versao = "laudos-zog-" + Date.now().toString(36);

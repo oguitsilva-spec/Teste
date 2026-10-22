@@ -5,6 +5,7 @@ import {
 } from "./catalogo.js";
 import { numDec, numInt, milhar, flag, dataHojeISO } from "./fmt.js";
 import { previaHTML, textoLaudo } from "./saidas.js";
+import { interpretar } from "./leitor.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -18,6 +19,7 @@ const ls = {
 
 let cfg = ls.get("zog.cfg", null) || { assinante: { ...VETERINARIOS[0] }, solicitante: "" };
 let foto = null; // foto do teste rápido (fica só na memória)
+const lidos = new Set(); // campos preenchidos pela leitura da foto, destacados até serem conferidos
 
 function numeroNovo(d = new Date()) {
   const p = (n) => String(n).padStart(2, "0");
@@ -175,6 +177,7 @@ function desenharChips() {
 }
 function desenharCartoes() {
   $("#exames").innerHTML = ORDEM.filter((t) => st.sel.includes(t)).map((t) => CARTOES[t]()).join("");
+  lidos.forEach((p) => { const el = $(`[data-b="${p}"]`); if (el) el.classList.add("lido"); });
   atualizarDerivados();
 }
 function preencherPaciente() {
@@ -238,6 +241,7 @@ document.addEventListener("input", (e) => {
   if (el.id === "numero") { st.numero = el.value; atualizarPrevia(); return; }
   const path = el.dataset.b;
   if (!path) return;
+  if (lidos.delete(path)) el.classList.remove("lido");
   setPath(st, path, el.type === "checkbox" ? el.checked : el.value);
   const liga = el.dataset.liga;
   if (liga && el.value.trim()) { setPath(st, `ex.bioquimico.itens.${liga}.on`, true); const cb = $(`[data-b="ex.bioquimico.itens.${liga}.on"]`); if (cb) cb.checked = true; }
@@ -307,6 +311,46 @@ function confirmarLimpar() {
   setTimeout(() => { delete b.dataset.armado; b.textContent = "Novo laudo"; }, 3000);
   return false;
 }
+
+/* ───── leitura da foto do exame ───── */
+function ocrStatus(t, err) { const s = $("#ocrStatus"); s.textContent = t; s.className = "status" + (err ? " err" : ""); }
+$("#fotoExameBtn").addEventListener("click", () => $("#fotoExame").click());
+$("#fotoExame").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  const btn = $("#fotoExameBtn");
+  btn.disabled = true;
+  ocrStatus("Preparando a leitura…");
+  try {
+    const { lerFoto } = await import("./ocr.js");
+    const texto = await lerFoto(file, (m) => {
+      if (m.status === "recognizing text") ocrStatus(`Lendo a foto… ${Math.round((m.progress || 0) * 100)}%`);
+      else if (/load/i.test(m.status)) ocrStatus("Preparando a leitura (na primeira vez baixa uns 7 MB; depois funciona sem internet)…");
+    });
+    $("#ocrTxt").hidden = false; $("#ocrTxt pre").textContent = texto.trim() || "(nada legível)";
+    const r = interpretar(texto);
+    const nh = Object.keys(r.hemo).length, nb = Object.keys(r.bio).length;
+    if (nh) {
+      if (!st.sel.includes("hemograma")) st.sel.push("hemograma");
+      for (const [k, v] of Object.entries(r.hemo)) { st.ex.hemograma.v[k] = v; lidos.add(`ex.hemograma.v.${k}`); }
+    }
+    if (nb) {
+      if (!st.sel.includes("bioquimico")) st.sel.push("bioquimico");
+      for (const [k, v] of Object.entries(r.bio)) { st.ex.bioquimico.itens[k] = { ...(st.ex.bioquimico.itens[k] || {}), on: true, v }; lidos.add(`ex.bioquimico.itens.${k}.v`); }
+    }
+    tudo();
+    if (!nh && !nb) ocrStatus("Não reconheci valores nesta foto. Tente com o papel reto, bem iluminado, sem sombra e ocupando a tela toda.", true);
+    else {
+      ocrStatus(`Li ${nh + nb} valor${nh + nb > 1 ? "es" : ""} da foto. Confira os campos em amarelo antes de gerar o laudo.${r.avisos.length ? " " + r.avisos.join(" ") : ""}`);
+      const alvo = $(nh ? "[data-tipo=hemograma]" : "[data-tipo=bioquimico]");
+      if (alvo) alvo.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  } catch (err) {
+    console.error(err);
+    ocrStatus("Não consegui ler a foto: " + (err?.message || err) + ". Na primeira vez é preciso estar com internet.", true);
+  } finally { btn.disabled = false; }
+});
 
 /* ───── configurações ───── */
 function desenharSetup() {
