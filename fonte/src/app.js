@@ -228,6 +228,8 @@ function atualizarPrevia() {
   tPrevia = setTimeout(() => {
     const l = laudoAtual(new Date());
     $("#paper").innerHTML = previaHTML(l, foto ? { [l.exames.findIndex((e) => e.tipo === "teste")]: foto.url } : {});
+    ajustarFolha();
+    if (viewAtual === "laudo") desenharAvisos();
     ls.set("zog.rascunho", st);
   }, 60);
 }
@@ -299,38 +301,98 @@ async function carregarFoto(file) {
   desenharCartoes(); atualizarPrevia();
 }
 
-$("#newBtn").addEventListener("click", () => {
-  if (!confirmarLimpar()) return;
-  st = estadoNovo(); foto = null; preencherPaciente(); tudo();
-  $("#animal").focus();
-});
-function confirmarLimpar() {
-  const b = $("#newBtn");
-  if (b.dataset.armado) { delete b.dataset.armado; b.textContent = "Novo laudo"; return true; }
-  b.dataset.armado = "1"; b.textContent = "Toque de novo para limpar";
-  setTimeout(() => { delete b.dataset.armado; b.textContent = "Novo laudo"; }, 3000);
-  return false;
+/* ───── telas: início → laudo pronto → editar → finalizar ───── */
+const VIEWS = ["inicio", "laudo", "editar", "finalizar"];
+let viewAtual = "inicio";
+function mostrar(v, empilhar = true) {
+  if (v === "finalizar" && !podeFinalizar()) return;
+  VIEWS.forEach((x) => { $("#v-" + x).hidden = x !== v; });
+  viewAtual = v;
+  if (empilhar) history.pushState({ v }, "", "#" + v);
+  if (v === "inicio") desenharInicio();
+  if (v === "laudo") { atualizarPrevia(); desenharAvisos(); }
+  if (v === "editar") { preencherPaciente(); tudo(); }
+  if (v === "finalizar") prepararFinalizar();
+  window.scrollTo({ top: 0 });
 }
+window.addEventListener("popstate", (e) => mostrar(e.state?.v || "inicio", false));
+document.addEventListener("click", (e) => { const b = e.target.closest("[data-ir]"); if (b) { e.preventDefault(); mostrar(b.dataset.ir); } });
 
-/* ───── leitura da foto do exame ───── */
+/* início */
+const INICIO = {
+  hemograma: { sub: "Foto da impressão", foto: true },
+  bioquimico: { sub: "Foto da impressão", foto: true },
+  urinalise: { sub: "Preencher", foto: false },
+  teste: { sub: "Foto do teste", foto: true },
+  leish: { sub: "Atestado", foto: false, nome: "Leishmaniose" },
+};
+let tipoInicio = ls.get("zog.tipoInicio", "hemograma");
+let espInicio = "Canina";
+function desenharInicio() {
+  $("#tiles").innerHTML = ORDEM.map((t) => `<button type="button" class="tile${t === "leish" ? " full" : ""}" data-tile="${t}" aria-pressed="${t === tipoInicio}"><b>${INICIO[t].nome || TIPOS[t].nome}</b><span>${INICIO[t].sub}</span></button>`).join("");
+  document.querySelectorAll("[data-esp]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.esp === espInicio)));
+  const cfgI = INICIO[tipoInicio];
+  $("#camTxt").textContent = tipoInicio === "teste" ? "Tirar foto do teste" : cfgI.foto ? "Tirar foto do exame" : "Preencher laudo";
+  $("#camBtn svg").style.display = cfgI.foto ? "" : "none";
+  $("#galeriaBtn").hidden = !cfgI.foto;
+  $("#manualBtn").hidden = !cfgI.foto;
+  const temRascunho = st.paciente.animal || Object.keys(st.ex.hemograma.v || {}).length || Object.values(st.ex.bioquimico.itens || {}).some((i) => i.v);
+  $("#continuarBox").hidden = !temRascunho;
+  $("#inicioForm").hidden = false; $("#lendo").hidden = true;
+}
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-tile]");
+  if (t) { tipoInicio = t.dataset.tile; ls.set("zog.tipoInicio", tipoInicio); ocrStatus(""); desenharInicio(); return; }
+  const es = e.target.closest("[data-esp]");
+  if (es) { espInicio = es.dataset.esp; desenharInicio(); }
+});
+function novoLaudo(tipos) {
+  st = estadoNovo(); foto = null; lidos.clear();
+  st.paciente.especie = espInicio;
+  st.sel = tipos;
+  $("#ocrTxt").hidden = true;
+}
+let modoFoto = "novo"; // "novo" | "adicionar"
+$("#camBtn").addEventListener("click", () => {
+  if (!INICIO[tipoInicio].foto) { novoLaudo([tipoInicio]); mostrar("editar"); return; }
+  modoFoto = "novo"; $("#camIn").click();
+});
+$("#galeriaBtn").addEventListener("click", () => { modoFoto = "novo"; $("#galIn").click(); });
+$("#manualBtn").addEventListener("click", () => { novoLaudo([tipoInicio]); mostrar("editar"); });
+$("#continuarBtn").addEventListener("click", () => mostrar("laudo"));
+$("#maisFotoBtn").addEventListener("click", () => { modoFoto = "adicionar"; $("#galIn").click(); });
+for (const id of ["#camIn", "#galIn"]) $(id).addEventListener("change", (e) => { const f = e.target.files[0]; e.target.value = ""; if (f) processarFoto(f); });
+
 function ocrStatus(t, err) { const s = $("#ocrStatus"); s.textContent = t; s.className = "status" + (err ? " err" : ""); }
-$("#fotoExameBtn").addEventListener("click", () => $("#fotoExame").click());
-$("#fotoExame").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  e.target.value = "";
-  if (!file) return;
-  const btn = $("#fotoExameBtn");
-  btn.disabled = true;
-  ocrStatus("Preparando a leitura…");
+let ultimaLeitura = null;
+async function processarFoto(file) {
+  // teste rápido: a foto vai para o laudo e o resultado é escolhido na edição
+  if (modoFoto === "novo" && tipoInicio === "teste") {
+    novoLaudo(["teste"]);
+    await carregarFoto(file);
+    mostrar("editar");
+    return;
+  }
+  if (viewAtual !== "inicio") mostrar("inicio");
+  $("#inicioForm").hidden = true; $("#lendo").hidden = false;
+  const prog = (p, t) => { $("#lendoBar").style.width = Math.round(p * 100) + "%"; $("#lendoTxt").textContent = t; };
+  prog(0.03, "Preparando a leitura…");
   try {
     const { lerFoto } = await import("./ocr.js");
     const texto = await lerFoto(file, (m) => {
-      if (m.status === "recognizing text") ocrStatus(`Lendo a foto… ${Math.round((m.progress || 0) * 100)}%`);
-      else if (/load/i.test(m.status)) ocrStatus("Preparando a leitura (na primeira vez baixa uns 7 MB; depois funciona sem internet)…");
+      if (m.status === "recognizing text") prog(0.15 + (m.progress || 0) * 0.85, `Lendo os valores… ${Math.round((m.progress || 0) * 100)}%`);
+      else if (/load|initializ/i.test(m.status)) prog(0.08, "Preparando a leitura (na primeira vez baixa uns 7 MB; depois funciona sem internet)…");
     });
-    $("#ocrTxt").hidden = false; $("#ocrTxt pre").textContent = texto.trim() || "(nada legível)";
     const r = interpretar(texto);
     const nh = Object.keys(r.hemo).length, nb = Object.keys(r.bio).length;
+    if (!nh && !nb) {
+      $("#lendo").hidden = true; $("#inicioForm").hidden = false;
+      ocrStatus("Não reconheci valores nesta foto. Tente de novo com o papel reto, bem iluminado, sem sombra e ocupando a tela toda, ou toque em “Preencher sem foto”.", true);
+      return;
+    }
+    if (modoFoto === "novo") novoLaudo([]);
+    if (r.especie && modoFoto === "novo") st.paciente.especie = r.especie;
+    if (r.nome && !st.paciente.animal) st.paciente.animal = r.nome;
     if (nh) {
       if (!st.sel.includes("hemograma")) st.sel.push("hemograma");
       for (const [k, v] of Object.entries(r.hemo)) { st.ex.hemograma.v[k] = v; lidos.add(`ex.hemograma.v.${k}`); }
@@ -339,18 +401,90 @@ $("#fotoExame").addEventListener("change", async (e) => {
       if (!st.sel.includes("bioquimico")) st.sel.push("bioquimico");
       for (const [k, v] of Object.entries(r.bio)) { st.ex.bioquimico.itens[k] = { ...(st.ex.bioquimico.itens[k] || {}), on: true, v }; lidos.add(`ex.bioquimico.itens.${k}.v`); }
     }
-    tudo();
-    if (!nh && !nb) ocrStatus("Não reconheci valores nesta foto. Tente com o papel reto, bem iluminado, sem sombra e ocupando a tela toda.", true);
-    else {
-      ocrStatus(`Li ${nh + nb} valor${nh + nb > 1 ? "es" : ""} da foto. Confira os campos em amarelo antes de gerar o laudo.${r.avisos.length ? " " + r.avisos.join(" ") : ""}`);
-      const alvo = $(nh ? "[data-tipo=hemograma]" : "[data-tipo=bioquimico]");
-      if (alvo) alvo.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    ultimaLeitura = { n: nh + nb, avisos: r.avisos };
+    $("#ocrTxt").hidden = false; $("#ocrTxt pre").textContent = texto.trim();
+    ls.set("zog.rascunho", st);
+    mostrar("laudo");
   } catch (err) {
     console.error(err);
+    $("#lendo").hidden = true; $("#inicioForm").hidden = false;
     ocrStatus("Não consegui ler a foto: " + (err?.message || err) + ". Na primeira vez é preciso estar com internet.", true);
-  } finally { btn.disabled = false; }
+  }
+}
+
+/* laudo pronto */
+function faltando() {
+  const p = st.paciente, f = [];
+  if (!p.animal.trim()) f.push("nome do animal");
+  if (!p.tutor.trim()) f.push("tutor(a)");
+  if (!String(p.idadeN).trim()) f.push("idade");
+  if (!p.raca.trim()) f.push("raça");
+  if (!p.solicitante.trim()) f.push("veterinário(a) solicitante");
+  if (st.sel.includes("teste") && st.ex.teste.linhas.some((l) => !l.res)) f.push("resultado do teste");
+  if (st.sel.includes("leish") && !st.ex.leish.resultado) f.push("resultado do atestado");
+  return f;
+}
+function desenharAvisos() {
+  const f = faltando();
+  let h = "";
+  if (ultimaLeitura) h += `<div class="aviso ok"><span>Li <b>${ultimaLeitura.n} valores</b> da foto. Confira no laudo; em Editar, os campos lidos aparecem em amarelo.${ultimaLeitura.avisos.length ? " " + esc(ultimaLeitura.avisos.join(" ")) : ""}</span></div>`;
+  if (f.length) h += `<div class="aviso"><span>Falta preencher: <b>${f.join(", ")}</b>.</span><button type="button" data-ir="editar">Completar</button></div>`;
+  $("#laudoAvisos").innerHTML = h;
+}
+function ajustarFolha() {
+  const folha = $("#folha"), paper = $("#paper");
+  if (!folha || folha.offsetParent === null) return;
+  paper.style.width = "600px";
+  const k = Math.min(1, folha.clientWidth / 600);
+  paper.style.transform = `scale(${k})`;
+  folha.style.height = paper.offsetHeight * k + "px";
+}
+window.addEventListener("resize", ajustarFolha);
+
+/* finalizar */
+function podeFinalizar() {
+  const falta = [];
+  if (!st.sel.length) falta.push("escolha um exame");
+  if (!st.paciente.animal.trim()) falta.push("nome do animal");
+  if (!cfg.assinante?.nome) falta.push("quem assina (em Configurações)");
+  if (falta.length) {
+    if (viewAtual === "laudo") $("#laudoAvisos").insertAdjacentHTML("afterbegin", `<div class="aviso"><span>Antes de finalizar, preencha: <b>${falta.join(", ")}</b>.</span><button type="button" data-ir="editar">Editar</button></div>`);
+    return false;
+  }
+  return true;
+}
+let pdfPronto = null; // { blob, nome }
+function msgPadrao() {
+  const p = st.paciente;
+  const ex = ORDEM.filter((t) => st.sel.includes(t)).map((t) => TIPOS[t].nome.toLowerCase()).join(" e ");
+  return `Olá${p.tutor ? ", " + p.tutor.split(" ")[0] : ""}! Aqui é do Zog Hospital Veterinário. Segue o laudo de ${ex} ${/^f/i.test(p.sexo) ? "da" : "do"} ${p.animal}. Qualquer dúvida, estamos à disposição.`;
+}
+function prepararFinalizar() {
+  const p = st.paciente;
+  $("#finResumo").textContent = `${p.animal} · ${ORDEM.filter((t) => st.sel.includes(t)).map((t) => TIPOS[t].nome).join(" + ")} · laudo nº ${st.numero}`;
+  $("#zap").value = p.whatsapp || "";
+  $("#zapMsg").value = msgPadrao();
+  status("Gerando o PDF…");
+  pdfPronto = null;
+  const nome = nomeArquivo("pdf");
+  fazerPDF().then((blob) => { pdfPronto = { blob, nome }; status("PDF pronto."); }).catch((err) => { console.error(err); status("Não consegui gerar o PDF: " + err.message, true); });
+}
+$("#zap").addEventListener("input", (e) => {
+  const d = e.target.value.replace(/\D/g, "").slice(0, 11);
+  e.target.value = d.length > 6 ? `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}` : d.length > 2 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d;
+  st.paciente.whatsapp = e.target.value; ls.set("zog.rascunho", st);
 });
+$("#zapBtn").addEventListener("click", () => {
+  const d = $("#zap").value.replace(/\D/g, "");
+  if (d.length < 10) { status("Digite o WhatsApp do tutor com DDD.", true); $("#zap").focus(); return; }
+  if (!pdfPronto) { status("O PDF ainda está sendo gerado. Tente de novo em um instante.", true); return; }
+  baixar(pdfPronto.blob, pdfPronto.nome);
+  const url = `https://wa.me/55${d}?text=${encodeURIComponent($("#zapMsg").value)}`;
+  status("PDF salvo. Abrindo a conversa do tutor…");
+  setTimeout(() => { location.href = url; }, 350);
+});
+$("#finalizarBtn").addEventListener("click", () => mostrar("finalizar"));
+$("#novoBtn").addEventListener("click", () => { novoLaudo([tipoInicio]); ultimaLeitura = null; ls.set("zog.rascunho", st); mostrar("inicio"); });
 
 /* ───── configurações ───── */
 function desenharSetup() {
@@ -417,7 +551,7 @@ $("#shareBtn").addEventListener("click", async () => {
   if (!validar()) return;
   status("Gerando PDF…");
   try {
-    const blob = await fazerPDF();
+    const blob = pdfPronto?.blob || (await fazerPDF());
     const file = new File([blob], nomeArquivo("pdf"), { type: "application/pdf" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], title: file.name });
@@ -446,5 +580,6 @@ $("#copyBtn").addEventListener("click", async () => {
 /* ───── início ───── */
 $("#listaSol").innerHTML = SOLICITANTES.map((s) => `<option>${s}</option>`).join("");
 preencherPaciente();
-tudo();
+history.replaceState({ v: "inicio" }, "", "#inicio");
+mostrar("inicio", false);
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});

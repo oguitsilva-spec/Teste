@@ -68,6 +68,13 @@ const casas = (n, c) => String(Math.round(n * 10 ** c) / 10 ** c);
 /** texto do OCR → { hemo: {chave: "valor"}, bio: {chave: "valor"}, avisos: [] } */
 export function interpretar(texto) {
   const hemo = {}, bio = {}, avisos = [];
+  const T = String(texto || "").toUpperCase();
+  // espécie e nome, quando a impressão traz
+  let especie = "";
+  if (/\b(FELINE|FELINO|FELINA|CAT|GATO|GATA)\b/.test(T)) especie = "Felina";
+  else if (/\b(CANINE|CANINO|CANINA|DOG|CAO|CÃO|CADELA)\b/.test(T)) especie = "Canina";
+  const mNome = String(texto || "").match(/(?:^|\n)\s*(?:NAME|NOME|PACIENTE|PATIENT|ANIMAL)\s*[:.]?\s*([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ '-]{1,30})/i);
+  const nome = mNome ? mNome[1].trim().replace(/\s{2,}.*$/, "").replace(/\b\w/g, (c) => c.toUpperCase()) : "";
   for (const bruta of String(texto || "").split(/\n/)) {
     const l = limparLinha(bruta);
     let achou = false;
@@ -100,5 +107,5 @@ export function interpretar(texto) {
   }
   // Hematócrito em fração (0,39) → %
   if (hemo.ht != null && parseFloat(hemo.ht) < 1.5) hemo.ht = casas(parseFloat(hemo.ht) * 100, 1);
-  return { hemo, bio, avisos };
+  return { hemo, bio, avisos, especie, nome };
 }

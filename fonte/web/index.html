@@ -107,6 +107,45 @@ table.vals input[type=checkbox]{width:18px;height:18px}
 .ocr .small{flex:1;min-width:200px}
 #ocrTxt pre{white-space:pre-wrap;font-size:.75rem;background:var(--field);border-radius:8px;padding:8px;max-height:220px;overflow:auto}
 input.lido,select.lido{background:var(--warn-soft);border-color:#e0b100}
+
+/* Telas */
+.view{animation:entra .18s ease-out}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.wrap.estreito{max-width:760px}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 18px;display:flex;flex-direction:column;gap:18px}
+.hero h2{margin:0;font-size:1.35rem;font-weight:800;letter-spacing:-.01em}
+.hero .sub{margin:-10px 0 0;color:var(--muted);font-size:.92rem}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border-radius:14px;padding:13px 14px;border:1.5px solid var(--line);background:var(--field)}
+.tile b{font-size:.98rem}.tile span{font-size:.76rem;color:var(--muted);font-weight:500}
+.tile[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.tile.full{grid-column:span 2}
+.camera{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:20px 18px;font-size:1.12rem;border-radius:18px;background:var(--accent);color:var(--accent-ink);border:none}
+.camera svg{width:30px;height:30px;flex:none}
+.links{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+.link{background:none;border:none;padding:6px 2px;color:var(--link);font-weight:700;font-size:.9rem;text-decoration:underline;text-underline-offset:3px}
+.esp{display:flex;gap:8px}.esp button{flex:1}
+.esp button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.lendo{display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 10px;text-align:center}
+.barra{width:100%;max-width:320px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--sky);transition:width .2s}
+.aviso{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);color:var(--warn-ink);border-radius:12px;padding:11px 13px;font-size:.88rem}
+.aviso.ok{background:var(--accent-soft);color:var(--link)}
+.aviso button{padding:6px 14px;font-size:.82rem}
+.folha{border-radius:10px;border:1px solid var(--line);background:#fff;overflow:hidden}
+.folha .paper{transform-origin:top left}
+.barra-acoes{position:sticky;bottom:0;z-index:5;background:var(--bg);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;border-top:1px solid var(--line);margin-top:4px}
+.barra-acoes button{flex:1;padding:14px 12px;font-size:1rem}
+.zap{background:#1f9d55!important;border-color:#1f9d55!important;color:#fff!important}
+.passos{margin:0;padding-left:20px;color:var(--muted);font-size:.88rem}.passos li{margin:3px 0}
+.voltar{background:none;border:none;color:var(--link);font-weight:700;padding:4px 0;font-size:.9rem;align-self:flex-start}
+@media (max-width:560px){
+  .brand-in{flex-wrap:nowrap;padding:10px 14px 12px;gap:10px}
+  .brand img{height:40px}
+  .brand .ttl{padding-left:10px}
+  .brand h1{font-size:.92rem}.brand p{font-size:.72rem}
+  .gear{padding:7px 12px;font-size:.78rem}
+}
 details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link);margin:4px 0 10px}
 .foto img{max-height:140px;border-radius:8px;border:1px solid var(--line)}
 /* Folha do laudo: papel branco, mesmo desenho do PDF */
@@ -146,12 +185,12 @@ details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link
 <header class="brand">
   <div class="brand-in">
     <img src="logo-header.png" alt="Zog Hospital Veterinário">
-    <div class="ttl"><h1>Laudos</h1><p>Hemograma · bioquímico · urinálise · testes rápidos</p></div>
+    <div class="ttl"><h1>Laudos</h1><p>Zog Hospital Veterinário</p></div>
     <button class="gear" id="gearBtn" type="button">Configurações</button>
   </div>
 </header>
 
-<div class="wrap">
+<div class="wrap estreito">
   <section class="card setup" id="setup" hidden>
     <h2>Configurações</h2>
     <p class="small" style="margin-bottom:12px">Fica salvo só neste aparelho.</p>
@@ -165,54 +204,101 @@ details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link
     <div class="row" style="margin-top:14px"><button class="primary" id="saveSetup" type="button">Salvar</button><span class="status" id="setupStatus"></span></div>
   </section>
 
-  <div class="grid" style="margin-top:16px">
-    <div class="col">
-      <section class="card">
-        <h2><span class="step">1</span> Paciente <button class="x mini" type="button" id="newBtn">Novo laudo</button></h2>
-        <div class="fields">
-          <div class="f s3"><label for="animal">Nome do animal</label><input id="animal" autocomplete="off"></div>
-          <div class="f s3"><label for="tutor">Tutor(a)</label><input id="tutor" autocomplete="off"></div>
-          <div class="f s2 half"><label for="especie">Espécie</label><select id="especie"><option>Canina</option><option>Felina</option></select></div>
-          <div class="f s2 half"><label for="raca">Raça</label><input id="raca" list="listaRaca" autocomplete="off"></div>
-          <div class="f s2 half"><label for="sexo">Sexo</label><select id="sexo"><option>Macho</option><option>Fêmea</option></select></div>
-          <div class="f s3"><label for="idadeN">Idade</label>
-            <div class="age"><input id="idadeN" inputmode="decimal" placeholder="ex.: 3"><select id="idadeU" aria-label="Unidade da idade"><option value="anos">anos</option><option value="meses">meses</option><option value="dias">dias</option></select></div>
-          </div>
-          <div class="f s3 half"><label for="data">Data do exame</label><input id="data" type="date"></div>
-          <div class="f s4"><label for="solicitante">Veterinário(a) solicitante</label><input id="solicitante" list="listaSol" placeholder="Dra. ..."></div>
-          <div class="f s2 half"><label for="numero">Laudo nº</label><input id="numero" inputmode="numeric"></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2><span class="step">2</span> Exames</h2>
-        <div class="chips" id="chips"></div>
-        <p class="legenda">Pode marcar mais de um: tudo sai no mesmo laudo, com assinatura em cada exame.</p>
-        <div class="ocr">
-          <button class="primary" id="fotoExameBtn" type="button">Ler foto do exame</button>
-          <input type="file" id="fotoExame" accept="image/*" hidden>
-          <span class="small">Tire a foto da impressão do aparelho (hemograma ou bioquímico). Os valores são preenchidos para você conferir.</span>
-        </div>
-        <p class="status" id="ocrStatus"></p>
-        <details id="ocrTxt" hidden><summary>Ver texto lido da foto</summary><pre></pre></details>
-      </section>
-      <div id="exames" class="col"></div>
+  <!-- 1. INÍCIO -->
+  <main class="view" id="v-inicio">
+    <div class="hero" id="inicioForm">
+      <h2>Novo laudo</h2>
+      <p class="sub">Escolha o exame e tire a foto da impressão do aparelho.</p>
+      <div>
+        <span class="lbl">Exame</span>
+        <div class="tiles" id="tiles" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <span class="lbl">Espécie</span>
+        <div class="esp" style="margin-top:8px"><button type="button" data-esp="Canina">Cão</button><button type="button" data-esp="Felina">Gato</button></div>
+      </div>
+      <button class="camera" id="camBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.6l1.5-2h6.8l1.5 2h1.6A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.5" r="3.8"/></svg><span id="camTxt">Tirar foto do exame</span></button>
+      <div class="links"><button class="link" type="button" id="galeriaBtn">Escolher da galeria</button><button class="link" type="button" id="manualBtn">Preencher sem foto</button></div>
+      <p class="status" id="ocrStatus"></p>
+      <div class="links" id="continuarBox" hidden><button class="link" type="button" id="continuarBtn">Continuar o laudo em andamento</button></div>
     </div>
-
-    <div class="col paperbox">
-      <section class="card">
-        <h2><span class="step">3</span> Laudo</h2>
-        <div class="paperwrap"><div class="paper" id="paper"></div></div>
-        <div class="actions">
-          <button class="primary" id="shareBtn" type="button">Enviar PDF</button>
-          <button id="pdfBtn" type="button">Baixar PDF</button>
-          <button id="dlBtn" type="button">Baixar .docx</button>
-          <button id="copyBtn" type="button">Copiar texto</button>
-        </div>
-        <p class="status" id="dlStatus"></p>
-      </section>
+    <div class="hero lendo" id="lendo" hidden>
+      <h2>Lendo a foto…</h2>
+      <div class="barra"><i id="lendoBar"></i></div>
+      <p class="small" id="lendoTxt">Preparando</p>
     </div>
-  </div>
+    <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+    <input type="file" id="galIn" accept="image/*" hidden>
+  </main>
+
+  <!-- 2. LAUDO PRONTO -->
+  <main class="view col" id="v-laudo" hidden>
+    <button class="voltar" type="button" data-ir="inicio">‹ Início</button>
+    <div id="laudoAvisos" class="col" style="gap:10px"></div>
+    <div class="folha" id="folha"><div class="paper" id="paper"></div></div>
+    <div class="links"><button class="link" type="button" id="maisFotoBtn">Adicionar outro exame por foto</button></div>
+    <details id="ocrTxt" hidden><summary>Ver texto lido da foto</summary><pre></pre></details>
+    <div class="barra-acoes"><button type="button" data-ir="editar">Editar</button><button class="primary" type="button" id="finalizarBtn">Finalizar</button></div>
+  </main>
+
+  <!-- 3. EDITAR -->
+  <main class="view col" id="v-editar" hidden>
+    <button class="voltar" type="button" data-ir="laudo">‹ Voltar ao laudo</button>
+    <section class="card" id="cardPaciente">
+      <h2>Paciente</h2>
+      <div class="fields">
+        <div class="f s3"><label for="animal">Nome do animal</label><input id="animal" autocomplete="off"></div>
+        <div class="f s3"><label for="tutor">Tutor(a)</label><input id="tutor" autocomplete="off"></div>
+        <div class="f s2 half"><label for="especie">Espécie</label><select id="especie"><option>Canina</option><option>Felina</option></select></div>
+        <div class="f s2 half"><label for="raca">Raça</label><input id="raca" list="listaRaca" autocomplete="off"></div>
+        <div class="f s2 half"><label for="sexo">Sexo</label><select id="sexo"><option>Macho</option><option>Fêmea</option></select></div>
+        <div class="f s3"><label for="idadeN">Idade</label>
+          <div class="age"><input id="idadeN" inputmode="decimal" placeholder="ex.: 3"><select id="idadeU" aria-label="Unidade da idade"><option value="anos">anos</option><option value="meses">meses</option><option value="dias">dias</option></select></div>
+        </div>
+        <div class="f s3 half"><label for="data">Data do exame</label><input id="data" type="date"></div>
+        <div class="f s4"><label for="solicitante">Veterinário(a) solicitante</label><input id="solicitante" list="listaSol" placeholder="Dra. ..."></div>
+        <div class="f s2 half"><label for="numero">Laudo nº</label><input id="numero" inputmode="numeric"></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Exames deste laudo</h2>
+      <div class="chips" id="chips"></div>
+      <p class="legenda">Pode marcar mais de um: tudo sai no mesmo laudo, com assinatura em cada exame.</p>
+    </section>
+    <div id="exames" class="col"></div>
+    <div class="barra-acoes"><button class="primary" type="button" data-ir="laudo">Ver laudo</button></div>
+  </main>
+
+  <!-- 4. FINALIZAR -->
+  <main class="view col" id="v-finalizar" hidden>
+    <button class="voltar" type="button" data-ir="laudo">‹ Voltar ao laudo</button>
+    <section class="card">
+      <h2>Enviar para o tutor</h2>
+      <p class="small" id="finResumo" style="margin-bottom:14px"></p>
+      <div class="fields">
+        <div class="f s3"><label for="zap">WhatsApp do tutor</label><input id="zap" type="tel" inputmode="tel" placeholder="(14) 99999-9999" autocomplete="off"></div>
+        <div class="f s6"><label for="zapMsg">Mensagem</label><textarea id="zapMsg" rows="4"></textarea></div>
+      </div>
+      <div class="col" style="gap:10px;margin-top:16px">
+        <button class="camera zap" type="button" id="zapBtn">Abrir conversa do tutor e salvar PDF</button>
+        <ol class="passos">
+          <li>O PDF do laudo é salvo no celular e a conversa do tutor abre com a mensagem pronta.</li>
+          <li>No WhatsApp, toque no 📎 › <b>Documento</b> e escolha o laudo, que aparece primeiro na lista.</li>
+        </ol>
+      </div>
+      <p class="status" id="dlStatus"></p>
+    </section>
+    <section class="card">
+      <h2>Outras opções</h2>
+      <div class="actions" style="margin:0">
+        <button type="button" id="shareBtn">Compartilhar PDF</button>
+        <button type="button" id="pdfBtn">Baixar PDF</button>
+        <button type="button" id="dlBtn">Baixar .docx</button>
+        <button type="button" id="copyBtn">Copiar texto</button>
+      </div>
+    </section>
+    <div class="barra-acoes"><button type="button" id="novoBtn">Fazer novo laudo</button></div>
+  </main>
 </div>
 <datalist id="listaSol"></datalist>
 <datalist id="listaRaca"><option>SRD</option><option>Shih-tzu</option><option>Yorkshire</option><option>Poodle</option><option>Lhasa apso</option><option>Golden retriever</option><option>Labrador</option><option>Buldogue francês</option><option>Buldogue inglês</option><option>Pinscher</option><option>Spitz alemão</option><option>Border collie</option><option>Pastor alemão</option><option>Maine coon</option><option>Persa</option><option>Siamês</option></datalist>
