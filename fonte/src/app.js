@@ -474,14 +474,29 @@ $("#zap").addEventListener("input", (e) => {
   e.target.value = d.length > 6 ? `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}` : d.length > 2 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d;
   st.paciente.whatsapp = e.target.value; ls.set("zog.rascunho", st);
 });
-$("#zapBtn").addEventListener("click", () => {
+// Envio: o compartilhamento do celular é o único caminho que anexa o PDF no WhatsApp
+$("#zapBtn").addEventListener("click", async () => {
+  if (!pdfPronto) { status("O PDF ainda está sendo gerado. Tente de novo em um instante.", true); return; }
+  const file = new File([pdfPronto.blob], pdfPronto.nome, { type: "application/pdf" });
+  const msg = $("#zapMsg").value.trim();
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], text: msg, title: file.name });
+      status("Enviado. Se quiser, toque em “Fazer novo laudo”.");
+    } catch (err) {
+      if (err?.name !== "AbortError") { console.error(err); status("Não consegui abrir o compartilhamento: " + err.message, true); }
+    }
+  } else {
+    // computador ou navegador sem compartilhamento de arquivos: baixa o PDF e abre o WhatsApp
+    baixar(pdfPronto.blob, pdfPronto.nome);
+    status("Este navegador não envia arquivos direto. O PDF foi baixado: anexe na conversa pelo 📎.");
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  }
+});
+$("#abrirZapBtn").addEventListener("click", () => {
   const d = $("#zap").value.replace(/\D/g, "");
   if (d.length < 10) { status("Digite o WhatsApp do tutor com DDD.", true); $("#zap").focus(); return; }
-  if (!pdfPronto) { status("O PDF ainda está sendo gerado. Tente de novo em um instante.", true); return; }
-  baixar(pdfPronto.blob, pdfPronto.nome);
-  const url = `https://wa.me/55${d}?text=${encodeURIComponent($("#zapMsg").value)}`;
-  status("PDF salvo. Abrindo a conversa do tutor…");
-  setTimeout(() => { location.href = url; }, 350);
+  location.href = `https://wa.me/55${d}?text=${encodeURIComponent($("#zapMsg").value)}`;
 });
 $("#finalizarBtn").addEventListener("click", () => mostrar("finalizar"));
 $("#novoBtn").addEventListener("click", () => { novoLaudo([tipoInicio]); ultimaLeitura = null; ls.set("zog.rascunho", st); mostrar("inicio"); });

@@ -5,6 +5,11 @@ const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" })
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true, deviceScaleFactor: 1 });
 let waUrl = null;
 await ctx.route(/wa\.me/, (r) => { waUrl = r.request().url(); r.fulfill({ status: 200, body: "whatsapp" }); });
+await ctx.addInitScript(() => {
+  window.__share = null;
+  navigator.canShare = (d) => !!(d && d.files);
+  navigator.share = async (d) => { window.__share = { n: d.files.length, nome: d.files[0].name, tipo: d.files[0].type, tam: d.files[0].size, text: d.text }; };
+});
 const p = await ctx.newPage();
 const erros = []; p.on("pageerror", (e) => erros.push(e.message)); p.on("console", (m) => m.type() === "error" && erros.push(m.text()));
 await p.goto(base);
@@ -22,12 +27,15 @@ await p.click('#v-editar .barra-acoes [data-ir="laudo"]');
 await p.waitForTimeout(300);
 await p.click("#finalizarBtn");
 await p.waitForSelector("#v-finalizar:not([hidden])");
-await p.fill("#zap", "14999998888");
 await p.waitForFunction(() => /PDF pronto/.test(document.querySelector("#dlStatus").textContent), null, { timeout: 30000 });
 await p.screenshot({ path: `${out}/f4-finalizar.png` });
-const [d] = await Promise.all([p.waitForEvent("download"), p.click("#zapBtn")]);
-await d.saveAs(`${out}/fluxo.pdf`);
-await p.waitForTimeout(1200);
-console.log({ zapCampo: "ok", arquivo: d.suggestedFilename(), waUrl, erros });
+await p.click("#zapBtn");
+await p.waitForTimeout(300);
+const share = await p.evaluate(() => window.__share);
+await p.click(".novo-tutor summary");
+await p.fill("#zap", "14999998888");
+await p.click("#abrirZapBtn");
+await p.waitForTimeout(800);
+console.log({ share, status: share ? "ok" : "falhou", waUrl, erros });
 // voltar com o botão do aparelho
 await b.close();
