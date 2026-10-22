@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Laudos Zog</title>
+<meta name="theme-color" content="#312782">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest?v=4">
+<link rel="icon" href="zog-icon-192.png">
+<link rel="apple-touch-icon" href="zog-apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Laudos Zog">
+<style>
+@font-face{font-family:"Montserrat";font-weight:400;font-style:normal;font-display:swap;src:url(fonts/Montserrat_400Regular.ttf) format("truetype")}
+@font-face{font-family:"Montserrat";font-weight:400;font-style:italic;font-display:swap;src:url(fonts/Montserrat_400Regular_Italic.ttf) format("truetype")}
+@font-face{font-family:"Montserrat";font-weight:500;font-display:swap;src:url(fonts/Montserrat_500Medium.ttf) format("truetype")}
+@font-face{font-family:"Montserrat";font-weight:600;font-display:swap;src:url(fonts/Montserrat_600SemiBold.ttf) format("truetype")}
+@font-face{font-family:"Montserrat";font-weight:700 800;font-display:swap;src:url(fonts/Montserrat_700Bold.ttf) format("truetype")}
+/* Faixa índigo com o logo; à esquerda o preenchimento (paciente → exames), à direita a folha do laudo; uma coluna no celular */
+:root{
+  --indigo:#312782; --sky:#35a8e0;
+  --bg:#f3f4fa; --surface:#ffffff; --ink:#1c1a3f; --muted:#5d5b80; --line:#dcdcec;
+  --field:#f6f7fc; --accent:#312782; --accent-ink:#ffffff; --accent-soft:#e3f2fb; --link:#1f86c0;
+  --hi:#c43d1e; --hi-soft:#fde8e2; --lo:#1f6fb0; --lo-soft:#e1effa; --warn-soft:#fff4d1; --warn-ink:#684c00;
+  --font:"Montserrat","Avenir Next","Segoe UI",system-ui,sans-serif; --radius:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12102b; --surface:#1c1940; --ink:#ecebfa; --muted:#a4a2c8; --line:#302c5c;
+  --field:#15132f; --accent:#35a8e0; --accent-ink:#141038; --accent-soft:#1f2c55; --link:#6cc4ef;
+  --hi:#ff9a7d; --hi-soft:#3d1f1e; --lo:#7cc3f0; --lo-soft:#173050; --warn-soft:#3a3010; --warn-ink:#f3d987; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12102b; --surface:#1c1940; --ink:#ecebfa; --muted:#a4a2c8; --line:#302c5c;
+  --field:#15132f; --accent:#35a8e0; --accent-ink:#141038; --accent-soft:#1f2c55; --link:#6cc4ef;
+  --hi:#ff9a7d; --hi-soft:#3d1f1e; --lo:#7cc3f0; --lo-soft:#173050; --warn-soft:#3a3010; --warn-ink:#f3d987; color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--indigo)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;min-height:100vh}
+img{max-width:100%}
+[hidden]{display:none!important}
+.brand{background:var(--indigo);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.brand-in{max-width:1280px;margin:0 auto;padding:14px 16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand img{height:56px;width:auto;display:block}
+.brand .ttl{display:flex;flex-direction:column;gap:2px;padding-left:14px;border-left:2px solid rgba(53,168,224,.55)}
+.brand h1{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.brand p{margin:0;color:#b9b5e6;font-size:.82rem;font-weight:500}
+.gear{margin-left:auto;background:transparent!important;color:#fff!important;border:1.5px solid var(--sky)!important}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 16px calc(48px + env(safe-area-inset-bottom,0px))}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:20px;align-items:start}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;min-width:0}
+.card h2{font-weight:800;font-size:1.05rem;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+.card h2 .x{margin-left:auto;font-size:.78rem;padding:5px 12px}
+.step{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sky);color:#fff;font-size:.8rem;font-weight:800;flex:none}
+.setup{border:1.5px solid var(--sky)}
+.fields{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f.s2{grid-column:span 2}.f.s3{grid-column:span 3}.f.s4{grid-column:span 4}.f.s6{grid-column:span 6}
+@media (max-width:560px){.f.s2,.f.s3,.f.s4{grid-column:span 6}.f.half{grid-column:span 3}}
+label,.lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700}
+input,select,textarea{font:inherit;font-weight:500;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;min-width:0}
+textarea{min-height:58px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--sky);outline-offset:1px}
+.age{display:flex;gap:6px}.age input{flex:1}.age select{width:auto}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 18px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.mini{padding:5px 12px;font-size:.8rem}
+button:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.status{font-size:.88rem;color:var(--muted);min-height:1.2em;margin:0}
+.status.err{color:var(--hi)}
+.small{font-size:.8rem;color:var(--muted);margin:0}
+.note{background:var(--warn-soft);color:var(--warn-ink);border-radius:10px;padding:9px 12px;font-size:.86rem;margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 14px;font-size:.88rem}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--accent-soft);color:var(--link);font-size:.78rem;font-weight:700}
+.refbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.refbar select{width:auto}
+.tbl{overflow-x:auto;margin-bottom:10px}
+table.vals{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.vals th{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;font-weight:700;padding:4px 6px;border-bottom:1.5px solid var(--line)}
+table.vals td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.vals td.n{font-weight:700;white-space:nowrap}
+table.vals td{white-space:nowrap}
+table.vals td:has(input.ref),table.vals td:has(input.nm){white-space:normal;width:40%}
+table.vals td.u{color:var(--muted);font-size:.78rem;white-space:nowrap}
+table.vals td.r{color:var(--muted);font-size:.8rem}
+table.vals tr.g td{font-size:.68rem;color:var(--link);text-transform:uppercase;letter-spacing:.09em;font-weight:800;padding-top:12px;border-bottom:none}
+table.vals input{padding:6px 8px;width:5.6em;text-align:right}
+table.vals input.ref{width:100%;min-width:9em;text-align:left;font-size:.8rem;padding:5px 7px}
+table.vals input.nm{width:100%;min-width:8em;text-align:left}
+table.vals input.tx{width:100%;min-width:7em;text-align:left}
+table.vals input[type=checkbox]{width:18px;height:18px}
+.flag{display:inline-block;font-size:.72rem;font-weight:800;border-radius:6px;padding:1px 0;margin-left:4px;width:1.4em;text-align:center}.flag:empty{visibility:hidden}
+.flag.alto{background:var(--hi-soft);color:var(--hi)}.flag.baixo{background:var(--lo-soft);color:var(--lo)}
+@media (max-width:560px){
+  table.vals td.r,table.vals th:nth-child(4){display:none}
+  table.vals td.n{font-size:.86rem;white-space:normal}
+  table.vals input{width:4.6em}
+  table.vals td{padding:5px 3px}
+}
+details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link);margin:4px 0 10px}
+.foto img{max-height:140px;border-radius:8px;border:1px solid var(--line)}
+/* Folha do laudo: papel branco, mesmo desenho do PDF */
+.paperbox{position:sticky;top:12px}
+.paperwrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line);background:#fff}
+.paper{background:#fff;color:#1f1d3d;min-width:560px;padding:26px 30px 18px;font-family:"Montserrat",sans-serif;font-size:11px;line-height:1.35}
+.lz-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.lz-top img{width:130px}
+.lz-ct{text-align:right;font-size:9px;color:#6a6890;line-height:1.5}.lz-ct b{color:#312782}
+.lz-num{display:flex;justify-content:space-between;margin:14px 0 6px;color:#312782;font-weight:700;font-size:11px}
+.lz-num small{font-size:8.5px;color:#6a6890;font-weight:600;margin-right:4px}
+.lz-pac{display:grid;grid-template-columns:1.5fr 1fr;background:#f1f1f8;border-left:3px solid #35a8e0;padding:9px 14px;gap:10px}
+.lz-pac dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0}
+.lz-pac dt{color:#6a6890;font-size:9.5px;padding-top:1px}.lz-pac dd{margin:0;font-weight:600}
+.lz-tit{font-size:14px;font-weight:700;color:#312782;text-transform:uppercase;margin:24px 0 4px;padding-bottom:5px;border-bottom:1px solid #d9d9ea;position:relative}
+.lz-tit::after{content:"";position:absolute;left:0;bottom:-1.5px;width:44px;height:2.5px;background:#35a8e0}
+.lz-meta{font-size:9px;color:#6a6890;margin:6px 0 8px}
+.lz-tab{width:100%;border-collapse:collapse;font-size:10.5px;table-layout:fixed}
+.lz-tab th{font-size:8px;color:#6a6890;text-transform:uppercase;letter-spacing:.04em;text-align:left;font-weight:600;padding:4px 7px;border-bottom:1px solid #d9d9ea}
+.lz-tab td{padding:2.5px 7px;vertical-align:top}
+.lz-tab tr.z td{background:#f3f3f9}
+.lz-tab tr.sec td{color:#312782;font-weight:700;font-size:8.5px;text-transform:uppercase;padding-top:10px}
+.lz-tab tr.sep td{border-top:8px solid #fff}
+.lz-tab td.fo{font-weight:600}.lz-tab td.r{color:#6a6890}.lz-tab td.ob{font-weight:600;font-size:9.5px}
+.lz-par{margin:10px 0}.lz-par.g{font-size:12.5px;line-height:1.65;text-align:justify}
+.lz-local{text-align:right;margin-top:20px;font-size:12px}
+.lz-img{margin:12px 0 0}.lz-img img{max-width:300px;max-height:200px;display:block}.lz-img figcaption{font-size:8.5px;font-style:italic;color:#6a6890;margin-top:4px}
+.lz-ass{margin-top:18px;border-left:2.5px solid #35a8e0;padding:1px 0 1px 10px;font-size:9.5px;color:#6a6890;line-height:1.5}.lz-ass b{color:#1f1d3d}
+.lz-rod{display:flex;justify-content:space-between;border-top:1px solid #d9d9ea;margin-top:30px;padding-top:6px;font-size:8.5px;color:#6a6890}
+.lz-vazio{color:#6a6890;font-style:italic;margin:24px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
+.legenda{font-size:.76rem;color:var(--muted);margin:6px 0 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="brand">
+  <div class="brand-in">
+    <img src="logo-header.png" alt="Zog Hospital Veterinário">
+    <div class="ttl"><h1>Laudos</h1><p>Hemograma · bioquímico · urinálise · testes rápidos</p></div>
+    <button class="gear" id="gearBtn" type="button">Configurações</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="card setup" id="setup" hidden>
+    <h2>Configurações</h2>
+    <p class="small" style="margin-bottom:12px">Fica salvo só neste aparelho.</p>
+    <div class="fields">
+      <div class="f s6"><label for="cfgAss">Quem assina os laudos</label><select id="cfgAss"></select></div>
+      <div class="f s3"><label for="cfgNome">Nome na assinatura</label><input id="cfgNome"></div>
+      <div class="f s2 half"><label for="cfgTitulo">Título</label><input id="cfgTitulo"></div>
+      <div class="f s2 half"><label for="cfgCrmv">CRMV</label><input id="cfgCrmv" placeholder="CRMV-SP 00000"></div>
+      <div class="f s4"><label for="cfgSol">Veterinário(a) solicitante padrão</label><input id="cfgSol" list="listaSol" placeholder="Dra. ..."></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="primary" id="saveSetup" type="button">Salvar</button><span class="status" id="setupStatus"></span></div>
+  </section>
+
+  <div class="grid" style="margin-top:16px">
+    <div class="col">
+      <section class="card">
+        <h2><span class="step">1</span> Paciente <button class="x mini" type="button" id="newBtn">Novo laudo</button></h2>
+        <div class="fields">
+          <div class="f s3"><label for="animal">Nome do animal</label><input id="animal" autocomplete="off"></div>
+          <div class="f s3"><label for="tutor">Tutor(a)</label><input id="tutor" autocomplete="off"></div>
+          <div class="f s2 half"><label for="especie">Espécie</label><select id="especie"><option>Canina</option><option>Felina</option></select></div>
+          <div class="f s2 half"><label for="raca">Raça</label><input id="raca" list="listaRaca" autocomplete="off"></div>
+          <div class="f s2 half"><label for="sexo">Sexo</label><select id="sexo"><option>Macho</option><option>Fêmea</option></select></div>
+          <div class="f s3"><label for="idadeN">Idade</label>
+            <div class="age"><input id="idadeN" inputmode="decimal" placeholder="ex.: 3"><select id="idadeU" aria-label="Unidade da idade"><option value="anos">anos</option><option value="meses">meses</option><option value="dias">dias</option></select></div>
+          </div>
+          <div class="f s3 half"><label for="data">Data do exame</label><input id="data" type="date"></div>
+          <div class="f s4"><label for="solicitante">Veterinário(a) solicitante</label><input id="solicitante" list="listaSol" placeholder="Dra. ..."></div>
+          <div class="f s2 half"><label for="numero">Laudo nº</label><input id="numero" inputmode="numeric"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="step">2</span> Exames</h2>
+        <div class="chips" id="chips"></div>
+        <p class="legenda">Pode marcar mais de um: tudo sai no mesmo laudo, com assinatura em cada exame.</p>
+      </section>
+      <div id="exames" class="col"></div>
+    </div>
+
+    <div class="col paperbox">
+      <section class="card">
+        <h2><span class="step">3</span> Laudo</h2>
+        <div class="paperwrap"><div class="paper" id="paper"></div></div>
+        <div class="actions">
+          <button class="primary" id="shareBtn" type="button">Enviar PDF</button>
+          <button id="pdfBtn" type="button">Baixar PDF</button>
+          <button id="dlBtn" type="button">Baixar .docx</button>
+          <button id="copyBtn" type="button">Copiar texto</button>
+        </div>
+        <p class="status" id="dlStatus"></p>
+      </section>
+    </div>
+  </div>
+</div>
+<datalist id="listaSol"></datalist>
+<datalist id="listaRaca"><option>SRD</option><option>Shih-tzu</option><option>Yorkshire</option><option>Poodle</option><option>Lhasa apso</option><option>Golden retriever</option><option>Labrador</option><option>Buldogue francês</option><option>Buldogue inglês</option><option>Pinscher</option><option>Spitz alemão</option><option>Border collie</option><option>Pastor alemão</option><option>Maine coon</option><option>Persa</option><option>Siamês</option></datalist>
+<script type="module" src="app.js"></script>
+</body>
+</html>
