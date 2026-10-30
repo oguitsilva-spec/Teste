@@ -26,12 +26,21 @@ cpSync(join(nm, "tesseract.js/dist/worker.min.js"), join(dist, "ocr/worker.min.j
 for (const f of ["tesseract-core-lstm.wasm.js", "tesseract-core-simd-lstm.wasm.js"]) cpSync(join(nm, "tesseract.js-core", f), join(dist, "ocr", f));
 cpSync(join(nm, "@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz"), join(dist, "ocr/eng.traineddata.gz"));
 
+// versão sem WebAssembly (JavaScript puro), usada só em aparelhos que bloqueiam WebAssembly
+const t2 = "/tmp/claude-0/-home-claude/ed89bedf-ea01-5768-aa09-9fb52626e97d/scratchpad/t2/node_modules";
+const t2local = join(raiz, "vendor/ocr2");
+mkdirSync(t2local, { recursive: true });
+for (const [de, para] of [["tesseract.js/dist/tesseract.min.js", "tesseract.min.js"], ["tesseract.js/dist/worker.min.js", "worker.min.js"], ["tesseract.js-core/tesseract-core.asm.js", "tesseract-core.asm.js"]]) {
+  try { cpSync(join(t2, de), join(t2local, para)); } catch { /* já copiado antes */ }
+}
+cpSync(t2local, join(dist, "ocr2"), { recursive: true });
+
 const lista = [];
 (function walk(d, pre = "") {
   for (const f of readdirSync(d)) {
     const p = join(d, f);
     if (statSync(p).isDirectory()) walk(p, pre + f + "/");
-    else if (f !== "sw.js" && !f.startsWith(".") && !pre.startsWith("ocr/")) lista.push(pre + f);
+    else if (f !== "sw.js" && !f.startsWith(".") && !pre.startsWith("ocr/") && !pre.startsWith("ocr2/")) lista.push(pre + f);
   }
 })(dist);
 const versao = "laudos-zog-" + Date.now().toString(36);

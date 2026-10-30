@@ -463,6 +463,7 @@ function prepararFinalizar() {
   const p = st.paciente;
   $("#finResumo").textContent = `${p.animal} · ${ORDEM.filter((t) => st.sel.includes(t)).map((t) => TIPOS[t].nome).join(" + ")} · laudo nº ${st.numero}`;
   $("#zap").value = p.whatsapp || "";
+  marcarPasso(1);
   $("#zapMsg").value = msgPadrao();
   status("Gerando o PDF…");
   pdfPronto = null;
@@ -474,29 +475,41 @@ $("#zap").addEventListener("input", (e) => {
   e.target.value = d.length > 6 ? `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}` : d.length > 2 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d;
   st.paciente.whatsapp = e.target.value; ls.set("zog.rascunho", st);
 });
-// Envio: o compartilhamento do celular é o único caminho que anexa o PDF no WhatsApp
+// Envio em 2 toques: (1) abre a conversa do tutor pelo número; (2) anexa o PDF pelo compartilhamento.
+// O link do WhatsApp (wa.me) só aceita texto, então o arquivo entra pelo compartilhamento do celular.
+function marcarPasso(n) {
+  $("#passo1").className = "passo" + (n >= 2 ? " feito" : " agora");
+  $("#passo2").className = "passo" + (n >= 2 ? " agora" : "") + (n >= 3 ? " feito" : "");
+}
+$("#abrirZapBtn").addEventListener("click", () => {
+  const d = $("#zap").value.replace(/\D/g, "");
+  if (d.length < 10) { status("Digite o WhatsApp do tutor com DDD.", true); $("#zap").focus(); return; }
+  window.open(`https://wa.me/55${d}?text=${encodeURIComponent($("#zapMsg").value)}`, "_blank");
+  marcarPasso(2);
+  status("Envie a mensagem no WhatsApp e volte aqui para anexar o PDF.");
+});
 $("#zapBtn").addEventListener("click", async () => {
   if (!pdfPronto) { status("O PDF ainda está sendo gerado. Tente de novo em um instante.", true); return; }
   const file = new File([pdfPronto.blob], pdfPronto.nome, { type: "application/pdf" });
-  const msg = $("#zapMsg").value.trim();
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
-      await navigator.share({ files: [file], text: msg, title: file.name });
-      status("Enviado. Se quiser, toque em “Fazer novo laudo”.");
+      await navigator.share({ files: [file], title: file.name });
+      marcarPasso(3);
+      status("Laudo enviado. Toque em “Fazer novo laudo” para o próximo.");
     } catch (err) {
       if (err?.name !== "AbortError") { console.error(err); status("Não consegui abrir o compartilhamento: " + err.message, true); }
     }
   } else {
-    // computador ou navegador sem compartilhamento de arquivos: baixa o PDF e abre o WhatsApp
     baixar(pdfPronto.blob, pdfPronto.nome);
-    status("Este navegador não envia arquivos direto. O PDF foi baixado: anexe na conversa pelo 📎.");
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+    marcarPasso(3);
+    status("PDF baixado. Na conversa do tutor, anexe pelo 📎 › Documento.");
   }
 });
-$("#abrirZapBtn").addEventListener("click", () => {
-  const d = $("#zap").value.replace(/\D/g, "");
-  if (d.length < 10) { status("Digite o WhatsApp do tutor com DDD.", true); $("#zap").focus(); return; }
-  location.href = `https://wa.me/55${d}?text=${encodeURIComponent($("#zapMsg").value)}`;
+// ao voltar do WhatsApp, destaca o passo 2
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && viewAtual === "finalizar" && $("#passo1").classList.contains("feito")) {
+    $("#passo2").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 });
 $("#finalizarBtn").addEventListener("click", () => mostrar("finalizar"));
 $("#novoBtn").addEventListener("click", () => { novoLaudo([tipoInicio]); ultimaLeitura = null; ls.set("zog.rascunho", st); mostrar("inicio"); });

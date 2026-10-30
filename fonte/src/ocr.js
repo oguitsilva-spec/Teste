@@ -42,8 +42,39 @@ async function tratarImagem(file) {
   return cv;
 }
 
+// Aparelhos sem WebAssembly (ex.: iPhone no Modo de Isolamento): Tesseract 2 em JavaScript puro
+let workerAsm = null;
+function carregarScript(src) {
+  return new Promise((ok, erro) => {
+    if (window.Tesseract) return ok();
+    const s = document.createElement("script");
+    s.src = src; s.onload = () => ok(); s.onerror = () => erro(new Error("não baixou o leitor"));
+    document.head.appendChild(s);
+  });
+}
+async function prepararAsm(onProg) {
+  if (workerAsm) return workerAsm;
+  const base = new URL("ocr2/", location.href).href;
+  await carregarScript(base + "tesseract.min.js");
+  const w = window.Tesseract.createWorker({
+    workerPath: base + "worker.min.js",
+    corePath: base + "tesseract-core.asm.js",
+    langPath: new URL("ocr", location.href).href,
+    gzip: true,
+    logger: (m) => onProg && onProg(m),
+  });
+  await w.load();
+  await w.loadLanguage("eng");
+  await w.initialize("eng");
+  await w.setParameters({ preserve_interword_spaces: "1", tessedit_pageseg_mode: "6" });
+  workerAsm = w;
+  return w;
+}
+
+export const semWasm = () => typeof WebAssembly === "undefined";
+
 export async function lerFoto(file, onProg) {
-  const w = await preparar(onProg);
+  const w = semWasm() ? await prepararAsm(onProg) : await preparar(onProg);
   const cv = await tratarImagem(file);
   const { data } = await w.recognize(cv);
   return data.text || "";
