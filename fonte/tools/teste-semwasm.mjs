@@ -4,11 +4,13 @@ const base = process.argv[2] || "http://localhost:8771/";
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
 await ctx.addInitScript(() => {
-  delete window.WebAssembly;
+  const SEMWASM = !location.search.includes("comwasm");
+  if (SEMWASM) delete window.WebAssembly;
+  delete window.indexedDB; try { Object.defineProperty(window, "indexedDB", { value: undefined }); } catch {}
   const W = window.Worker;
   window.Worker = function (url, opts) {
     const abs = new URL(url, location.href).href;
-    const src = `self.WebAssembly = undefined; delete self.WebAssembly; importScripts(${JSON.stringify(abs)});`;
+    const src = `${SEMWASM ? "self.WebAssembly = undefined; delete self.WebAssembly;" : ""} delete self.indexedDB; try { Object.defineProperty(self, "indexedDB", { value: undefined }); } catch (e) {} importScripts(${JSON.stringify(abs)});`;
     return new W(URL.createObjectURL(new Blob([src], { type: "text/javascript" })), opts);
   };
 });

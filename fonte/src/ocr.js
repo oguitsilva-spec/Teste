@@ -10,6 +10,7 @@ async function preparar(onProg) {
     corePath: new URL("ocr/", location.href).href,
     langPath: new URL("ocr", location.href).href,
     gzip: true,
+    cacheMethod: "none", // sem IndexedDB (bloqueado em alguns iPhones); o cache offline fica com o service worker
     logger: (m) => onProg && onProg(m),
   });
   await worker.setParameters({ preserve_interword_spaces: "1", tessedit_pageseg_mode: "6" });
@@ -61,6 +62,7 @@ async function prepararAsm(onProg) {
     corePath: base + "tesseract-core.asm.js",
     langPath: new URL("ocr", location.href).href,
     gzip: true,
+    cacheMethod: "none",
     logger: (m) => onProg && onProg(m),
   });
   await w.load();

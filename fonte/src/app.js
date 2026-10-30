@@ -408,7 +408,7 @@ async function processarFoto(file) {
   } catch (err) {
     console.error(err);
     $("#lendo").hidden = true; $("#inicioForm").hidden = false;
-    ocrStatus("Não consegui ler a foto: " + (err?.message || err) + ". Na primeira vez é preciso estar com internet.", true);
+    ocrStatus("Não consegui ler a foto: " + (err?.message || err) + ". Tente de novo; se continuar, use “Preencher sem foto”.", true);
   }
 }
 
