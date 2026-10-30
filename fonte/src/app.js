@@ -5,7 +5,7 @@ import {
 } from "./catalogo.js";
 import { numDec, numInt, milhar, flag, dataHojeISO } from "./fmt.js";
 import { previaHTML, textoLaudo } from "./saidas.js";
-import { interpretar } from "./leitor.js";
+import { interpretarVarios } from "./leitor.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -399,13 +399,16 @@ async function processarFoto(file, lerAssim = false) {
   prog(0.03, "Preparando a leitura…");
   try {
     const { lerFoto } = await import("./ocr.js");
-    const texto = await lerFoto(file, (m) => {
+    const textos = await lerFoto(file, (m) => {
       if (m.status === "recognizing text") prog(0.15 + (m.progress || 0) * 0.85, `Lendo os valores… ${Math.round((m.progress || 0) * 100)}%`);
       else if (/load|initializ/i.test(m.status)) prog(0.08, "Preparando a leitura (na primeira vez baixa uns 7 MB; depois funciona sem internet)…");
     });
     fimTimer();
     if (leituraCancelada) return;
-    const r = interpretar(texto);
+    const texto = textos.join("\n\n────────\n\n");
+    const r = interpretarVarios(textos);
+    // poucos campos soltos de um tipo = ruído do papel, não um exame
+    if (Object.keys(r.hemo).length < 3) r.hemo = {};
     const nh = Object.keys(r.hemo).length, nb = Object.keys(r.bio).length;
     if (!nh && !nb) {
       $("#lendo").hidden = true; $("#inicioForm").hidden = false;
@@ -418,6 +421,7 @@ async function processarFoto(file, lerAssim = false) {
     if (nh) {
       if (!st.sel.includes("hemograma")) st.sel.push("hemograma");
       for (const [k, v] of Object.entries(r.hemo)) { st.ex.hemograma.v[k] = v; lidos.add(`ex.hemograma.v.${k}`); }
+      // absolutos vieram do aparelho: os % também; nada a calcular
     }
     if (nb) {
       if (!st.sel.includes("bioquimico")) st.sel.push("bioquimico");
