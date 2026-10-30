@@ -18,13 +18,13 @@ async function preparar(onProg) {
 }
 
 /** Ajusta a foto para o OCR: tons de cinza, contraste e tamanho bom para leitura */
-async function tratarImagem(file) {
+async function tratarImagem(file, maxLado = 2400) {
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.src = url;
   await img.decode();
   const maior = Math.max(img.naturalWidth, img.naturalHeight);
-  const k = Math.min(2400 / maior, 2.2);
+  const k = Math.min(maxLado / maior, 2.2);
   const cv = document.createElement("canvas");
   cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k);
   const cx = cv.getContext("2d", { willReadFrequently: true });
@@ -60,7 +60,7 @@ async function prepararAsm(onProg) {
   const w = window.Tesseract.createWorker({
     workerPath: base + "worker.min.js",
     corePath: base + "tesseract-core.asm.js",
-    langPath: new URL("ocr", location.href).href,
+    langPath: base.replace(/\/$/, ""), // modelo "fast": bem mais leve sem JIT
     gzip: true,
     cacheMethod: "none",
     logger: (m) => onProg && onProg(m),
@@ -77,7 +77,7 @@ export const semWasm = () => typeof WebAssembly === "undefined";
 
 export async function lerFoto(file, onProg) {
   const w = semWasm() ? await prepararAsm(onProg) : await preparar(onProg);
-  const cv = await tratarImagem(file);
+  const cv = await tratarImagem(file, semWasm() ? 1300 : 2400);
   const { data } = await w.recognize(cv);
   return data.text || "";
 }

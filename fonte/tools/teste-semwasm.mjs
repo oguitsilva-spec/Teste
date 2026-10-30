@@ -1,7 +1,7 @@
 // Simula aparelho sem WebAssembly (página e workers) e testa a leitura da foto.
 import { chromium } from "playwright";
 const base = process.argv[2] || "http://localhost:8771/";
-const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium", args: process.env.JITLESS ? ["--js-flags=--jitless"] : [] });
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
 await ctx.addInitScript(() => {
   const SEMWASM = !location.search.includes("comwasm");
@@ -22,9 +22,15 @@ await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForT
 console.log("WebAssembly na página:", await p.evaluate(() => typeof WebAssembly));
 await p.click('[data-tile="hemograma"]');
 await p.setInputFiles("#camIn", "/home/claude/ocrteste/hemo.jpg");
+await p.waitForTimeout(800);
+if (await p.isVisible("#isolamento")) {
+  await p.screenshot({ path: "/home/claude/shots/isolamento.png" });
+  console.log("tela de orientação: sim");
+  await p.click("#lerAssimBtn");
+}
 await Promise.race([
-  p.waitForSelector("#v-laudo:not([hidden])", { timeout: 300000 }),
-  p.waitForFunction(() => /Não/.test(document.querySelector("#ocrStatus").textContent), null, { timeout: 300000 }),
+  p.waitForSelector("#v-laudo:not([hidden])", { timeout: 900000 }),
+  p.waitForFunction(() => /Não/.test(document.querySelector("#ocrStatus").textContent), null, { timeout: 900000 }),
 ]);
 console.log({
   tela: await p.evaluate(() => ["inicio", "laudo"].find((v) => !document.querySelector("#v-" + v).hidden)),

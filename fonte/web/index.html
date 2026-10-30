@@ -231,6 +231,23 @@ details summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--link
       <h2>Lendo a foto…</h2>
       <div class="barra"><i id="lendoBar"></i></div>
       <p class="small" id="lendoTxt">Preparando</p>
+      <p class="small" id="lendoTempo"></p>
+      <button type="button" class="link" id="cancelarLeitura">Cancelar e preencher à mão</button>
+    </div>
+    <div class="hero" id="isolamento" hidden>
+      <h2>Liberar a leitura da foto</h2>
+      <p class="sub" style="margin:0">Este iPhone está com o <b>Modo de Isolamento</b> ligado. Ele bloqueia o recurso que lê a foto em segundos.</p>
+      <div>
+        <span class="lbl">Libere só este app (1 vez)</span>
+        <ol class="passos" style="margin-top:8px;color:var(--ink);font-size:.92rem">
+          <li>Abra <b>Ajustes</b> › <b>Privacidade e Segurança</b> › <b>Modo de Isolamento</b>.</li>
+          <li>Toque em <b>Configurar Navegação na Web</b> › <b>Sites Excluídos</b>.</li>
+          <li>Ative <b>oguitsilva-spec.github.io</b> (se não aparecer, abra o app uma vez pelo Safari e volte).</li>
+          <li>Feche o app e abra de novo.</li>
+        </ol>
+      </div>
+      <button class="camera" type="button" id="lerAssimBtn"><span>Ler mesmo assim (demora alguns minutos)</span></button>
+      <div class="links"><button class="link" type="button" id="isoManualBtn">Preencher sem foto</button><button class="link" type="button" id="isoVoltarBtn">Voltar</button></div>
     </div>
     <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
     <input type="file" id="galIn" accept="image/*" hidden>

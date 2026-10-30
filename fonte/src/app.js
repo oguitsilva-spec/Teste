@@ -338,7 +338,7 @@ function desenharInicio() {
   $("#manualBtn").hidden = !cfgI.foto;
   const temRascunho = st.paciente.animal || Object.keys(st.ex.hemograma.v || {}).length || Object.values(st.ex.bioquimico.itens || {}).some((i) => i.v);
   $("#continuarBox").hidden = !temRascunho;
-  $("#inicioForm").hidden = false; $("#lendo").hidden = true;
+  $("#inicioForm").hidden = false; $("#lendo").hidden = true; $("#isolamento").hidden = true;
 }
 document.addEventListener("click", (e) => {
   const t = e.target.closest("[data-tile]");
@@ -365,7 +365,17 @@ for (const id of ["#camIn", "#galIn"]) $(id).addEventListener("change", (e) => {
 
 function ocrStatus(t, err) { const s = $("#ocrStatus"); s.textContent = t; s.className = "status" + (err ? " err" : ""); }
 let ultimaLeitura = null;
-async function processarFoto(file) {
+let leituraCancelada = false, timerLeitura = 0, arquivoPendente = null;
+function fimTimer() { clearInterval(timerLeitura); $("#lendoTempo").textContent = ""; }
+$("#cancelarLeitura").addEventListener("click", () => {
+  leituraCancelada = true; fimTimer();
+  novoLaudo([tipoInicio]); mostrar("editar");
+});
+$("#lerAssimBtn").addEventListener("click", () => { const f = arquivoPendente; arquivoPendente = null; $("#isolamento").hidden = true; if (f) processarFoto(f, true); });
+$("#isoManualBtn").addEventListener("click", () => { arquivoPendente = null; $("#isolamento").hidden = true; novoLaudo([tipoInicio]); mostrar("editar"); });
+$("#isoVoltarBtn").addEventListener("click", () => { arquivoPendente = null; $("#isolamento").hidden = true; $("#inicioForm").hidden = false; });
+
+async function processarFoto(file, lerAssim = false) {
   // teste rápido: a foto vai para o laudo e o resultado é escolhido na edição
   if (modoFoto === "novo" && tipoInicio === "teste") {
     novoLaudo(["teste"]);
@@ -374,7 +384,17 @@ async function processarFoto(file) {
     return;
   }
   if (viewAtual !== "inicio") mostrar("inicio");
-  $("#inicioForm").hidden = true; $("#lendo").hidden = false;
+  // sem WebAssembly (Modo de Isolamento do iPhone) a leitura fica muito lenta: orienta antes
+  if (typeof WebAssembly === "undefined" && !lerAssim) {
+    arquivoPendente = file;
+    $("#inicioForm").hidden = true; $("#lendo").hidden = true; $("#isolamento").hidden = false;
+    return;
+  }
+  leituraCancelada = false;
+  $("#inicioForm").hidden = true; $("#isolamento").hidden = true; $("#lendo").hidden = false;
+  const t0 = Date.now();
+  clearInterval(timerLeitura);
+  timerLeitura = setInterval(() => { const s = Math.round((Date.now() - t0) / 1000); $("#lendoTempo").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }, 1000);
   const prog = (p, t) => { $("#lendoBar").style.width = Math.round(p * 100) + "%"; $("#lendoTxt").textContent = t; };
   prog(0.03, "Preparando a leitura…");
   try {
@@ -383,6 +403,8 @@ async function processarFoto(file) {
       if (m.status === "recognizing text") prog(0.15 + (m.progress || 0) * 0.85, `Lendo os valores… ${Math.round((m.progress || 0) * 100)}%`);
       else if (/load|initializ/i.test(m.status)) prog(0.08, "Preparando a leitura (na primeira vez baixa uns 7 MB; depois funciona sem internet)…");
     });
+    fimTimer();
+    if (leituraCancelada) return;
     const r = interpretar(texto);
     const nh = Object.keys(r.hemo).length, nb = Object.keys(r.bio).length;
     if (!nh && !nb) {
@@ -407,6 +429,8 @@ async function processarFoto(file) {
     mostrar("laudo");
   } catch (err) {
     console.error(err);
+    fimTimer();
+    if (leituraCancelada) return;
     $("#lendo").hidden = true; $("#inicioForm").hidden = false;
     ocrStatus("Não consegui ler a foto: " + (err?.message || err) + ". Tente de novo; se continuar, use “Preencher sem foto”.", true);
   }
