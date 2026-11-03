@@ -35,6 +35,18 @@ function modal(html, onMount) {
   return close;
 }
 
+// Confirmação dentro do app (o confirm() do navegador nem sempre aparece)
+function confirmar(msg, ok = 'Confirmar') {
+  return new Promise((resolve) => {
+    let r = false;
+    modal(`<h2>${esc(msg)}</h2><div class="row gap"><button class="btn" data-close>Cancelar</button><button class="btn danger-fill" id="cf-ok">${ok}</button></div>`,
+      (w, close) => { $('#cf-ok', w).onclick = () => { r = true; close(); }; });
+    const wrap = $('#modal');
+    const obs = new MutationObserver(() => { if (wrap.hidden) { obs.disconnect(); resolve(r); } });
+    obs.observe(wrap, { attributes: true, attributeFilter: ['hidden'] });
+  });
+}
+
 const fotoURLs = new Map();
 async function fotoURL(id) {
   if (!id) return null;
@@ -109,6 +121,7 @@ function setupMic(btn, textarea) {
 // ---------------- telas ----------------
 const routes = {
   '': viewPainel,
+  inicio: viewPainel,
   estoque: viewEstoque,
   moto: viewMoto,
   nova: viewNova,
@@ -117,15 +130,18 @@ const routes = {
   ajustes: viewAjustes,
 };
 
+// Rotas no formato "#nome" ou "#nome-parametro" (ex.: #moto-abc123, #nova-foto)
 async function router() {
   stopRecognition();
-  const [path, query] = location.hash.replace(/^#\/?/, '').split('?');
-  const [name, id] = path.split('/');
-  const params = new URLSearchParams(query || '');
+  const h = location.hash.replace(/^#\/?/, '');
+  const i = h.indexOf('-');
+  const name = i < 0 ? h : h.slice(0, i);
+  const arg = i < 0 ? '' : h.slice(i + 1);
   const view = routes[name] || viewPainel;
-  $$('.tabbar a').forEach((a) => a.classList.toggle('active', a.dataset.tab === (name || 'painel')));
-  main.scrollTop = 0; window.scrollTo(0, 0);
-  try { await view(id, params); } catch (e) { console.error(e); main.innerHTML = `<div class="empty">Erro: ${esc(e.message)}</div>`; }
+  const tab = name === 'moto' || name === 'editar' ? 'estoque' : name || 'inicio';
+  $$('.tabbar a').forEach((a) => a.classList.toggle('active', a.dataset.tab === tab));
+  window.scrollTo(0, 0);
+  try { await view(arg); } catch (e) { console.error(e); main.innerHTML = `<div class="empty">Erro: ${esc(e.message)}</div>`; }
   hydrateImgs();
 }
 
@@ -147,31 +163,31 @@ async function viewPainel() {
   const semPreco = estoque.filter((m) => !m.precoVenda);
 
   main.innerHTML = `
-    <header class="top hero"><div><small>Garagem</small><h1>Olá! 👋</h1></div><a href="#/ajustes" class="icon-btn" aria-label="Ajustes">⚙️</a></header>
+    <header class="top hero"><div><small>Garagem</small><h1>Olá! 👋</h1></div><a href="#ajustes" class="icon-btn" aria-label="Ajustes">⚙️</a></header>
     <section class="add-grid">
-      <a class="add-btn primary" href="#/nova?modo=foto"><b>📷</b><span>Foto da ficha</span></a>
-      <a class="add-btn" href="#/nova?modo=audio"><b>🎤</b><span>Falar</span></a>
-      <a class="add-btn" href="#/nova?modo=manual"><b>✍️</b><span>Digitar</span></a>
+      <a class="add-btn primary" href="#nova-foto"><b>📷</b><span>Foto da ficha</span></a>
+      <a class="add-btn" href="#nova-audio"><b>🎤</b><span>Falar</span></a>
+      <a class="add-btn" href="#nova-manual"><b>✍️</b><span>Digitar</span></a>
     </section>
     <section class="kpis">
-      <a href="#/estoque" class="kpi"><small>Motos no estoque</small><strong>${estoque.length}</strong></a>
+      <a href="#estoque" class="kpi"><small>Motos no estoque</small><strong>${estoque.length}</strong></a>
       <div class="kpi"><small>Dinheiro parado em motos</small><strong>${brlShort(investido)}</strong></div>
       <div class="kpi"><small>Lucro previsto do estoque</small><strong class="${previsto >= 0 ? 'pos' : 'neg'}">${brlShort(previsto)}</strong></div>
-      <a href="#/vendas" class="kpi"><small>Vendidas este mês</small><strong>${vendMes.length} <em class="${lucroMes >= 0 ? 'pos' : 'neg'}">${brlShort(lucroMes)}</em></strong></a>
+      <a href="#vendas" class="kpi"><small>Vendidas este mês</small><strong>${vendMes.length} <em class="${lucroMes >= 0 ? 'pos' : 'neg'}">${brlShort(lucroMes)}</em></strong></a>
     </section>
     ${paradas.length || semPreco.length ? `<section class="card alerts"><h2>Atenção</h2>
-      ${paradas.map((m) => `<a class="alert" href="#/moto/${m.id}">⏳ <b>${esc(titulo(m))}</b> está há ${diasEstoque(m)} dias no estoque</a>`).join('')}
-      ${semPreco.map((m) => `<a class="alert" href="#/editar/${m.id}">🏷️ <b>${esc(titulo(m))}</b> está sem preço de venda</a>`).join('')}
+      ${paradas.map((m) => `<a class="alert" href="#moto-${m.id}">⏳ <b>${esc(titulo(m))}</b> está há ${diasEstoque(m)} dias no estoque</a>`).join('')}
+      ${semPreco.map((m) => `<a class="alert" href="#editar-${m.id}">🏷️ <b>${esc(titulo(m))}</b> está sem preço de venda</a>`).join('')}
     </section>` : ''}
     <section>
-      <div class="sec-head"><h2>Últimas entradas</h2><a href="#/estoque">ver todas</a></div>
-      ${estoque.length ? estoque.slice(0, 5).map(cardMoto).join('') : `<div class="empty">Nenhuma moto ainda.<br>Tire a foto de uma ficha para começar,<br>ou carregue o exemplo em <a href="#/ajustes">Ajustes</a>.</div>`}
+      <div class="sec-head"><h2>Últimas entradas</h2><a href="#estoque">ver todas</a></div>
+      ${estoque.length ? estoque.slice(0, 5).map(cardMoto).join('') : `<div class="empty">Nenhuma moto ainda.<br>Tire a foto de uma ficha para começar,<br>ou carregue o exemplo em <a href="#ajustes">Ajustes</a>.</div>`}
     </section>`;
 }
 
 function cardMoto(m) {
   const lp = m.status === 'vendida' ? lucroReal(m) : lucroPrevisto(m);
-  return `<a class="moto-card" href="#/moto/${m.id}">
+  return `<a class="moto-card" href="#moto-${m.id}">
     <div class="thumb">${m.fotos?.[0] ? `<img data-foto="${m.fotos[0]}" alt="">` : '🏍️'}</div>
     <div class="info">
       <b>${esc(titulo(m))}</b>
@@ -213,13 +229,13 @@ async function viewEstoque() {
 // ===== Detalhe da moto =====
 async function viewMoto(id) {
   const m = await db.getMoto(id);
-  if (!m) { main.innerHTML = header('Moto', '#/estoque') + '<div class="empty">Moto não encontrada.</div>'; return; }
+  if (!m) { main.innerHTML = header('Moto', '#estoque') + '<div class="empty">Moto não encontrada.</div>'; return; }
   const ct = custoTotal(m), tg = totalGastos(m), lp = lucroPrevisto(m), lr = lucroReal(m);
   const vendida = m.status === 'vendida';
   const margem = (v) => (ct ? ` (${Math.round((v / ct) * 100)}%)` : '');
   const vsFipe = m.fipe && m.precoVenda ? Math.round((m.precoVenda / m.fipe) * 100) : null;
 
-  main.innerHTML = `${header(esc(titulo(m)), '#/estoque')}
+  main.innerHTML = `${header(esc(titulo(m)), '#estoque')}
     <section class="gallery">
       ${(m.fotos || []).map((f) => `<div class="ph"><img data-foto="${f}" alt="" data-ver="${f}"><button class="del-foto" data-del="${f}" aria-label="Remover foto">×</button></div>`).join('')}
       <button class="ph add" id="add-foto">📷<span>Adicionar fotos</span></button>
@@ -239,7 +255,7 @@ async function viewMoto(id) {
       ${vendida
         ? `<div class="line"><span>Vendida por</span><b>${brl(m.venda.valor)}</b></div>
            <div class="line big ${lr >= 0 ? 'pos' : 'neg'}"><span>Lucro</span><b>${brl(lr)}${margem(lr)}</b></div>`
-        : `<div class="line"><span>Preço de venda</span><b>${m.precoVenda ? brl(m.precoVenda) : '<a href="#/editar/' + m.id + '">definir</a>'}</b></div>
+        : `<div class="line"><span>Preço de venda</span><b>${m.precoVenda ? brl(m.precoVenda) : '<a href="#editar-' + m.id + '">definir</a>'}</b></div>
            ${lp != null ? `<div class="line big ${lp >= 0 ? 'pos' : 'neg'}"><span>Lucro previsto</span><b>${brl(lp)}${margem(lp)}</b></div>` : ''}
            ${vsFipe ? `<p class="muted small">Preço de venda = ${vsFipe}% da FIPE</p>` : ''}
            ${!m.precoVenda && ct ? `<p class="muted small">Sugestão: com 20% de margem → ${brl(Math.ceil((ct * 1.2) / 100) * 100)}${m.fipe ? ` · FIPE ${brl(m.fipe)}` : ''}</p>` : ''}`}
@@ -256,7 +272,7 @@ async function viewMoto(id) {
         : `<button class="btn primary big" id="vender">💰 Marcar como vendida</button>
            ${m.status === 'preparacao' ? '<button class="btn" id="pronta">✅ Pronta — colocar à venda</button>' : ''}
            <button class="btn" id="anuncio">📣 Enviar anúncio no WhatsApp</button>`}
-      <a class="btn" href="#/editar/${m.id}">✏️ Editar dados</a>
+      <a class="btn" href="#editar-${m.id}">✏️ Editar dados</a>
       <button class="btn danger" id="excluir">Excluir moto</button>
     </section>`;
 
@@ -272,7 +288,7 @@ async function viewMoto(id) {
   };
   $$('[data-del]').forEach((b) => (b.onclick = async (e) => {
     e.stopPropagation();
-    if (!confirm('Remover esta foto?')) return;
+    if (!await confirmar('Remover esta foto?')) return;
     m.fotos = m.fotos.filter((f) => f !== b.dataset.del);
     await db.deleteFoto(b.dataset.del);
     save();
@@ -281,8 +297,8 @@ async function viewMoto(id) {
     const url = await fotoURL(img.dataset.ver);
     modal(`<img class="full" src="${url}" alt=""><button class="btn" data-close>Fechar</button>`);
   }));
-  $$('[data-gdel]').forEach((b) => (b.onclick = () => {
-    if (!confirm('Apagar este gasto?')) return;
+  $$('[data-gdel]').forEach((b) => (b.onclick = async () => {
+    if (!await confirmar('Apagar este gasto?')) return;
     m.gastos = m.gastos.filter((g) => g.id !== b.dataset.gdel);
     save('Gasto apagado');
   }));
@@ -351,7 +367,7 @@ async function viewMoto(id) {
     };
   }));
   $('#pronta') && ($('#pronta').onclick = () => { m.status = 'venda'; save('Moto à venda'); });
-  $('#desfazer') && ($('#desfazer').onclick = () => { if (confirm('Desfazer a venda e voltar para o estoque?')) { m.status = 'venda'; delete m.venda; save('Venda desfeita'); } });
+  $('#desfazer') && ($('#desfazer').onclick = async () => { if (await confirmar('Desfazer a venda e voltar para o estoque?')) { m.status = 'venda'; delete m.venda; save('Venda desfeita'); } });
   $('#anuncio') && ($('#anuncio').onclick = async () => {
     const txt = `🏍️ *${titulo(m)}*${m.marca ? ' – ' + m.marca : ''}\n${m.km ? `📍 ${Number(m.km).toLocaleString('pt-BR')} km\n` : ''}${m.precoVenda ? `💰 *${brl(m.precoVenda)}*\n` : ''}✅ Revisada e pronta pra rodar\n📲 Chama no WhatsApp!`;
     const files = [];
@@ -359,11 +375,16 @@ async function viewMoto(id) {
     if (files.length && navigator.canShare?.({ files })) {
       try { await navigator.share({ text: txt, files }); return; } catch (e) { if (e.name === 'AbortError') return; }
     }
-    window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+    modal(`<h2>Anúncio</h2><textarea id="anuncio-txt" rows="6" readonly>${esc(txt)}</textarea>
+      <a class="btn primary big" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">Abrir no WhatsApp</a>
+      <button class="btn" id="copiar">Copiar texto</button><button class="btn" data-close>Fechar</button>`, (w) => {
+      $('#copiar', w).onclick = () => navigator.clipboard.writeText(txt).then(() => toast('Texto copiado'))
+        .catch(() => { $('#anuncio-txt', w).select(); toast('Selecione e copie o texto'); });
+    });
   });
   $('#excluir').onclick = async () => {
-    if (!confirm(`Excluir "${titulo(m)}" e todas as fotos? Não dá para desfazer.`)) return;
-    await db.deleteMoto(m.id); toast('Moto excluída'); location.hash = '#/estoque';
+    if (!await confirmar(`Excluir "${titulo(m)}" e todas as fotos? Não dá para desfazer.`)) return;
+    await db.deleteMoto(m.id); toast('Moto excluída'); location.hash = '#estoque';
   };
 }
 
@@ -439,9 +460,9 @@ function bindForm(m, onSaved) {
 
 async function viewEditar(id) {
   const m = await db.getMoto(id);
-  if (!m) { location.hash = '#/estoque'; return; }
-  main.innerHTML = header('Editar moto', `#/moto/${id}`) + formMoto(m);
-  bindForm(m, () => { toast('Salvo'); location.hash = `#/moto/${m.id}`; });
+  if (!m) { location.hash = '#estoque'; return; }
+  main.innerHTML = header('Editar moto', `#moto-${id}`) + formMoto(m);
+  bindForm(m, () => { toast('Salvo'); location.hash = `#moto-${m.id}`; });
 }
 
 // ===== Nova moto: foto / áudio / manual =====
@@ -454,22 +475,22 @@ function novaMoto(dados = {}) {
 }
 
 function mostrarRevisao(m, aviso, titulo = 'Confira os dados') {
-  main.innerHTML = header(titulo, '#/') + `<p class="muted pad">Revise e corrija o que precisar antes de salvar.</p>` + formMoto(m, aviso);
-  bindForm(m, () => { toast('Moto cadastrada! ✅'); location.hash = `#/moto/${m.id}`; });
+  main.innerHTML = header(titulo, '#inicio') + `<p class="muted pad">Revise e corrija o que precisar antes de salvar.</p>` + formMoto(m, aviso);
+  bindForm(m, () => { toast('Moto cadastrada! ✅'); location.hash = `#moto-${m.id}`; });
 }
 
-async function viewNova(_, params) {
-  const modo = params.get('modo') || 'manual';
+async function viewNova(modo) {
+  modo = modo || 'manual';
   if (modo === 'manual') return mostrarRevisao(novaMoto(), null, 'Nova moto');
 
   if (modo === 'foto') {
-    main.innerHTML = header('Foto da ficha', '#/') + `
+    main.innerHTML = header('Foto da ficha', '#inicio') + `
       <div class="capture">
         <div class="big-ico">📷</div>
         <p>Tire uma foto da ficha <b>inteira</b>, bem iluminada e reta.<br>O app lê o modelo, FIPE, custo e todos os gastos.</p>
         <button class="btn primary big" id="cam">Tirar foto</button>
         <button class="btn" id="gal">Escolher da galeria</button>
-        ${temIA() ? '' : `<div class="warn">Para ler a ficha automaticamente, ${navigator.onLine ? 'configure a chave da IA em <a href="#/ajustes">Ajustes</a>' : 'é preciso internet'}. Sem isso, a foto fica salva e você digita os dados.</div>`}
+        ${temIA() ? '' : `<div class="warn">Para ler a ficha automaticamente, ${navigator.onLine ? 'configure a chave da IA em <a href="#ajustes">Ajustes</a>' : 'é preciso internet'}. Sem isso, a foto fica salva e você digita os dados.</div>`}
       </div>`;
     const go = async (capture) => {
       const [file] = await pickFile({ capture });
@@ -495,7 +516,7 @@ async function viewNova(_, params) {
   }
 
   if (modo === 'audio') {
-    main.innerHTML = header('Falar sobre a moto', '#/') + `
+    main.innerHTML = header('Falar sobre a moto', '#inicio') + `
       <div class="capture">
         <p class="muted">Fale naturalmente, por exemplo:</p>
         <blockquote>“Entrou hoje uma Fazer 150 ED 2015 preta, comprei do João por 7 mil. FIPE 11.389. Gastei 150 de pneu, 635 no mecânico, 50 de lavagem e 700 de pintura. Quero vender por 13.500.”</blockquote>
@@ -598,11 +619,11 @@ async function viewAjustes() {
     };
     inp.click();
   };
-  $('#exemplo').onclick = async () => { await carregarExemplo(); toast('Exemplos carregados'); location.hash = '#/'; };
+  $('#exemplo').onclick = async () => { await carregarExemplo(); toast('Exemplos carregados'); location.hash = '#inicio'; };
   $('#limpar').onclick = async () => {
-    if (!confirm('Apagar TODAS as motos e fotos deste aparelho?')) return;
-    if (!confirm('Tem certeza? Faça um backup antes.')) return;
-    await db.clearAll(); toast('Tudo apagado'); location.hash = '#/';
+    if (!await confirmar('Apagar TODAS as motos e fotos deste aparelho?')) return;
+    if (!await confirmar('Tem certeza? Faça um backup antes.')) return;
+    await db.clearAll(); toast('Tudo apagado'); location.hash = '#inicio';
   };
 }
 
