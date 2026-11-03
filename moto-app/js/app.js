@@ -4,6 +4,7 @@ import {
   lucroReal, diasEstoque, titulo, STATUS, esc, parseMotoTexto, parseGastosTexto,
 } from './util.js';
 import { getApiKey, setApiKey, temIA, lerFicha, lerAudio, conferirSoma } from './ai.js';
+import * as fipe from './fipe.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
@@ -248,7 +249,8 @@ async function viewMoto(id) {
       </dl>
     </section>
     <section class="card money-card">
-      <div class="line"><span>FIPE</span><b>${m.fipe ? brl(m.fipe) : '—'}</b></div>
+      <div class="line"><span>FIPE${m.fipeRef?.mes ? ` <small class="muted">(${esc(m.fipeRef.mes)})</small>` : ''}</span><b>${m.fipe ? brl(m.fipe) : '—'}</b></div>
+      ${!vendida ? `<button class="btn sm fipe-btn" id="atualizar-fipe">${m.fipeRef ? '🔄 Atualizar valor FIPE' : '🔎 Buscar valor FIPE'}</button>` : ''}
       <div class="line"><span>Valor de compra</span><b>${brl(m.valorCompra)}</b></div>
       <div class="line"><span>Gastos (${(m.gastos || []).length})</span><b>${brl(tg)}</b></div>
       <div class="line total"><span>Custo total</span><b>${brl(ct)}</b></div>
@@ -382,10 +384,112 @@ async function viewMoto(id) {
         .catch(() => { $('#anuncio-txt', w).select(); toast('Selecione e copie o texto'); });
     });
   });
+  $('#atualizar-fipe') && ($('#atualizar-fipe').onclick = async () => {
+    let r;
+    if (m.fipeRef?.marca) {
+      loading(true, 'Consultando a FIPE…');
+      try { r = await fipe.valor(m.fipeRef.marca, m.fipeRef.modelo, m.fipeRef.ano); r.ref = { ...m.fipeRef, mes: r.mesReferencia }; }
+      catch (e) { toast(e.message, 4000); return; } finally { loading(false); }
+    } else {
+      r = await buscarFipe({ marca: m.marca, modelo: m.modelo, ano: m.ano });
+      if (!r) return;
+    }
+    const antes = m.fipe;
+    m.fipe = r.valor; m.fipeRef = r.ref;
+    save(antes && antes !== r.valor ? `FIPE mudou: ${brl(antes)} → ${brl(r.valor)}` : 'FIPE atualizada');
+  });
   $('#excluir').onclick = async () => {
     if (!await confirmar(`Excluir "${titulo(m)}" e todas as fotos? Não dá para desfazer.`)) return;
     await db.deleteMoto(m.id); toast('Moto excluída'); location.hash = '#estoque';
   };
+}
+
+// ===== Busca na Tabela FIPE =====
+const cap1 = (s) => String(s || '').toLowerCase().replace(/(^|\s)\S/g, (c) => c.toUpperCase());
+const fipeInfo = (m) => (m.fipeRef ? `FIPE ${esc(m.fipeRef.mes || '')} · ${esc(m.fipeRef.nome || '')}${m.fipeRef.codigo ? ' · cód. ' + esc(m.fipeRef.codigo) : ''}` : '');
+
+// Busca em 3 passos (marca → modelo → ano), pulando os passos que já dá pra deduzir
+// do que foi digitado. Resolve com { valor, ref, ... } ou null se cancelar.
+function buscarFipe(pref = {}) {
+  return new Promise((resolve) => {
+    let escolhido = null;
+    const sel = {};
+    let auto = true; // pula passos automaticamente só na ida; ao voltar, mostra a lista
+    modal(`<div class="row between"><h2 id="fp-tit">Tabela FIPE</h2><button class="btn sm" id="fp-voltar" hidden>‹ Voltar</button></div>
+      <p class="muted small" id="fp-trilha"></p>
+      <input id="fp-busca" type="search" placeholder="Digite para filtrar…" autocomplete="off">
+      <div id="fp-lista" class="fp-lista"></div>
+      <button class="btn" data-close>Cancelar</button>`, (w, close) => {
+      const lista = $('#fp-lista', w), busca = $('#fp-busca', w), tit = $('#fp-tit', w), voltar = $('#fp-voltar', w), trilha = $('#fp-trilha', w);
+      let itens = [], onPick = null, ordenar = false, passo = 0;
+      const carregando = (msg) => { lista.innerHTML = `<div class="fp-msg"><div class="spinner sm"></div>${msg}</div>`; };
+      const erro = (e, retry) => { lista.innerHTML = `<div class="fp-msg">${esc(e.message)}<button class="btn sm" id="fp-tentar">Tentar de novo</button></div>`; $('#fp-tentar', w).onclick = retry; };
+      const render = () => {
+        const q = busca.value.trim();
+        let l = itens;
+        if (q) {
+          l = itens.map((x) => ({ x, s: fipe.score(x.nome, q) })).filter((o) => o.s > 0);
+          if (ordenar) l.sort((a, b) => b.s - a.s);
+          l = l.map((o) => o.x);
+        }
+        lista.innerHTML = l.length ? l.slice(0, 80).map((x) => `<button class="fp-item" data-i="${itens.indexOf(x)}">${esc(x.nome)}</button>`).join('')
+          : '<div class="fp-msg">Nada encontrado. Tente outra palavra.</div>';
+        $$('.fp-item', lista).forEach((b) => (b.onclick = () => onPick(itens[b.dataset.i])));
+        lista.scrollTop = 0;
+      };
+      busca.oninput = render;
+      const mostrar = (titulo, lst, q, pick, ord) => {
+        tit.textContent = titulo; itens = lst; onPick = pick; ordenar = ord;
+        busca.hidden = false; busca.value = q || ''; render();
+        trilha.textContent = [passo > 0 && sel.marca?.nome, passo > 1 && sel.modelo?.nome].filter(Boolean).join(' › ');
+        voltar.hidden = passo === 0;
+      };
+      const passos = [
+        async () => {
+          passo = 0; carregando('Carregando marcas…');
+          try {
+            const ms = await fipe.marcas();
+            const achou = pref.marca && ms.find((x) => fipe.norm(x.nome) === fipe.norm(pref.marca));
+            if (achou && auto) { sel.marca = achou; return passos[1](); }
+            mostrar('Qual a marca?', ms, '', (x) => { sel.marca = x; auto = true; passos[1](); }, false);
+          } catch (e) { erro(e, passos[0]); }
+        },
+        async () => {
+          passo = 1; carregando('Carregando modelos…');
+          try {
+            const ms = await fipe.modelos(sel.marca.codigo);
+            mostrar('Qual o modelo?', ms, auto ? pref.modelo : '', (x) => { sel.modelo = x; auto = true; passos[2](); }, true);
+          } catch (e) { erro(e, passos[1]); }
+        },
+        async () => {
+          passo = 2; carregando('Carregando anos…');
+          try {
+            const as = (await fipe.anos(sel.marca.codigo, sel.modelo.codigo)).map((a) => ({ ...a, nome: a.nome.replace(/^32000/, 'Zero km') }));
+            const achou = pref.ano ? as.filter((a) => a.nome.startsWith(String(pref.ano).trim())) : [];
+            if (achou.length === 1 && auto) return pegar(achou[0]);
+            mostrar('Qual o ano?', as, '', pegar, false);
+          } catch (e) { erro(e, passos[2]); }
+        },
+      ];
+      async function pegar(ano) {
+        passo = 3; busca.hidden = true; voltar.hidden = false; carregando('Consultando valor…');
+        trilha.textContent = `${sel.marca.nome} › ${sel.modelo.nome} › ${ano.nome}`;
+        try {
+          const r = await fipe.valor(sel.marca.codigo, sel.modelo.codigo, ano.codigo);
+          r.ref = { marca: sel.marca.codigo, modelo: sel.modelo.codigo, ano: ano.codigo, mes: r.mesReferencia, codigo: r.codigoFipe, nome: `${r.modelo} ${r.ano}` };
+          tit.textContent = 'Valor FIPE';
+          lista.innerHTML = `<div class="fp-result"><small>${esc(r.mesReferencia)}</small><strong>${brl(r.valor)}</strong><span>${esc(r.marca)} ${esc(r.modelo)} · ${esc(r.ano)}</span>
+            <button class="btn primary big" id="fp-usar">Usar este valor</button></div>`;
+          $('#fp-usar', w).onclick = () => { escolhido = r; close(); };
+        } catch (e) { erro(e, () => pegar(ano)); }
+      }
+      voltar.onclick = () => { auto = false; passos[Math.max(0, passo - 1)](); };
+      passos[0]();
+    });
+    const wrap = $('#modal');
+    const obs = new MutationObserver(() => { if (wrap.hidden) { obs.disconnect(); resolve(escolhido); } });
+    obs.observe(wrap, { attributes: true, attributeFilter: ['hidden'] });
+  });
 }
 
 // ===== Formulário (nova / editar) =====
@@ -410,6 +514,8 @@ function formMoto(m, aviso) {
     </fieldset>
     <fieldset class="card"><legend>Valores</legend>
       <div class="grid2">${moneyInput('fipe', 'FIPE', m.fipe)}${moneyInput('valorCompra', 'Paguei na moto', m.valorCompra)}</div>
+      <button type="button" class="btn sm fipe-btn" id="buscar-fipe">🔎 Buscar valor na Tabela FIPE</button>
+      <p class="muted small" id="fipe-info">${fipeInfo(m)}</p>
       ${moneyInput('precoVenda', 'Preço de venda', m.precoVenda)}
     </fieldset>
     <fieldset class="card"><legend>Gastos</legend>
@@ -438,6 +544,18 @@ function bindForm(m, onSaved) {
   $('#add-row').onclick = () => { $('#gastos-rows').insertAdjacentHTML('beforeend', rowGasto()); bindRows(); $$('[name=g_desc]', f).pop().focus(); };
   f.addEventListener('input', calc);
   bindRows(); calc();
+  $('#buscar-fipe').onclick = async () => {
+    const r = await buscarFipe({ marca: f.marca.value, modelo: f.modelo.value, ano: f.ano.value });
+    if (!r) return;
+    m.fipeRef = r.ref;
+    f.fipe.value = fmtNum(r.valor);
+    if (!f.marca.value) f.marca.value = cap1(r.marca);
+    if (!f.modelo.value) f.modelo.value = r.modelo;
+    if (!f.ano.value && /^\d{4}$/.test(r.ano)) f.ano.value = r.ano;
+    $('#fipe-info').innerHTML = fipeInfo(m);
+    calc();
+    toast('Valor FIPE preenchido');
+  };
   f.onsubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(f);

@@ -1,8 +1,8 @@
 // Service worker: deixa o app abrir sem internet.
-const CACHE = 'garagem-v1';
+const CACHE = 'garagem-v2';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest', './css/styles.css',
-  './js/app.js', './js/db.js', './js/util.js', './js/ai.js', './js/vendor/anthropic-sdk.js',
+  './js/app.js', './js/db.js', './js/util.js', './js/ai.js', './js/fipe.js', './js/vendor/anthropic-sdk.js',
   './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
 ];
 
