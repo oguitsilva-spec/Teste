@@ -72,7 +72,7 @@ function rQuick() {
 }
 $('scan').addEventListener('keydown', e => { if (e.key === 'Enter') { const v = $('scan').value.trim(); if (!v) return; if (byCod(v)) { addCart(v); $('scan').value = ''; rQuick(); } else { const m = db.prods.filter(p => p.nome.toLowerCase().includes(v.toLowerCase())); if (m.length === 1) { addCart(m[0].cod); $('scan').value = ''; rQuick(); } else toast(m.length ? 'Toque no produto abaixo' : 'Não encontrado: ' + v, m.length ? '' : 'bad'); } } });
 $('scan').addEventListener('input', rQuick);
-$('camV').onclick = () => scanner(c => addCart(c), true);
+$('camV').onclick = () => scanner(c => addCart(c), false);
 $('cobrar').onclick = () => {
   if (!cart.length) return toast('A conta está vazia', 'bad');
   const t = tot(); let pag = 'Pix';
