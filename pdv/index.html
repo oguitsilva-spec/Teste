@@ -86,14 +86,14 @@ video{width:100%;max-width:400px;border-radius:8px}
 </main>
 <script>
 const $=id=>document.getElementById(id),R=v=>'R$ '+(+v).toFixed(2).replace('.',',');
+const TAM=["P","M","G","GG","XG"];
 const SEED=[["Caneta",15,"Acessórios"],["Chaveiro de metal",24,"Acessórios"],["Chaveiro de borracha",2,"Acessórios"],["Pin",15,"Acessórios"],
 ["Pulseira de borracha / São Bento",15,"Pulseiras"],["Pulseira fina de borracha",6,"Pulseiras"],["Pulseira média de Jesus",5,"Pulseiras"],
 ["Imagem de São Miguel",35,"Imagens"],["Pulseira de metal",25.9,"Pulseiras"],["Pulseira de cordinha trançada",29.9,"Pulseiras"],
 ["Pulseira de Nossa Senhora",19.9,"Pulseiras"],["Pulseira branca de Nossa Senhora",19.9,"Pulseiras"],["Pulseira dos Santos",34.9,"Pulseiras"],
 ["Pulseira de nylon",10,"Pulseiras"],["Escapulário",39.9,"Acessórios"],["Terço infantil",19.9,"Terços"],["Bolsinha de terço",29.9,"Terços"],
-["Camiseta Padre Pio",90,"Camisetas",1],["Camiseta Nossa Senhora de Pentecostes",90,"Camisetas",1],["Camiseta Aviva-me 2026 (Sarça)",90,"Camisetas",1],
-["Camiseta Nossa Senhora de Guadalupe",90,"Camisetas",1],["Camiseta Totus Tuus",90,"Camisetas",1],["Camiseta Carlo Acutis",90,"Camisetas",1],
-["Camiseta Maria Passa na Frente",90,"Camisetas",1]];
+...["Padre Pio","Nossa Senhora de Pentecostes","Aviva-me 2026 (Sarça)","Nossa Senhora de Guadalupe","Totus Tuus","Carlo Acutis","Maria Passa na Frente"]
+ .flatMap(m=>TAM.map(t=>["Camiseta "+m+" - "+t,90,"Camisetas",1]))];
 const ean=n=>{const b='2'+String(n).padStart(11,'0');let s=0;for(let i=0;i<12;i++)s+=+b[i]*(i%2?3:1);return b+((10-s%10)%10)};
 const L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'],
  G=L.map(x=>[...x].map(c=>c^1).reverse().join('')),Rr=L.map(x=>[...x].map(c=>c^1).join('')),
@@ -103,6 +103,8 @@ function bars(c){let b='101';for(let i=1;i<7;i++)b+=(PAR[c[0]][i-1]=='L'?L:G)[c[
  return`<svg viewBox="0 0 113 66" xmlns="http://www.w3.org/2000/svg">${r}<g font-size="9" font-family="monospace" text-anchor="middle"><text x="4" y="64">${c[0]}</text><text x="33" y="64">${c.slice(1,7)}</text><text x="79" y="64">${c.slice(7)}</text></g></svg>`}
 let db;try{db=JSON.parse(localStorage.pdvAvivados)}catch(e){}
 if(!db){db={seq:0,prods:[],vendas:[]};SEED.forEach(([n,p,c,r])=>novo(n,p,c,0,!!r))}
+else db.prods.filter(p=>p.cat==='Camisetas'&&!/ - (P|M|G|GG|XG)$/.test(p.nome)).forEach(p=>{
+ db.prods=db.prods.filter(x=>x!==p);TAM.forEach(t=>novo(p.nome+' - '+t,p.preco,p.cat,t==='P'?p.qtd:0,p.repor))});
 let cart=[];
 function save(){try{localStorage.pdvAvivados=JSON.stringify(db)}catch(e){alert('Erro ao salvar')}}
 function novo(nome,preco,cat,qtd,repor){db.seq++;const p={cod:ean(db.seq),nome,preco:+preco,cat,qtd:+qtd||0,repor};db.prods.push(p);save();return p}
