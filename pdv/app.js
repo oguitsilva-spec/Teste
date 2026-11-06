@@ -89,7 +89,7 @@ $('cobrar').onclick = () => {
   $('rec').oninput = () => { const r = +$('rec').value; $('troco').textContent = r ? (r >= t ? 'Troco: ' + R(r - t) : 'Faltam ' + R(t - r)) : ''; };
   $('cancV').onclick = () => { m.close(); ask('Cancelar esta venda?', 'Sim, cancelar', () => { cart = []; rCart(); }, 1); };
   $('okV').onclick = () => {
-    const v = { d: new Date().toISOString(), itens: cart, total: t, pag };
+    const v = { d: new Date().toISOString(), itens: cart, total: t, pag }; v.id = v.d.replace(/\W/g, '');
     cart.forEach(i => { const p = byCod(i.cod); if (p) p.qtd -= i.q; });
     db.vendas.push(v); save(); cloudVenda(v);
     cart = []; m.close(); render(); toast('Venda registrada: ' + R(t), 'ok'); beep();
@@ -171,9 +171,23 @@ function rVendas() {
   const t = vs.reduce((a, v) => a + v.total, 0), por = {}; vs.forEach(v => por[v.pag] = (por[v.pag] || 0) + v.total);
   $('vStats').innerHTML = `<div class="st"><small>Total</small><b>${R(t)}</b></div><div class="st"><small>Vendas</small><b>${vs.length}</b></div><div class="st"><small>Ticket médio</small><b>${R(vs.length ? t / vs.length : 0)}</b></div>` +
     Object.entries(por).map(([k, v]) => `<div class="st"><small>${k}</small><b>${R(v)}</b></div>`).join('');
-  $('hist').innerHTML = vs.map(v => `<div class="vd"><div class="nm">${v.itens.map(i => i.q + '× ' + esc(i.nome)).join('<br>')}<br><small>${new Date(v.d).toLocaleTimeString('pt-BR').slice(0, 5)} · ${v.pag}</small></div><b>${R(v.total)}</b></div>`).join('') || '<div class="empty">Nenhuma venda neste dia.</div>';
+  $('hist').innerHTML = vs.map(v => `<div class="vd" data-id="${esc(vid(v))}"><div class="nm">${v.itens.map(i => i.q + '× ' + esc(i.nome)).join('<br>')}<br><small>${new Date(v.d).toLocaleTimeString('pt-BR').slice(0, 5)} · ${v.pag}</small></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><b>${R(v.total)}</b><button class="btn sm bad" data-del>Excluir</button></div></div>`).join('') || '<div class="empty">Nenhuma venda neste dia.</div>';
+  $('hist').querySelectorAll('[data-del]').forEach(b => b.onclick = () => excluirVenda(b.closest('.vd').dataset.id));
 }
 $('dia').onchange = rVendas;
+const vid = v => v.id || v.d.replace(/\W/g, '');
+function excluirVenda(id) {
+  const v = db.vendas.find(x => vid(x) === id); if (!v) return;
+  ask('Excluir esta venda de ' + R(v.total) + '? Os itens voltam para o estoque.', 'Excluir venda', () => {
+    v.itens.forEach(i => { const p = byCod(i.cod); if (p) p.qtd += i.q; });
+    db.vendas = db.vendas.filter(x => x !== v); save(); render(); toast('Venda excluída e estoque devolvido', 'ok');
+    if (FB && au.currentUser) {
+      const b = fs.batch(), inc = firebase.firestore.FieldValue.increment;
+      v.itens.forEach(i => byCod(i.cod) && b.update(fs.collection('produtos').doc(i.cod), { qtd: inc(i.q) }));
+      b.delete(fs.collection('vendas').doc(id)); b.commit().catch(erroNuvem);
+    }
+  }, 1);
+}
 $('exp').onclick = async () => {
   const f = new File([JSON.stringify(db)], 'pdv-avivados-' + dstr(Date.now()) + '.json', { type: 'application/json' });
   if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Backup PDV Avivados' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
@@ -209,13 +223,13 @@ function cloudVenda(v) {
   if (!FB || !au.currentUser) return;
   const b = fs.batch(), inc = firebase.firestore.FieldValue.increment;
   v.itens.forEach(i => byCod(i.cod) && b.update(fs.collection('produtos').doc(i.cod), { qtd: inc(-i.q) }));
-  b.set(fs.collection('vendas').doc(), v); b.commit().catch(erroNuvem);
+  const { id, ...dados } = v; b.set(fs.collection('vendas').doc(id), dados); b.commit().catch(erroNuvem);
 }
 async function cloudSubir(tudo) { // envia os dados deste aparelho (primeira vez ou backup importado)
   const ops = [];
   db.prods.forEach(p => ops.push(b => b.set(fs.collection('produtos').doc(p.cod), p)));
   if (tudo) { const ex = await fs.collection('produtos').get(); ex.docs.forEach(d => !byCod(d.id) && ops.push(b => b.delete(d.ref))); }
-  db.vendas.forEach(v => ops.push(b => b.set(fs.collection('vendas').doc(v.d.replace(/\W/g, '')), v)));
+  db.vendas.forEach(v => ops.push(b => { const { id, ...dados } = v; b.set(fs.collection('vendas').doc(id || v.d.replace(/\W/g, '')), dados); }));
   ops.push(b => b.set(fs.doc('meta/contador'), { seq: db.seq }, { merge: true }));
   for (let i = 0; i < ops.length; i += 400) { const b = fs.batch(); ops.slice(i, i + 400).forEach(f => f(b)); await b.commit(); }
 }
@@ -248,7 +262,7 @@ function iniciarNuvem() {
       if (!(c.exists && c.data().bebidas)) { const b = fs.batch(); BEBIDAS.forEach(x => b.set(fs.collection('produtos').doc(x.cod), x)); b.set(fs.doc('meta/contador'), { bebidas: true }, { merge: true }); await b.commit(); } } catch (e) { erroNuvem(e); }
     unsub.push(fs.collection('produtos').onSnapshot(s => { db.prods = s.docs.map(d => d.data()).sort((a, b) => a.cod.localeCompare(b.cod)); save(); render(); }, erroNuvem));
     const desde = new Date(Date.now() - 400 * 864e5).toISOString();
-    unsub.push(fs.collection('vendas').where('d', '>=', desde).onSnapshot(s => { db.vendas = s.docs.map(d => d.data()).sort((a, b) => a.d.localeCompare(b.d)); save(); render(); }, erroNuvem));
+    unsub.push(fs.collection('vendas').where('d', '>=', desde).onSnapshot(s => { db.vendas = s.docs.map(d => ({ ...d.data(), id: d.id })).sort((a, b) => a.d.localeCompare(b.d)); save(); render(); }, erroNuvem));
   });
 }
 iniciarNuvem();
