@@ -217,17 +217,22 @@ async function cloudSubir(tudo) { // envia os dados deste aparelho (primeira vez
 }
 function erroNuvem(e) { console.warn(e); toast(e.code === 'permission-denied' ? 'Sem permissão no banco. Entre novamente.' : 'Erro ao sincronizar: ' + (e.message || e), 'bad'); }
 function login() {
-  const m = sheet(`<h2>Entrar</h2><p style="margin:0 0 14px;color:var(--mu)">Use o e-mail e a senha da equipe para acessar o estoque compartilhado.</p>
-   <form id="lf"><div class="fld"><label for="lE">E-mail</label><input class="in" id="lE" type="email" autocomplete="username" required></div>
-   <div class="fld"><label for="lS">Senha</label><input class="in" id="lS" type="password" autocomplete="current-password" required></div>
-   <p id="lErr" style="color:var(--bad);min-height:20px;margin:0 0 8px"></p><button class="btn pri" style="width:100%">Entrar</button></form>`);
+  const m = sheet(`<h2>Entrar</h2><p style="margin:0 0 16px;color:var(--mu)">Entre com sua conta Google para acessar o estoque compartilhado da loja.</p>
+   <button class="btn" id="gBtn" style="width:100%;height:52px;background:#fff;color:#1f1f1f;border-color:#dadce0"><svg viewBox="0 0 48 48" width="20" height="20"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.8c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C1 16.6 0 20.2 0 24s1 7.4 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.8c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>Entrar com Google</button>
+   <p id="lErr" style="color:var(--bad);min-height:20px;margin:10px 0 0;text-align:center"></p>`);
   m.el.onclick = null;
-  $('lf').onsubmit = e => { e.preventDefault(); $('lErr').textContent = '';
-    au.signInWithEmailAndPassword($('lE').value.trim(), $('lS').value).then(() => m.close()).catch(() => $('lErr').textContent = 'E-mail ou senha incorretos.'); };
+  $('gBtn').onclick = () => {
+    const pv = new firebase.auth.GoogleAuthProvider(); pv.setCustomParameters({ prompt: 'select_account' }); $('lErr').textContent = '';
+    au.signInWithPopup(pv).then(() => m.close()).catch(e => {
+      if (/popup-blocked|operation-not-supported|web-storage/.test(e.code)) return au.signInWithRedirect(pv);
+      if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') $('lErr').textContent = 'Não foi possível entrar (' + e.code + ').';
+    });
+  };
 }
 function iniciarNuvem() {
   $('nuvem').hidden = !FB; if (!FB) return;
   firebase.initializeApp(FIREBASE_CONFIG);
+  firebase.auth().getRedirectResult().catch(e => toast('Erro no login: ' + e.code, 'bad'));
   fs = firebase.firestore(); au = firebase.auth();
   fs.enablePersistence({ synchronizeTabs: true }).catch(() => { });
   $('sair').onclick = () => ask('Sair da conta neste aparelho?', 'Sair', () => au.signOut(), 1);
