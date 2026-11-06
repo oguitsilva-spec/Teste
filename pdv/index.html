@@ -164,6 +164,7 @@ nav button.on{color:var(--fire)}
  <div class="row"><input class="in" type="date" id="dia"></div>
  <div class="stats" id="vStats"></div>
  <div class="card" id="hist"></div>
+ <div class="card np" id="nuvem" hidden><p class="h">Sincronização</p><div class="row"><span id="nuvemSt" style="flex:1;color:var(--mu)"></span><button class="btn sm bad" id="sair">Sair</button></div></div>
  <div class="card np"><p class="h">Backup dos dados</p><p style="margin:0 0 10px;color:var(--mu);font-size:13.5px">Os dados ficam salvos neste aparelho. Exporte de vez em quando para não perder nada.</p>
   <div class="row"><button class="btn" id="exp">Exportar backup</button><label class="btn">Importar<input type="file" id="imp" hidden accept=".json,application/json"></label></div></div>
 </div></section>
@@ -176,6 +177,10 @@ nav button.on{color:var(--fire)}
  <button data-t="vendas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Vendas</button>
 </nav>
 <div id="modal"></div>
+<script src="vendor/firebase-app-compat.js"></script>
+<script src="vendor/firebase-auth-compat.js"></script>
+<script src="vendor/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="vendor/html5-qrcode.min.js"></script>
 <script src="app.js"></script>
 </body>

@@ -85,8 +85,9 @@ $('cobrar').onclick = () => {
   $('rec').oninput = () => { const r = +$('rec').value; $('troco').textContent = r ? (r >= t ? 'Troco: ' + R(r - t) : 'Faltam ' + R(t - r)) : ''; };
   $('cancV').onclick = () => { m.close(); ask('Cancelar esta venda?', 'Sim, cancelar', () => { cart = []; rCart(); }, 1); };
   $('okV').onclick = () => {
+    const v = { d: new Date().toISOString(), itens: cart, total: t, pag };
     cart.forEach(i => { const p = byCod(i.cod); if (p) p.qtd -= i.q; });
-    db.vendas.push({ d: new Date().toISOString(), itens: cart, total: t, pag }); save();
+    db.vendas.push(v); save(); cloudVenda(v);
     cart = []; m.close(); render(); toast('Venda registrada: ' + R(t), 'ok'); beep();
   };
 };
@@ -134,14 +135,15 @@ function editar(p) {
    <label class="row" style="margin-bottom:14px"><input type="checkbox" id="fR" ${n || p.repor ? 'checked' : ''}> Repor quando acabar</label>
    <div class="two">${n ? '<button class="btn x" style="width:auto;height:48px;border-radius:14px">Cancelar</button>' : '<button class="btn bad" id="fDel">Excluir</button>'}<button class="btn pri" id="fOk">Salvar</button></div>`);
   m.el.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { $('fQ').value = Math.max(0, (+$('fQ').value || 0) + +b.dataset.a); });
-  $('fOk').onclick = () => {
+  $('fOk').onclick = async () => {
     const nome = $('fN').value.trim(), preco = +String($('fP').value).replace(',', '.');
     if (!nome || !(preco > 0)) return toast('Preencha nome e preço', 'bad');
-    if (n) { const x = novo(nome, preco, $('fC').value.trim() || 'Geral', $('fQ').value, $('fR').checked); toast('Cadastrado · código ' + x.cod, 'ok'); }
+    let x = p;
+    if (n) { try { await proxSeq(); } catch (e) { return toast('Sem internet: conecte para cadastrar produto novo', 'bad'); } x = novo(nome, preco, $('fC').value.trim() || 'Geral', $('fQ').value, $('fR').checked); toast('Cadastrado · código ' + x.cod, 'ok'); }
     else Object.assign(p, { nome, preco, qtd: +$('fQ').value || 0, cat: $('fC').value.trim() || 'Geral', repor: $('fR').checked }), toast('Salvo', 'ok');
-    save(); m.close(); render();
+    save(); cloudProd(x); m.close(); render();
   };
-  if (!n) $('fDel').onclick = () => { m.close(); ask('Excluir ' + p.nome + '?', 'Excluir', () => { db.prods = db.prods.filter(x => x !== p); save(); render(); }, 1); };
+  if (!n) $('fDel').onclick = () => { m.close(); ask('Excluir ' + p.nome + '?', 'Excluir', () => { db.prods = db.prods.filter(x => x !== p); save(); cloudDel(p); render(); }, 1); };
   if (n) setTimeout(() => $('fN').focus(), 250);
 }
 
@@ -173,7 +175,7 @@ $('exp').onclick = async () => {
   if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Backup PDV Avivados' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
   const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; a.click();
 };
-$('imp').onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { let d; try { d = JSON.parse(t); } catch (x) { return toast('Arquivo inválido', 'bad'); } if (!d.prods) return toast('Arquivo inválido', 'bad'); ask('Substituir todos os dados por este backup?', 'Substituir', () => { db = d; save(); render(); toast('Backup restaurado', 'ok'); }, 1); }); e.target.value = ''; };
+$('imp').onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { let d; try { d = JSON.parse(t); } catch (x) { return toast('Arquivo inválido', 'bad'); } if (!d.prods) return toast('Arquivo inválido', 'bad'); ask('Substituir todos os dados por este backup?', 'Substituir', () => { db = d; save(); cloudSubir(true); render(); toast('Backup restaurado', 'ok'); }, 1); }); e.target.value = ''; };
 
 function render() {
   $('hoje').textContent = R(db.vendas.filter(v => dstr(v.d) === dstr(Date.now())).reduce((a, v) => a + v.total, 0));
@@ -188,3 +190,55 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && buf.length >= 6) { if (tab !== 'venda') go('venda'); addCart(buf); buf = ''; } else if (e.key.length === 1) buf += e.key;
 });
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+
+// ===== nuvem (Firebase): estoque e vendas compartilhados entre os aparelhos =====
+const FB = window.FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey;
+let fs, au, unsub = [];
+async function proxSeq() { // no modo nuvem o contador de códigos é único para todos os aparelhos
+  if (!FB) return;
+  const ref = fs.doc('meta/contador');
+  db.seq = await fs.runTransaction(async t => { const s = await t.get(ref); const v = Math.max(s.exists ? s.data().seq : 0, db.seq) + 1; t.set(ref, { seq: v }); return v; }) - 1;
+}
+function cloudProd(p) { if (FB && au.currentUser) fs.collection('produtos').doc(p.cod).set(p).catch(erroNuvem); }
+function cloudDel(p) { if (FB && au.currentUser) fs.collection('produtos').doc(p.cod).delete().catch(erroNuvem); }
+function cloudVenda(v) {
+  if (!FB || !au.currentUser) return;
+  const b = fs.batch(), inc = firebase.firestore.FieldValue.increment;
+  v.itens.forEach(i => byCod(i.cod) && b.update(fs.collection('produtos').doc(i.cod), { qtd: inc(-i.q) }));
+  b.set(fs.collection('vendas').doc(), v); b.commit().catch(erroNuvem);
+}
+async function cloudSubir(tudo) { // envia os dados deste aparelho (primeira vez ou backup importado)
+  const ops = [];
+  db.prods.forEach(p => ops.push(b => b.set(fs.collection('produtos').doc(p.cod), p)));
+  if (tudo) { const ex = await fs.collection('produtos').get(); ex.docs.forEach(d => !byCod(d.id) && ops.push(b => b.delete(d.ref))); }
+  db.vendas.forEach(v => ops.push(b => b.set(fs.collection('vendas').doc(v.d.replace(/\W/g, '')), v)));
+  ops.push(b => b.set(fs.doc('meta/contador'), { seq: db.seq }));
+  for (let i = 0; i < ops.length; i += 400) { const b = fs.batch(); ops.slice(i, i + 400).forEach(f => f(b)); await b.commit(); }
+}
+function erroNuvem(e) { console.warn(e); toast(e.code === 'permission-denied' ? 'Sem permissão no banco. Entre novamente.' : 'Erro ao sincronizar: ' + (e.message || e), 'bad'); }
+function login() {
+  const m = sheet(`<h2>Entrar</h2><p style="margin:0 0 14px;color:var(--mu)">Use o e-mail e a senha da equipe para acessar o estoque compartilhado.</p>
+   <form id="lf"><div class="fld"><label for="lE">E-mail</label><input class="in" id="lE" type="email" autocomplete="username" required></div>
+   <div class="fld"><label for="lS">Senha</label><input class="in" id="lS" type="password" autocomplete="current-password" required></div>
+   <p id="lErr" style="color:var(--bad);min-height:20px;margin:0 0 8px"></p><button class="btn pri" style="width:100%">Entrar</button></form>`);
+  m.el.onclick = null;
+  $('lf').onsubmit = e => { e.preventDefault(); $('lErr').textContent = '';
+    au.signInWithEmailAndPassword($('lE').value.trim(), $('lS').value).then(() => m.close()).catch(() => $('lErr').textContent = 'E-mail ou senha incorretos.'); };
+}
+function iniciarNuvem() {
+  $('nuvem').hidden = !FB; if (!FB) return;
+  firebase.initializeApp(FIREBASE_CONFIG);
+  fs = firebase.firestore(); au = firebase.auth();
+  fs.enablePersistence({ synchronizeTabs: true }).catch(() => { });
+  $('sair').onclick = () => ask('Sair da conta neste aparelho?', 'Sair', () => au.signOut(), 1);
+  au.onAuthStateChanged(async u => {
+    unsub.forEach(f => f()); unsub = [];
+    $('nuvemSt').textContent = u ? 'Conectado como ' + u.email : 'Desconectado';
+    if (!u) return login();
+    try { const c = await fs.doc('meta/contador').get(); if (!c.exists) { await cloudSubir(false); toast('Estoque enviado para a nuvem', 'ok'); } } catch (e) { erroNuvem(e); }
+    unsub.push(fs.collection('produtos').onSnapshot(s => { db.prods = s.docs.map(d => d.data()).sort((a, b) => a.cod.localeCompare(b.cod)); save(); render(); }, erroNuvem));
+    const desde = new Date(Date.now() - 400 * 864e5).toISOString();
+    unsub.push(fs.collection('vendas').where('d', '>=', desde).onSnapshot(s => { db.vendas = s.docs.map(d => d.data()).sort((a, b) => a.d.localeCompare(b.d)); save(); render(); }, erroNuvem));
+  });
+}
+iniciarNuvem();
