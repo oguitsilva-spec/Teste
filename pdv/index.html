@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PDV Avivados</title>
+<meta name="theme-color" content="#2e2f31">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PDV Avivados">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: app de uma tela — cabeçalho escuro, conteúdo rolável, barra de abas fixa embaixo */
+:root{
+ --ink:#2e2f31;--ink2:#47484b;--fire:#d86e2d;--fire2:#ebb833;--bg:#f6f4f1;--card:#fff;--tx:#232325;--mu:#7d7a76;--ln:#e9e5df;
+ --ok:#17a35a;--warn:#e8a200;--bad:#e5484d;--f:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+ --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#141415;--card:#1f1f21;--tx:#f3f1ee;--mu:#a19d97;--ln:#333336;color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;font-family:var(--f);background:var(--bg);color:var(--tx);font-size:15px;display:flex;flex-direction:column;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+header{background:linear-gradient(135deg,var(--ink),var(--ink2));color:#fff;padding:calc(var(--st) + 14px) max(16px,var(--sr)) 14px max(16px,var(--sl));display:flex;align-items:center;gap:12px}
+.logo{height:44px;width:auto;flex:none;filter:drop-shadow(0 2px 6px #0005)}
+header h1{margin:0;font-size:19px;font-weight:600;letter-spacing:4px;line-height:1.1}
+header small{display:block;font-weight:500;font-size:11px;color:var(--fire);letter-spacing:2px;text-transform:uppercase}
+.hdr-r{margin-left:auto;text-align:right;font-size:12px;opacity:.85}
+.hdr-r b{display:block;font-size:16px;color:var(--fire2)}
+.sync{display:inline-flex;align-items:center;gap:5px;font-size:11px;margin-top:2px}.sync:empty{display:none}
+.sync:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.sync.on{color:#4ade80}.sync.wait{color:var(--fire2)}.sync.off{color:#f87171}
+.sync.on:before{animation:pulso 2s infinite}@keyframes pulso{50%{opacity:.3}}
+#ptr{height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--fire);transition:height .2s;margin:-16px 0 0}
+#ptr svg{width:26px;height:26px;transition:transform .2s}#ptr.pronto svg{transform:rotate(180deg)}#ptr.girando svg{animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px max(16px,var(--sr)) 24px max(16px,var(--sl))}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+nav{display:flex;background:var(--card);border-top:1px solid var(--ln);padding:6px max(6px,var(--sr)) calc(6px + var(--sb)) max(6px,var(--sl))}
+nav button{flex:1;border:0;background:none;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:500;color:var(--mu);cursor:pointer;border-radius:12px}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--fire)}
+.card{background:var(--card);border-radius:18px;padding:14px;border:1px solid var(--ln)}
+.h{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);margin:0 0 10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.in{flex:1;min-width:0;height:48px;padding:0 14px;border:1.5px solid var(--ln);border-radius:14px;background:var(--bg);font-size:16px;outline:none;transition:border .15s}
+.in:focus{border-color:var(--fire)}
+.btn{height:48px;padding:0 18px;border-radius:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--bg);border:1.5px solid var(--ln);white-space:nowrap}
+.btn svg{width:20px;height:20px}
+.btn.pri{background:linear-gradient(135deg,var(--fire),#e5843f);color:#fff;border:0;box-shadow:0 6px 18px #d86e2d44}
+.btn.ok{background:var(--ok);color:#fff;border:0}
+.btn.ink{background:var(--ink);color:#fff;border:0}
+.btn.bad{background:none;color:var(--bad);border-color:var(--bad)}
+.btn.sm{height:36px;padding:0 12px;border-radius:10px;font-size:14px}
+.btn.ic{width:48px;padding:0}
+.btn:active{transform:scale(.97)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{flex:none;height:34px;padding:0 14px;border-radius:99px;border:1.5px solid var(--ln);background:var(--card);font-size:13.5px;font-weight:500;cursor:pointer}
+.chip.on{background:var(--fire);color:#fff;border-color:var(--fire)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.pt{border:1.5px solid var(--ln);background:var(--card);border-radius:14px;padding:10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:78px}
+.pt b{font-size:13.5px;font-weight:600;line-height:1.2}
+.pt span{margin-top:auto;display:flex;justify-content:space-between;font-size:13px;color:var(--mu)}
+.pt span i{font-style:normal;font-weight:700;color:var(--tx)}
+.pt.zero{opacity:.5}
+.ci{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)}
+.ci:last-child{border-bottom:0}
+.ci .nm{flex:1;min-width:0}
+.ci .nm b{display:block;font-weight:600;font-size:15px}
+.ci .nm small{color:var(--mu)}
+.qty{display:flex;align-items:center;background:var(--bg);border-radius:12px}
+.qty button{width:36px;height:36px;border:0;background:none;font-size:20px;cursor:pointer;color:var(--fire);font-weight:700}
+.qty span{min-width:22px;text-align:center;font-weight:700}
+.ci .sub{width:86px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.empty{text-align:center;color:var(--mu);padding:26px 10px}
+.empty svg{width:46px;height:46px;opacity:.35;display:block;margin:0 auto 8px}
+.totbar{position:sticky;bottom:-24px;background:linear-gradient(135deg,var(--ink),var(--ink2));color:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px #2e2f3155}
+.totbar .t small{display:block;font-size:12px;opacity:.7;text-transform:uppercase;letter-spacing:.8px}
+.totbar .t b{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--fire2)}
+.totbar .btn{margin-left:auto}
+.it{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--ln);cursor:pointer}
+.it:last-child{border-bottom:0}
+.it .nm{flex:1;min-width:0}
+.it .nm b{display:block;font-weight:600}
+.it .nm small{color:var(--mu);font-size:12.5px;font-variant-numeric:tabular-nums}
+.it .pr{font-weight:700;font-variant-numeric:tabular-nums}
+.bdg{min-width:44px;height:28px;padding:0 8px;border-radius:99px;display:inline-grid;place-items:center;font-weight:700;font-size:13.5px;background:#17a35a1f;color:var(--ok)}
+.bdg.l{background:#e8a20022;color:var(--warn)}.bdg.z{background:#e5484d1c;color:var(--bad)}
+.tag{white-space:nowrap;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--mu);border:1px solid var(--ln);border-radius:6px;padding:1px 5px;margin-left:6px;vertical-align:2px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:12px;min-width:0}
+.st small{display:block;color:var(--mu);font-size:12px}
+.st b{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.sheet{position:fixed;inset:0;background:#0e0e0faa;display:flex;align-items:flex-end;justify-content:center;z-index:50;backdrop-filter:blur(3px)}
+.sheet>div{background:var(--card);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:18px max(18px,var(--sr)) calc(18px + var(--sb)) max(18px,var(--sl));max-height:92%;overflow-y:auto;animation:up .22s ease-out}
+@media (min-width:700px){.sheet{align-items:center}.sheet>div{border-radius:24px}}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h2{margin:0 0 14px;font-size:20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.x{width:36px;height:36px;border-radius:50%;border:0;background:var(--bg);font-size:20px;cursor:pointer;flex:none}
+.fld{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fld label{font-size:13px;font-weight:600;color:var(--mu)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pays{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.pays button{height:54px;border-radius:14px;border:1.5px solid var(--ln);background:var(--bg);font-weight:600;cursor:pointer;font-size:13.5px}
+.pays button.on{border-color:var(--fire);background:#d86e2d14;color:var(--fire)}
+.big{font-size:34px;font-weight:800;text-align:center;margin:4px 0 14px;font-variant-numeric:tabular-nums}
+.troco{text-align:center;font-size:18px;font-weight:600;color:var(--ok);min-height:26px}
+#reader{width:100%;border-radius:16px;overflow:hidden;background:#000;min-height:220px}
+.scanhint{text-align:center;color:var(--mu);font-size:13px;margin-top:8px}
+.toast{position:fixed;left:50%;top:calc(var(--st) + 14px);transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-weight:600;z-index:99;box-shadow:0 10px 30px #0006;max-width:calc(100% - 32px);animation:dn .2s}
+.toast.bad{background:var(--bad)}.toast.ok{background:var(--ok)}
+@keyframes dn{from{transform:translate(-50%,-20px);opacity:0}}
+#labels{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.lbl{background:#fff;color:#000;border:1px dashed #bbb;border-radius:8px;padding:6px 6px 4px;text-align:center;break-inside:avoid}
+.lbl b{display:block;font-size:11.5px;line-height:1.15;min-height:26px}
+.lbl .p{font-size:14px;min-height:0}
+.lbl svg{width:100%;height:auto;display:block}
+.vd{padding:10px 0;border-bottom:1px solid var(--ln);display:flex;gap:10px}
+.vd:last-child{border-bottom:0}
+.vd .nm{flex:1;min-width:0;font-size:14px}
+.vd small{color:var(--mu)}
+@media print{header,nav,.np{display:none!important}body{display:block;overflow:visible;background:#fff;height:auto}main{overflow:visible;padding:0}#labels{grid-template-columns:repeat(4,1fr);gap:4px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+ <img class="logo" src="icons/marca.png" alt="Avivados">
+ <div><h1>AVIVADOS</h1><small>em Pentecostes · PDV</small></div>
+ <div class="hdr-r">Vendido hoje<b id="hoje">R$ 0,00</b><span id="sync" class="sync"></span></div>
+</header>
+<main><div id="ptr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg></div><div class="wrap">
+
+<section id="venda"><div class="wrap">
+ <div class="card"><div class="row">
+  <input class="in" id="scan" placeholder="Bipe o código ou busque" autocomplete="off" enterkeyhint="go">
+  <button class="btn pri ic" id="camV" aria-label="Ler com a câmera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg></button>
+ </div></div>
+ <div class="card"><p class="h">Conta do cliente</p><div id="cart"></div></div>
+ <div class="card"><p class="h">Toque para adicionar</p><div class="chips" id="vChips"></div><div class="grid" id="quick" style="margin-top:10px"></div></div>
+ <div class="totbar"><div class="t"><small id="nItens">0 itens</small><b id="total">R$ 0,00</b></div><button class="btn pri" id="cobrar">Cobrar</button></div>
+</div></section>
+
+<section id="estoque" hidden><div class="wrap">
+ <div class="stats"><div class="st"><small>Produtos</small><b id="sP">0</b></div><div class="st"><small>Peças</small><b id="sQ">0</b></div><div class="st"><small>Em estoque</small><b id="sV">R$ 0</b></div></div>
+ <div class="row"><input class="in" id="busca" placeholder="Buscar produto ou código">
+  <button class="btn ic" id="camE" aria-label="Ler código para entrada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg></button>
+  <button class="btn pri" id="novoP"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Novo</button></div>
+ <div class="chips" id="eChips"></div>
+ <div class="card" id="lista"></div>
+</div></section>
+
+<section id="etiquetas" hidden><div class="wrap">
+ <div class="card np"><p class="h">Imprimir etiquetas</p>
+  <div class="chips" id="lChips"></div>
+  <div class="row" style="margin-top:10px">
+   <label class="row" style="gap:6px">Cópias <input class="in" id="copias" type="number" value="1" min="1" style="width:80px;flex:none"></label>
+   <label class="row" style="gap:6px"><input type="checkbox" id="soEst"> Uma por peça em estoque</label>
+   <button class="btn ink" id="imprimir" style="margin-left:auto">Imprimir</button></div>
+ </div>
+ <div id="labels"></div>
+</div></section>
+
+<section id="vendas" hidden><div class="wrap">
+ <div class="row"><input class="in" type="date" id="dia"></div>
+ <div class="stats" id="vStats"></div>
+ <div class="card" id="hist"></div>
+ <div class="card np" id="nuvem" hidden><p class="h">Sincronização</p><div class="row"><span id="nuvemSt" style="flex:1;color:var(--mu)"></span><button class="btn sm bad" id="sair">Sair</button></div></div>
+ <div class="card np"><p class="h">Backup dos dados</p><p style="margin:0 0 10px;color:var(--mu);font-size:13.5px">Os dados ficam salvos neste aparelho. Exporte de vez em quando para não perder nada.</p>
+  <div class="row"><button class="btn" id="exp">Exportar backup</button><label class="btn">Importar<input type="file" id="imp" hidden accept=".json,application/json"></label></div></div>
+</div></section>
+
+</div></main>
+<nav>
+ <button data-t="venda" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>Vender</button>
+ <button data-t="estoque"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Estoque</button>
+ <button data-t="etiquetas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14"/></svg>Etiquetas</button>
+ <button data-t="vendas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Vendas</button>
+</nav>
+<div id="modal"></div>
+<script src="vendor/firebase-app-compat.js"></script>
+<script src="vendor/firebase-auth-compat.js"></script>
+<script src="vendor/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="vendor/html5-qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
