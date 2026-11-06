@@ -29,6 +29,9 @@ if (!db || !db.prods) { db = { seq: 0, prods: [], vendas: [] }; SEED.forEach(([n
 else db.prods.filter(p => p.cat === 'Camisetas' && !/ - (P|M|G|GG|XG)$/.test(p.nome)).forEach(p => {
   db.prods = db.prods.filter(x => x !== p); TAM.forEach(t => novo(p.nome + ' - ' + t, p.preco, p.cat, t === 'P' ? p.qtd : 0, p.repor));
 });
+const BEBIDAS = [['Água', 3], ['Refrigerante Coca-Cola', 8], ['Refrigerante Coca-Cola Zero', 8], ['Energético', 15], ['Suco Del Valle', 0]]
+  .map(([nome, preco], i) => ({ cod: ean(900001 + i), nome, preco, cat: 'Bebidas', qtd: 0, repor: true }));
+if (!db.migBebidas) { BEBIDAS.forEach(b => db.prods.some(p => p.cod === b.cod) || db.prods.push({ ...b })); db.migBebidas = 1; }
 function save() { try { localStorage.pdvAvivados = JSON.stringify(db); } catch (e) { toast('Não foi possível salvar neste aparelho', 'bad'); } }
 save();
 const byCod = c => db.prods.find(p => p.cod === String(c).trim());
@@ -49,6 +52,7 @@ function go(t) { tab = t; document.querySelectorAll('nav button').forEach(x => x
 let cart = [], vCat = 'Todos';
 function addCart(c) {
   const p = byCod(c); if (!p) { beep(false); return toast('Código não encontrado: ' + c, 'bad'); }
+  if (!(p.preco > 0)) { beep(false); return toast(p.nome + ' está sem preço. Defina no Estoque.', 'bad'); }
   const it = cart.find(i => i.cod === p.cod); it ? it.q++ : cart.unshift({ cod: p.cod, nome: p.nome, preco: p.preco, q: 1 });
   beep(); if ((it ? it.q : 1) > p.qtd) toast(p.nome + ': estoque insuficiente (' + p.qtd + ')', 'bad'); else toast('+ ' + p.nome + '  ' + R(p.preco));
   rCart();
@@ -197,7 +201,7 @@ let fs, au, unsub = [];
 async function proxSeq() { // no modo nuvem o contador de códigos é único para todos os aparelhos
   if (!FB) return;
   const ref = fs.doc('meta/contador');
-  db.seq = await fs.runTransaction(async t => { const s = await t.get(ref); const v = Math.max(s.exists ? s.data().seq : 0, db.seq) + 1; t.set(ref, { seq: v }); return v; }) - 1;
+  db.seq = await fs.runTransaction(async t => { const s = await t.get(ref); const v = Math.max(s.exists ? s.data().seq : 0, db.seq) + 1; t.set(ref, { seq: v }, { merge: true }); return v; }) - 1;
 }
 function cloudProd(p) { if (FB && au.currentUser) fs.collection('produtos').doc(p.cod).set(p).catch(erroNuvem); }
 function cloudDel(p) { if (FB && au.currentUser) fs.collection('produtos').doc(p.cod).delete().catch(erroNuvem); }
@@ -212,7 +216,7 @@ async function cloudSubir(tudo) { // envia os dados deste aparelho (primeira vez
   db.prods.forEach(p => ops.push(b => b.set(fs.collection('produtos').doc(p.cod), p)));
   if (tudo) { const ex = await fs.collection('produtos').get(); ex.docs.forEach(d => !byCod(d.id) && ops.push(b => b.delete(d.ref))); }
   db.vendas.forEach(v => ops.push(b => b.set(fs.collection('vendas').doc(v.d.replace(/\W/g, '')), v)));
-  ops.push(b => b.set(fs.doc('meta/contador'), { seq: db.seq }));
+  ops.push(b => b.set(fs.doc('meta/contador'), { seq: db.seq }, { merge: true }));
   for (let i = 0; i < ops.length; i += 400) { const b = fs.batch(); ops.slice(i, i + 400).forEach(f => f(b)); await b.commit(); }
 }
 function erroNuvem(e) { console.warn(e); toast(e.code === 'permission-denied' ? 'Sem permissão no banco. Entre novamente.' : 'Erro ao sincronizar: ' + (e.message || e), 'bad'); }
@@ -224,7 +228,7 @@ function login() {
   $('gBtn').onclick = () => {
     const pv = new firebase.auth.GoogleAuthProvider(); pv.setCustomParameters({ prompt: 'select_account' }); $('lErr').textContent = '';
     au.signInWithPopup(pv).then(() => m.close()).catch(e => {
-      if (/popup-blocked|operation-not-supported|web-storage/.test(e.code)) return au.signInWithRedirect(pv);
+      if (e.code === 'auth/popup-blocked') return $('lErr').textContent = 'O navegador bloqueou a janela do Google. Permita pop-ups para este site e toque de novo.';
       if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') $('lErr').textContent = 'Não foi possível entrar (' + e.code + ').';
     });
   };
@@ -240,7 +244,8 @@ function iniciarNuvem() {
     unsub.forEach(f => f()); unsub = [];
     $('nuvemSt').textContent = u ? 'Conectado como ' + u.email : 'Desconectado';
     if (!u) return login();
-    try { const c = await fs.doc('meta/contador').get(); if (!c.exists) { await cloudSubir(false); toast('Estoque enviado para a nuvem', 'ok'); } } catch (e) { erroNuvem(e); }
+    try { const c = await fs.doc('meta/contador').get(); if (!c.exists) { await cloudSubir(false); toast('Estoque enviado para a nuvem', 'ok'); }
+      if (!(c.exists && c.data().bebidas)) { const b = fs.batch(); BEBIDAS.forEach(x => b.set(fs.collection('produtos').doc(x.cod), x)); b.set(fs.doc('meta/contador'), { bebidas: true }, { merge: true }); await b.commit(); } } catch (e) { erroNuvem(e); }
     unsub.push(fs.collection('produtos').onSnapshot(s => { db.prods = s.docs.map(d => d.data()).sort((a, b) => a.cod.localeCompare(b.cod)); save(); render(); }, erroNuvem));
     const desde = new Date(Date.now() - 400 * 864e5).toISOString();
     unsub.push(fs.collection('vendas').where('d', '>=', desde).onSnapshot(s => { db.vendas = s.docs.map(d => d.data()).sort((a, b) => a.d.localeCompare(b.d)); save(); render(); }, erroNuvem));
