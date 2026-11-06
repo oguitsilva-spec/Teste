@@ -260,9 +260,38 @@ function iniciarNuvem() {
     if (!u) return login();
     try { const c = await fs.doc('meta/contador').get(); if (!c.exists) { await cloudSubir(false); toast('Estoque enviado para a nuvem', 'ok'); }
       if (!(c.exists && c.data().bebidas)) { const b = fs.batch(); BEBIDAS.forEach(x => b.set(fs.collection('produtos').doc(x.cod), x)); b.set(fs.doc('meta/contador'), { bebidas: true }, { merge: true }); await b.commit(); } } catch (e) { erroNuvem(e); }
-    unsub.push(fs.collection('produtos').onSnapshot(s => { db.prods = s.docs.map(d => d.data()).sort((a, b) => a.cod.localeCompare(b.cod)); save(); render(); }, erroNuvem));
+    unsub.push(fs.collection('produtos').onSnapshot({ includeMetadataChanges: true }, s => { estado('p', s.metadata); db.prods = s.docs.map(d => d.data()).sort((a, b) => a.cod.localeCompare(b.cod)); save(); render(); }, erroNuvem));
     const desde = new Date(Date.now() - 400 * 864e5).toISOString();
-    unsub.push(fs.collection('vendas').where('d', '>=', desde).onSnapshot(s => { db.vendas = s.docs.map(d => ({ ...d.data(), id: d.id })).sort((a, b) => a.d.localeCompare(b.d)); save(); render(); }, erroNuvem));
+    unsub.push(fs.collection('vendas').where('d', '>=', desde).onSnapshot({ includeMetadataChanges: true }, s => { estado('v', s.metadata); db.vendas = s.docs.map(d => ({ ...d.data(), id: d.id })).sort((a, b) => a.d.localeCompare(b.d)); save(); render(); }, erroNuvem));
   });
 }
 iniciarNuvem();
+
+// ===== tempo real: indicador, puxar para atualizar e reconexão ao voltar para o app =====
+const meta = {};
+function estado(k, m) { if (m) meta[k] = m; const ms = Object.values(meta), el = $('sync'); if (!el) return; if (!FB) return el.textContent = '';
+  const off = !navigator.onLine, pend = ms.some(x => x.hasPendingWrites), cache = !ms.length || ms.some(x => x.fromCache);
+  el.className = 'sync ' + (off ? 'off' : pend || cache ? 'wait' : 'on');
+  el.textContent = off ? 'Sem internet' : pend ? 'Enviando…' : cache ? 'Conectando…' : 'Ao vivo'; }
+addEventListener('online', () => atualizar(true)); addEventListener('offline', () => estado());
+let atualizando = false;
+async function atualizar(quieto) {
+  if (atualizando) return; atualizando = true;
+  try {
+    if (FB && au && au.currentUser) { await fs.disableNetwork(); await fs.enableNetwork(); estado();
+      await Promise.all([fs.collection('produtos').get({ source: 'server' }), fs.doc('meta/contador').get({ source: 'server' })]); }
+    render(); if (!quieto) toast('Atualizado', 'ok');
+  } catch (e) { if (!quieto) toast(navigator.onLine ? 'Não foi possível atualizar agora' : 'Sem internet: mostrando os últimos dados salvos', 'bad'); }
+  atualizando = false;
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') atualizar(true); });
+(() => { // puxar para baixo
+  const mn = document.querySelector('main'), ind = $('ptr'); let y0 = null, dy = 0;
+  mn.addEventListener('touchstart', e => { y0 = mn.scrollTop <= 0 && !$('modal').innerHTML ? e.touches[0].clientY : null; dy = 0; }, { passive: true });
+  mn.addEventListener('touchmove', e => { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); const h = Math.min(dy * .5, 70);
+    ind.style.height = h + 'px'; ind.classList.toggle('pronto', h >= 60); }, { passive: true });
+  mn.addEventListener('touchend', async () => { if (y0 === null) return; y0 = null;
+    if (ind.classList.contains('pronto')) { ind.classList.add('girando'); ind.style.height = '56px'; await atualizar(); }
+    ind.classList.remove('pronto', 'girando'); ind.style.height = '0'; });
+})();
+estado();
