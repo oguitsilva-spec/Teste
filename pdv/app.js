@@ -295,3 +295,22 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
     ind.classList.remove('pronto', 'girando'); ind.style.height = '0'; });
 })();
 estado();
+
+// ===== relatório semanal para o WhatsApp =====
+function relatorio() {
+  const fim = new Date(), ini = new Date(fim - 7 * 864e5), vs = db.vendas.filter(v => new Date(v.d) >= ini);
+  const tot = vs.reduce((a, v) => a + v.total, 0), por = {}, prod = {};
+  vs.forEach(v => { por[v.pag] = (por[v.pag] || 0) + v.total; v.itens.forEach(i => { prod[i.nome] = (prod[i.nome] || 0) + i.q; }); });
+  const top = Object.entries(prod).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const zer = db.prods.filter(p => p.qtd <= 0), bx = db.prods.filter(p => p.qtd > 0 && p.qtd <= 3);
+  let q = 0, val = 0; db.prods.forEach(p => { if (p.qtd > 0) { q += p.qtd; val += p.qtd * p.preco; } });
+  const f = d => d.toLocaleDateString('pt-BR');
+  let t = `*🔥 Relatório Avivados*\n${f(ini)} a ${f(fim)}\n\n*💰 Vendas*\nTotal: *${R(tot)}*\nVendas: ${vs.length}` + (vs.length ? `\nTicket médio: ${R(tot / vs.length)}` : '');
+  Object.entries(por).forEach(([k, v]) => t += `\n• ${k}: ${R(v)}`);
+  if (top.length) t += `\n\n*🏆 Mais vendidos*\n` + top.map(([n, x], i) => `${i + 1}. ${n} (${x})`).join('\n');
+  t += `\n\n*📦 Estoque*\n${q} peças · ${R(val)}`;
+  if (bx.length) t += `\n\n*⚠️ Acabando (até 3)*\n` + bx.map(p => `• ${p.nome}: ${p.qtd}`).join('\n');
+  if (zer.length) t += `\n\n*❌ Sem estoque (${zer.length})*\n` + zer.map(p => `• ${p.nome}${p.repor ? '' : ' (não repor)'}`).join('\n');
+  return t;
+}
+$('relWpp').onclick = () => { location.href = 'https://wa.me/?text=' + encodeURIComponent(relatorio()); };
